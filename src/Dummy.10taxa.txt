@@ -1,0 +1,11 @@
+			Gene_1	Gene_2	Gene_3	Gene_4	Gene_5	Gene_6	Gene_7	Gene_8	Gene_9	Gene_10
+Taxon_1	1	0	1	1	1	0	0	1	1	1
+Taxon_2	1	1	1	1	1	0	0	1	1	0
+Taxon_3	0	1	1	1	1	1	0	1	1	0
+Taxon_4	1	1	1	1	0	1	0	0	0	0
+Taxon_5	1	1	1	0	1	1	0	1	1	0
+Taxon_6	1	1	1	1	1	1	1	1	1	1
+Taxon_7	1	1	1	1	1	1	1	0	1	0
+Taxon_8	1	1	1	1	1	1	1	1	1	0
+Taxon_9	1	1	1	1	1	1	1	1	1	1
+Taxon_10	1	1	0	1	1	1	1	1	1	0

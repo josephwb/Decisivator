@@ -1,0 +1,61 @@
+2011-11-21
+  * fixed some compilation issues for linux
+2011-11-20
+  * fixed omission of translation table from annotated tree file
+  * user has option to overwrite default tree file name (Decisivator.tree) or rename
+2011-11-19
+  * can annotate:
+	- simple cladograms
+	- phylograms
+	- cladograms with annotations (perhaps trees having undergone previous Decisivator analyses)
+	- phylograms with annotations (e.g. BEAST-style)
+  * released code for peer review
+2011-11-18
+  * can annotate MrBayes trees (i.e. with edge lengths)
+2011-11-17
+  * fixed missing argument in branch-wise partial decisiveness
+  * bipartition table now logged to disk (as well as screen)
+2011-11-16
+  * fixed bug in translating from tree -> translation table -> alignment
+  * results from user-tree analysis displayed in a bipartition table
+2011-11-15
+  * fixed bug in indexing reference taxa where last taxon is NOT a reference taxon
+2011-11-14
+  * fixed bug in mapping translation table to alignment
+2011-11-13
+  * starting drafting a rough user manual
+2011-11-11
+  * split partial decisiveness into tree-wise and branch-wise
+2011-11-8
+  * can calculate number and proportion of ways a particular user-edge is satisfied
+2011-11-5
+  * can handle rooted or unrooted (or combination thereof) trees
+2011-11-4
+  * can burnin and thin trees passed in
+2011-10-27
+  * can read in translation tables (in case it differs from alignment ordering)
+2011-10-25
+  * can read in multiple user trees. still no translation tables (yet)
+2011-10-24
+  * can read in user-tree. no translation table (at the moment)
+2011-10-18
+  * can export reduced matrix in Nexus or PHYLIP formats
+2011-10-18
+  * added further exclusion criteria:
+	- overlap criterion (either worst or threshold overlap)
+	- taxa with sequences for ONLY gene X (per Tank request)
+  * better summary information printed to screen
+2011-09-25
+  * made taxon exclusion more general
+	- by index
+	- by name
+	- missing N partitions
+	- missing >= N partitions
+2011-09-13
+  * no longer logs all missing quartets: exhausts memory on large data sets (e.g. >15000 taxa)
+	- instead logs a single (int) vector of taxa, counting when taxon i is missing from a quartet
+  * no longer immediately tests for decisiveness; user may want to make changes first
+2011-08-31
+  * made more general; can handle any kind of data (i.e. not just nucleotides)
+  * fixed one-off bug in character counting
+	- only really a problem with single-character (e.g. morphological) data
