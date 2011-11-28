@@ -271,7 +271,8 @@ void printHelp ()
 	<< "  '1' indicates a cell (taxon-partition) has data, while '0' indicates it does not." << endl
 	<< "  First row should give locus names. First column should give taxon names." << endl
 	<< endl
-	<< "'tree_file' contains user tree(s) in Nexus format to evaluate decisiveness upon." << endl
+	<< "'tree_file' contains user tree(s) in Nexus format to evaluate decisiveness upon. Tree(s) must be" << endl
+	<< "fully bifurcating." << endl
 	<< endl
 	<< "'burnin' is the number of trees to ignore. Only makes sense with a distribution of trees." << endl
 	<< endl
