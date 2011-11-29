@@ -2,6 +2,7 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+#include <numeric>
 
 using namespace std;
 
@@ -566,6 +567,7 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 	vector <int> upper;
 	double treeCount = 0;
 	double numInternalEdges = data.size() - 3;
+	int numTaxa = data.size();
 	
 	
 // should this be fixed or flexible?
@@ -582,10 +584,20 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 	{
 		printProgress("Tree", j + 1, numTrees);
 		treeCount++;
+		vector < vector <int> > storedSatisfiedClades;
 		double currentDecisiveness = 0.0;
 		double numEdgesSatisfied = 0;
 		tree = fastBinaryTree(data.size(), sibNodes, referenceTaxonPresent);
 		if (DEBUG) {printTree(tree);}
+		
+		printTree(tree);
+//		sort(tree.begin()+numTaxa,tree.end());
+//		printTree(tree);
+		
+		for (int i = numTaxa; i < (int)tree.size(); i++)
+		{
+			cout << "Clade " << i << " sums to: " << accumulate(tree[i].begin(),tree[i].end(),0) << endl;;
+		}
 		
 		if (DEBUG) {cout << endl << "Edges:" << endl;}
 		for (int i = 0; i < numInternalEdges; ++i) // Walk through all internal edges
@@ -593,9 +605,13 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 			getEdges(i, tree, sibNodes, referenceTaxonPresent, left, right, sib, upper);
 			
 // *** Scan taxon-gene matrix here ***
-			if (searchEdgePartitions(data, left, right, sib, upper, findAll, referenceTaxonPresent))
+			if (searchEdgePartitions(data, left, right, sib, upper, findAll, referenceTaxonPresent, storedSatisfiedClades))
 			{
 				numEdgesSatisfied++;
+				storedSatisfiedClades.push_back(left);
+				storedSatisfiedClades.push_back(right);
+				storedSatisfiedClades.push_back(sib);
+				storedSatisfiedClades.push_back(upper);
 			}
 			
 // empty vectors for next edge
@@ -607,6 +623,7 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 // empty vectors for next tree
 		tree.clear();
 		sibNodes.clear();
+		storedSatisfiedClades.clear();
 		currentDecisiveness = numEdgesSatisfied/numInternalEdges;
 		partialDecisiveness = ((((treeCount - 1)/treeCount) * partialDecisiveness) + (currentDecisiveness/treeCount));
 	}
@@ -620,7 +637,7 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 // findAll below switches between boolean and count
 int searchEdgePartitions (vector < vector <int> > const& data, vector <int> const& left,
 	vector <int> const& right, vector <int> const& sib, vector <int> const& upper, bool const& findAll,
-	bool const& referenceTaxonPresent)
+	bool const& referenceTaxonPresent, vector < vector <int> > const& storedSatisfiedClades)
 {
 	int numLoci = data[0].size();
 	int numSatisfied = 0;
@@ -721,6 +738,8 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
 	int numTrees = userTrees.size();
 	bool findAll = true;
 	
+	vector < vector <int> > storedSatisfiedClades;
+	
 	printMatrixToFile (data, taxonNames, locusWeights, taxonWeights);
 	
 	double numInternalEdges = userTrees[0][0].size() - 3; // *should* be the same for all trees in a file...
@@ -785,7 +804,7 @@ options:
 			int numPossibleQuartets = (int)left.size() * (int)right.size() * (int)sib.size() * (int)upper.size();
 			
 // *** Scan taxon-gene matrix here ***
-			 numEdgesSatisfied = searchEdgePartitions(data, left, right, sib, upper, findAll, 0);
+			 numEdgesSatisfied = searchEdgePartitions(data, left, right, sib, upper, findAll, 0, storedSatisfiedClades);
 			 
 			if (DEBUG)
 			{

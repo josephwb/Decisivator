@@ -19,7 +19,7 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 	vector < vector <int> > const& data, bool const& findAll);
 int searchEdgePartitions (vector < vector <int> > const& data, vector <int> const& left,
 	vector <int> const& right, vector <int> const& sib, vector <int> const& upper, bool const& findAll,
-	bool const& referenceTaxonPresent);
+	bool const& referenceTaxonPresent, vector < vector <int> > const& storedSatisfiedClades);
 bool testCompleteDecisivness (vector < vector <int> > const& data, bool const& referenceTaxonPresent,
 	vector <int> const& referenceTaxa, vector <string> const& taxonNames, vector < vector <int> > & missingQuartets,
 	vector < vector <int> > & triplets, vector < vector <int> > & tripletLocations, vector < vector <int> > & missingTriplets);

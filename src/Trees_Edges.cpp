@@ -336,11 +336,11 @@ void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < v
 // reverse the 'upper' vector, as reference taxon (if present) will be the last taxon
 	reverse(upper.begin(), upper.end());
 	
-	if (DEBUG)
-	{
+//	if (DEBUG)
+//	{
 		cout << "Left:";  printClade(left);
 		cout << "Right:"; printClade(right);
 		cout << "Sib:";   printClade(sib);
 		cout << "Upper:"; printClade(upper);
-	}
+//	}
 }
