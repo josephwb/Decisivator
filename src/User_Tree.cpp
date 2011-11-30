@@ -117,7 +117,7 @@ void getUserTrees (string const& treeFileName, vector <string> & rawTrees,
 				if (DEBUG)
 				{
 					cout << "Tree '" << name << "' = "<< treeDeclaration << endl;
-					printTree(tempTree);
+//					printTree(tempTree);
 				}
 			}
 			treeDeclaration.clear();

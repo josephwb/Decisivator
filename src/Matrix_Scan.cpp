@@ -567,7 +567,7 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 	vector <int> upper;
 	double treeCount = 0;
 	double numInternalEdges = data.size() - 3;
-	int numTaxa = data.size();
+//	int numTaxa = data.size();
 	
 	
 // should this be fixed or flexible?
@@ -590,15 +590,10 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 		tree = fastBinaryTree(data.size(), sibNodes, referenceTaxonPresent);
 		if (DEBUG) {printTree(tree);}
 		
-		printTree(tree);
+//		printTree(tree);
 //		sort(tree.begin()+numTaxa,tree.end());
 //		printTree(tree);
-		
-		for (int i = numTaxa; i < (int)tree.size(); i++)
-		{
-			cout << "Clade " << i << " sums to: " << accumulate(tree[i].begin(),tree[i].end(),0) << endl;;
-		}
-		
+				
 		if (DEBUG) {cout << endl << "Edges:" << endl;}
 		for (int i = 0; i < numInternalEdges; ++i) // Walk through all internal edges
 		{
@@ -764,8 +759,8 @@ options:
 		taxonOrdering = treeTaxonOrdering[j];
 		if (DEBUG)
 		{
-			cout << "Raw tree:" << endl;
-			printTree(rawTree);
+//			cout << "Raw tree:" << endl;
+//			printTree(rawTree);
 			
 			cout << endl << "Translation:" << endl;
 			printVectorAsList(taxonOrdering);
@@ -786,8 +781,8 @@ options:
 		
 		if (DEBUG)
 		{
-			cout << "Formatted tree:" << endl;
-			printTree(formattedTree);
+//			cout << "Formatted tree:" << endl;
+//			printTree(formattedTree);
 		}
 		
 		sibNodes = getSibNodes(formattedTree); // get sibling node relationships; expected downstream

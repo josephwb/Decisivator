@@ -1,0 +1,16 @@
+#NEXUS 
+
+Begin trees;
+
+   translate
+       1 Scer,
+       2 Spar,
+       3 Sklu,
+       4 Skud,
+       5 Sbay,
+       6 Scas,
+       7 Calb,
+       8 Smik;
+
+tree PAUP_1 = [&U] (1,(((((2,3),(4,5)),6),7),8));
+End;

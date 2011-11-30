@@ -1,0 +1,4 @@
+#NEXUS
+Begin trees;
+tree EL_annotated = [&U] (Scer:0.1,((((Spar:0.1,Sklu:0.1):0.1[&decisiveness=1],(Skud:0.1,Sbay:0.1):0.1[&decisiveness=1]):0.1[&decisiveness=1],Scas:0.1):0.1[&decisiveness=1],Calb:0.1):0.1[&decisiveness=1],Smik:0.1);
+End;

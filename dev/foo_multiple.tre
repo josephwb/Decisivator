@@ -1,0 +1,13 @@
+#NEXUS 
+
+Begin trees;  [Treefile saved Tue Oct 25 09:42:52 2011]
+tree PAUP_2 = [&R] (Scer,(((((Spar,Sklu),(Skud,Sbay)),Scas),Calb),Smik));
+tree PAUP_3 = [&U] (Scer,(((Spar,Sklu),(Skud,Sbay)),(Scas,Calb)),Smik);
+tree PAUP_4 = [&U] (Scer:0.20000000,((((Spar:0.08333334,Sklu:0.11666667):0.20000000,(Skud:0.15000002,Sbay:0.45000001):0):0.11666667,Scas:0.28333335):0.08999999,Calb:0.32000001):0.18000000,Smik:0.20000000);
+tree PAUP_gah = [&R] (Scer,(((((Spar,Sklu),(Skud,Sbay)),Scas),Calb),Smik));
+tree PAUP_ack = [&U] (Scer,(((Spar,Sklu),(Skud,Sbay)),(Scas,Calb)),Smik);
+tree PAUP_barf = [&U] (Scer:0.20000000,((((Spar:0.08333334,Sklu:0.11666667):0.20000000,(Skud:0.15000002,Sbay:0.45000001):0):0.11666667,Scas:0.28333335):0.08999999,Calb:0.32000001):0.18000000,Smik:0.20000000);
+tree PAUP_1234 = [&R] (Scer,(((((Spar,Sklu),(Skud,Sbay)),Scas),Calb),Smik));
+tree PAUP_13 = [&U] (Scer,(((Spar,Sklu),(Skud,Sbay)),(Scas,Calb)),Smik);
+tree PAUP_foo = [&U] (Scer:0.20000000,((((Spar:0.08333334,Sklu:0.11666667):0.20000000,(Skud:0.15000002,Sbay:0.45000001):0):0.11666667,Scas:0.28333335):0.08999999,Calb:0.32000001):0.18000000,Smik:0.20000000);
+End;
