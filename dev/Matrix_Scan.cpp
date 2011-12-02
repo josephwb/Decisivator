@@ -1259,9 +1259,6 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 		treeCount++;
 		vector < vector <int> > temp;
 		vector <int> foo;
-		
-		
-		
 		vector < vector < vector <int> > > cacheSatisfiedClades (numPartitions, temp);
 		
 		double currentDecisiveness = 0.0;
@@ -1286,19 +1283,34 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 			for (int k = 0; k < numPartitions; k++)
 			{
 				vector < vector <int> > partitionClades = cacheSatisfiedClades[k];
+				if (partitionClades.empty())
+				{
+					cout << "partitionClades empty for edge #" << i << ", partition #" << k << endl;
+				}
+				
+				
 				if (!partitionClades.empty())
 				{
+					cout << "partitionClades not empty for edge #" << i << ", partition #" << k << endl;
+					
 					leftValid = searchEdgeStoredClades (left, partitionClades);
 					rightValid = searchEdgeStoredClades (right, partitionClades);
 					sibValid = searchEdgeStoredClades (sib, partitionClades);
 					upperValid = searchEdgeStoredClades (upper, partitionClades);
+					
+					
 					if (leftValid && rightValid && sibValid && upperValid)
 					{
 						match = true;
 						k = numPartitions;
+						cout << "Satisfied all four clades in one fell swoop for edge #" << i << endl;
 						continue;
 					}
-					else if (!leftValid && !rightValid && !sibValid && !upperValid)
+					
+					cout << "leftValid = " << leftValid << "; rightValid = " << rightValid <<
+						"; sibValid = " << sibValid << "; upperValid = " << upperValid << endl;
+						
+					if (!leftValid && !rightValid && !sibValid && !upperValid)
 					{
 						if (DEBUG) {cout << "No valid clades. Gotta search'em all." << endl;}
 						continue;
@@ -1342,6 +1354,12 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 						k = numPartitions;
 						continue;
 					}
+				
+				
+				
+				
+				
+				
 				}
 			}
 // *** Scan taxon-gene matrix here ***
@@ -1356,15 +1374,35 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 					referenceTaxonPresent, partitionMatched))
 				{
 					numEdgesSatisfied++;
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
 // push back satisfied clades HERE
 					cacheSatisfiedClades[partitionMatched].push_back(left);
 					cacheSatisfiedClades[partitionMatched].push_back(right);
 					cacheSatisfiedClades[partitionMatched].push_back(sib);
 					cacheSatisfiedClades[partitionMatched].push_back(upper);
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
 				}
 			}
-
-			
 // empty vectors for next edge
 			left.clear();
 			right.clear();
@@ -1376,6 +1414,8 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 		sibNodes.clear();
 		cacheSatisfiedClades.clear();
 		currentDecisiveness = numEdgesSatisfied/numInternalEdges;
+		
+// running mean to avoid potential overflow
 		partialDecisiveness = ((((treeCount - 1)/treeCount) * partialDecisiveness) + (currentDecisiveness/treeCount));
 	}
 	cout << endl << "Done." << endl << endl;

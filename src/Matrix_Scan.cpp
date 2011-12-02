@@ -13,6 +13,39 @@ using namespace std;
 
 extern bool DEBUG;
 
+void checkForMissingTaxa (vector < vector <int> > const& data, vector <string> const& taxonNames)
+{
+	vector <string> missingData;
+	for (int i = 0; i < (int)data.size(); i++) // numTaxa
+	{
+		bool match = false;
+		for (int j = 0; j < (int)data[0].size(); j++) // numPartitions
+		{
+			if (data[i][j])
+			{
+				match = true;
+			}
+		}
+		if (!match)
+		{
+			missingData.push_back(taxonNames[i]);
+		}
+	}
+	if (!missingData.empty())
+	{
+		if (missingData.size() > 1)
+		{
+			cout << endl << " *** WARNING! MULTIPLE TAXA WITH NO DATA!! ***" << endl << endl;
+			printVectorAsList(missingData);
+		}
+		else
+		{
+			cout << endl << "*** WARNING! TAXON WITH NO DATA!! ***" << endl << endl;
+			cout << "Taxon: " << missingData[0] << "." << endl << endl;
+		}
+	}
+}
+
 bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & referenceTaxa,
 	vector <string> & taxonNames)
 {

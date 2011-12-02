@@ -23,6 +23,8 @@ double convertStringtoDouble (string stringToConvert);
 vector <string> storeStringVector (string & stringToParse);
 void printVectorAsList (vector <string> const& vectorToPrint);
 void printVectorAsList (vector <int> const& vectorToPrint); // overloading for debugging
+void printVectorAsList (vector <double> const& vectorToPrint, string const& columnOneName,
+	string const& columnOneName); // overloading for debugging
 vector <string> collectData (string const& fileName);
 void printProgress (string const& elementType, BigInt const& current, BigInt const& upper);
 bool caseInsensitiveStringCompare (string const& str1, string const& str2);

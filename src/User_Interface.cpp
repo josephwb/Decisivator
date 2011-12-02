@@ -3,12 +3,14 @@
 #include <vector>
 #include <sstream>
 #include <cstdlib>
+#include <iomanip>
 
 using namespace std;
 
 #include "User_Interface.h"
 #include "General.h"
 #include "Parse_Nexus.h"
+#include "Matrix_Scan.h"
 
 extern bool DEBUG; // print out extra junk to screen
 extern double version;
@@ -374,16 +376,38 @@ void printSummaryInformation (vector <string> const& locusNames, vector <string>
 	{
 		cout << "Partial branch-wise decisiveness has not yet been determined for this taxon-character matrix." << endl;
 	}
+	checkForMissingTaxa (data, taxonNames);
 }
 
+
+// print our proportion of data present
 void printMatrix (vector < vector <int> > const& data, vector <string> const& taxonNames, 
 	vector <double> const& locusWeights, vector <double> const& taxonWeights)
 {
+	cout.precision(3);
+	cout.setf(ios::fixed,ios::floatfield);
+	
 	int numTaxa = data.size();
 	int numLoci = data[0].size();
+	vector <double> proportionDataPresent;
 	
 	string maxString;
 	int longestName = 0;
+	
+// get proportion of data present
+	for (int i = 0; i < numTaxa; i++)
+	{
+		double temp = 0.0;
+		for (int j = 0; j < numLoci; j++)
+		{
+			if (data[i][j])
+			{
+				temp ++;
+			}
+		}
+		temp = temp / (double)numLoci;
+		proportionDataPresent.push_back(temp);
+	}
 	
 	for (int i = 0; i < numTaxa; i++)
 	{		
@@ -399,11 +423,12 @@ void printMatrix (vector < vector <int> > const& data, vector <string> const& ta
 		longestName++;
 	}
 	cout << endl << "Current matrix:" << endl;
-	for (int i = 0; i < (longestName + numLoci +3); i++)
+	for (int i = 0; i < (longestName + numLoci +2); i++)
 	{
 		cout << " ";
 	}
-	cout << "Weight" << endl;
+	cout << "   Prop.";
+	cout << "   Weight" << endl;
 	for (int i = 0; i < numTaxa; i++)
 	{		
 		cout << " " ;
@@ -423,18 +448,13 @@ void printMatrix (vector < vector <int> > const& data, vector <string> const& ta
 		{
 			cout << data[i][j];
 		}
+		cout << "   " << proportionDataPresent[i];
 		cout << "   " << taxonWeights[i] << endl;
 	}
 	cout << endl;
-	for (int i = 0; i < longestName - 6; i++)
-	{
-		cout << " ";
-	}
-	cout << "Weight: ";
-	for (int i = 0; i < numLoci; i++)
-	{
-		cout << locusWeights[i];
-	}
+	
+	cout << "Partition weights:" << endl << endl;
+	printVectorAsList (locusWeights, "Part", "Weight");
 	cout << endl;
 }
 

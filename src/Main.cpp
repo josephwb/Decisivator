@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 		cout << "Ergh. Something fucked up... Shit." << endl;
 		exit(1);
 	}
-	
+
 // *** If reference taxon IS present, put at bottom of taxon-gene matrix (as outgroup taxon is always last in tree)
 //     Will allow faster satisfaction (but not rejection) of internal edges.
 	referenceTaxonPresent = searchForReferenceTaxon(data, referenceTaxa, taxonNames);
@@ -199,6 +199,7 @@ int main(int argc, char *argv[])
 	double revisedCoverage = taxonCoverage;
 	int numRandomTrees = 0;
 	
+// this is a placeholder; currently cannot prune taxa from a tree
 	vector < vector < vector <bool> > > revisedUserTrees = userTrees; // i.e. if taxa are deleted
 	bool completeDecisivenessDetermined = false; // UPDATE THIS!
 		

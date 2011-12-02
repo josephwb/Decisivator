@@ -358,7 +358,6 @@ void printVectorAsList (vector <string> const& vectorToPrint)
 	}
 }
 
-
 void printVectorAsList (vector <int> const& vectorToPrint) // overloading for debugging
 {
 	int numElements = vectorToPrint.size();
@@ -387,6 +386,55 @@ void printVectorAsList (vector <int> const& vectorToPrint) // overloading for de
 	cout << endl;
 }
 
+void printVectorAsList (vector <double> const& vectorToPrint, string const& columnOneName,
+	string const& columnTwoName) // overloading for debugging
+{
+	int numElements = vectorToPrint.size();
+	for (int i = -1; i < numElements; i++)
+	{		
+		if (i >= 0)
+		{
+			cout << "  ";
+			if (numElements >= 1000)
+			{
+				if (i + 1 < 10) {cout << "   ";}
+				else if (i + 1 < 100) {cout << "  ";}
+				else if (i + 1 < 1000) {cout << " ";}
+			}
+			else if (numElements >= 100)
+			{
+				if (i + 1 < 10) {cout << "  ";}
+				else if (i + 1 < 100) {cout << " ";}
+			}
+			else if (numElements >= 10)
+			{
+				if (i + 1 < 10) {cout << " ";}
+			}
+			cout << i + 1 << ". ";
+			cout << vectorToPrint[i] << endl;
+		}
+		else
+		{
+			if (numElements >= 1000)
+			{
+				if (i + 1 < 10) {cout << "  ";}
+				else if (i + 1 < 100) {cout << " ";}
+			}
+			else if (numElements >= 100)
+			{
+				if (i + 1 < 10) {cout << " ";}
+			}
+			if (numElements > 10)
+			{
+				cout << columnOneName << "  " << columnTwoName << endl;
+			}
+			else
+			{
+				cout << columnOneName << " " << columnTwoName << endl;
+			}
+		}
+	}
+}
 
 vector <string> collectData (string const& fileName)
 {
