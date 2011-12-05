@@ -12,7 +12,7 @@ using namespace std;
 #include "Parse_Data.h"
 #include "User_Interface.h"
 
-extern bool DEBUG;
+extern bool debuggering;
 
 /*
   NOTE: deals only with the vanilla-iest of Nexus file formats at the moment.
@@ -61,7 +61,7 @@ void getNumTaxaChar (string fileName, int & numTaxa, int & numChar, bool & inter
 	
 	while (getline(inputUserFile,line) && !done)
 	{
-		if (DEBUG) {cout << "Current line: " << line << endl;}
+		if (debuggering) {cout << "Current line: " << line << endl;}
 		int stringPosition = 0;
 		commentLine = checkCommentLine(line);
 		whiteSpaceOnly = checkWhiteSpaceOnly(line);
@@ -74,12 +74,12 @@ void getNumTaxaChar (string fileName, int & numTaxa, int & numChar, bool & inter
 			if (checkStringValue(line, "matrix", stringPosition))	// Done - won't find the information further down; really only used for 'interleave'
 			{
 				done = true;
-				if (DEBUG) {cout << "Encountered 'matrix'" << endl;}
+				if (debuggering) {cout << "Encountered 'matrix'" << endl;}
 				continue;
 			}
 			else if (checkStringValue(line, "dimensions", stringPosition))
 			{
-				if (DEBUG) {cout << "Encountered 'dimensions'" << endl;}
+				if (debuggering) {cout << "Encountered 'dimensions'" << endl;}
 				stringPosition = 0;
 				while (!numTaxaEncountered || !numCharEncountered)
 				{
@@ -90,7 +90,7 @@ void getNumTaxaChar (string fileName, int & numTaxa, int & numChar, bool & inter
 						tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
 						tempString = removeStringSuffix(tempString, ';', numTaxaEncountered);
 						numTaxa = convertStringtoInt(tempString);
-						if (DEBUG) {cout << "NTax = " << numTaxa << endl;}
+						if (debuggering) {cout << "NTax = " << numTaxa << endl;}
 						numTaxaEncountered = true;
 					}
 					if (checkStringValue(tempString, "nchar", 0))
@@ -98,7 +98,7 @@ void getNumTaxaChar (string fileName, int & numTaxa, int & numChar, bool & inter
 						tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
 						tempString = removeStringSuffix(tempString, ';', numCharEncountered);
 						numChar = convertStringtoInt(tempString);
-						if (DEBUG) {cout << "NChar = " << numChar << endl;}
+						if (debuggering) {cout << "NChar = " << numChar << endl;}
 						numCharEncountered = true;
 					}
 				}
@@ -142,7 +142,7 @@ void getNumTaxaChar (string fileName, int & numTaxa, int & numChar, bool & inter
 		}
 	}
 	inputUserFile.close();
-	if (DEBUG) {cout << endl;}
+	if (debuggering) {cout << endl;}
 }
 
 vector <string> collectCharsets (string charsetFileName, vector <string> inputCharsets,
@@ -212,7 +212,7 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 				tempString = removeStringSuffix(*lineIter, '\\', separatorEncountered);
 				if (separatorEncountered)
 				{
-					if (DEBUG) {cout << "Interval CHARSET encountered: '" << *lineIter << "." << endl;}
+					if (debuggering) {cout << "Interval CHARSET encountered: '" << *lineIter << "." << endl;}
 					extractIntervalRange(charsetDeclaration, start, stop, interval);
 					tempIntVector.push_back(1);		// Code for interval range
 					tempIntVector.push_back(start);
@@ -531,7 +531,7 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 			else
 			{
 // First string is taxon name, second is sequence
-				if (DEBUG) {cout << "Reading in taxon '" << extractStringElement(line, 0) << "'..." << endl;}
+				if (debuggering) {cout << "Reading in taxon '" << extractStringElement(line, 0) << "'..." << endl;}
 				tempStringVector.push_back(extractStringElement(line, 0));
 				tempStringVector.push_back(extractStringElement(line, 1));
 				taxonNames.push_back(extractStringElement(line, 0));
@@ -542,7 +542,7 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 // Count sites encountered - for error-checking; only checking first sequence (for now)
 				if (taxonIter == 0)
 				{
-					int charCounter = extractStringElement(line, 1).size();
+					int charCounter = (int)extractStringElement(line, 1).size();
 					numCharRead += charCounter;
 				}
 				if (numCharRead != numChar)
@@ -556,7 +556,7 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 		if (numCharRead == numChar)
 		{
 			allCharacterRead = true;
-			if (DEBUG) {cout << "numCharRead (" << numCharRead << ") == numChar (" << numChar << ") declared in Nexus file. Woo-hoo!" << endl;}
+			if (debuggering) {cout << "numCharRead (" << numCharRead << ") == numChar (" << numChar << ") declared in Nexus file. Woo-hoo!" << endl;}
 		}
 	}
 	else if (interleavedData)
@@ -606,7 +606,7 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 					
 					if (firstPass)
 					{
-						if (DEBUG) {cout << "Reading in (interleaved) taxon '" << extractStringElement(line, 0) << "'..." << endl;}
+						if (debuggering) {cout << "Reading in (interleaved) taxon '" << extractStringElement(line, 0) << "'..." << endl;}
 						taxonNames.push_back(taxonName);
 						tempStringVector.push_back(taxonName);		// Taxon name
 						tempStringVector.push_back(taxonSequence);	// sequence
@@ -633,7 +633,7 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 			if (numCharRead == numChar)
 			{
 				allCharacterRead = true;
-				if (DEBUG) {cout << "numCharRead (" << numCharRead << ") == numChar (" << numChar << ") declared in Nexus file. Woo-hoo!" << endl;}
+				if (debuggering) {cout << "numCharRead (" << numCharRead << ") == numChar (" << numChar << ") declared in Nexus file. Woo-hoo!" << endl;}
 			}
 // *** Need to print out some error here if not all characters are read ***
 // At the moment just segfaults
@@ -674,7 +674,7 @@ void constructMatrix (vector < vector <string> > const& taxaAlignment, vector < 
 			if (!sequencePresent)
 			{
 				temp.push_back(0);
-				if (DEBUG) {cout << "No sequence for taxon " << taxaAlignment[i][0] << " for locus " << locusNames[j] << "." << endl;}
+				if (debuggering) {cout << "No sequence for taxon " << taxaAlignment[i][0] << " for locus " << locusNames[j] << "." << endl;}
 				numMissing++;
 			}
 		}
@@ -695,7 +695,7 @@ bool validCharacterEncountered (char const& character)
 	}
 	else
 	{
-		if(DEBUG) {cout << "Character '" << character << "' is invalid." << endl;}
+		if(debuggering) {cout << "Character '" << character << "' is invalid." << endl;}
 	}
 	return match;
 }

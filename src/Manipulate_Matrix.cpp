@@ -11,7 +11,7 @@ using namespace std;
 #include "General.h"
 #include "Matrix_Scan.h"
 
-extern bool DEBUG;
+extern bool debuggering;
 
 void addTaxonGeneToMatrix (vector < vector <int> > & data, vector <string> const& taxonNames,
 	vector <string> & locusNames, vector <double> & locusWeights, vector <double> & taxonWeights)
@@ -136,7 +136,7 @@ void deleteGenesFromMatrix (vector < vector <int> > & data, vector <string> & lo
 	bool done = false;
 	vector <int> userInput;
 	bool validIntEntry = false;
-	int numTaxa = data.size();
+	int numTaxa = (int)data.size();
 	int numEntries = 0;
 	int geneSelection;
 	
@@ -212,7 +212,7 @@ void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, 
 	vector <int> userInput;
 	bool validIntEntry = false;
 	int numEntries = 0;
-	int numPartitions = locusNames.size();
+	int numPartitions = (int)locusNames.size();
 	int userSelection;
 	string taxonName;
 	vector <string> excludedTaxa;
@@ -224,7 +224,7 @@ void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, 
 		while (!validChoice)
 		{
 			char userChoice;
-			int numTaxa = taxonNames.size();
+			int numTaxa = (int)taxonNames.size();
 			getCoverage (data, revisedCoverage);
 			cout << endl << endl << "EXCLUDE TAXA FROM MATRIX" << endl << endl;
 			cout << "Matrix currently contains " << numTaxa << " taxa." << endl
@@ -436,7 +436,7 @@ void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, 
 					else
 					{
 						vector <int> excludeTaxa;
-						int numTaxa = taxonNames.size();
+						int numTaxa = (int)taxonNames.size();
 						
 						for (int editIter = 0; editIter < numEntries; editIter++)
 						{
@@ -506,8 +506,8 @@ void excludeTaxaMissingNGenes (int const& partitionsMissing, vector < vector <in
 {
 	vector <string> excludedTaxa;
 	vector <int> excludedIndices;
-	int numTaxa = data.size();
-	int numPartitions = data[0].size();
+	int numTaxa = (int)data.size();
+	int numPartitions = (int)data[0].size();
 	
 	if (missingExact)
 	{
@@ -543,7 +543,7 @@ void excludeTaxaMissingNGenes (int const& partitionsMissing, vector < vector <in
 	}
 	if (excludedIndices.size() != 0)
 	{
-		int numExcluded = excludedTaxa.size();
+		int numExcluded = (int)excludedTaxa.size();
 		cout << endl << "Excluded taxa:" << endl;
 		printVectorAsList (excludedTaxa);
 		
@@ -567,8 +567,8 @@ void excludeTaxaPossessingNGenes (int const& partitionsPossessed, vector < vecto
 {
 	vector <string> excludedTaxa;
 	vector <int> excludedIndices;
-	int numTaxa = data.size();
-	int numPartitions = data[0].size();
+	int numTaxa = (int)data.size();
+	int numPartitions = (int)data[0].size();
 	
 	if (possessingExact)
 	{
@@ -604,7 +604,7 @@ void excludeTaxaPossessingNGenes (int const& partitionsPossessed, vector < vecto
 	}
 	if (excludedIndices.size() != 0)
 	{
-		int numExcluded = excludedTaxa.size();
+		int numExcluded = (int)excludedTaxa.size();
 		cout << endl << "Excluded taxa:" << endl;
 		printVectorAsList (excludedTaxa);
 		
@@ -626,8 +626,8 @@ void excludeTaxaPossessingNGenes (int const& partitionsPossessed, vector < vecto
 void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> & taxonNames,
 	vector <double> & taxonWeights)
 {
-	int numTaxa = data.size();
-	int numPartitions = data[0].size();
+	int numTaxa = (int)data.size();
+	int numPartitions = (int)data[0].size();
 	vector <int> counts;
 	int minCount = numTaxa;
 	vector <string> excludedTaxa;
@@ -646,9 +646,9 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 		cout << "Enter threshold value (minimum proportion of taxonomic overlap): ";
 		cin >> thresholdValue;
 		
-		thresholdCount = thresholdValue * numTaxa;
+		thresholdCount = (int)thresholdValue * numTaxa;
 		
-		if (DEBUG) {cout << "thresholdCount calculated to be: " << thresholdCount << endl;}
+		if (debuggering) {cout << "thresholdCount calculated to be: " << thresholdCount << endl;}
 	}
 	
 // Count
@@ -673,7 +673,7 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 		
 		sum = accumulate(temp.begin(), temp.end(), 0);
 		
-		if (DEBUG) {cout << "Overlap count for taxon '" << taxonNames[taxonIter] << "' is: " << sum << endl;}
+		if (debuggering) {cout << "Overlap count for taxon '" << taxonNames[taxonIter] << "' is: " << sum << endl;}
 		
 		counts.push_back(sum);
 		if (sum < minCount)
@@ -682,7 +682,7 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 		}
 	}
 	
-	if (DEBUG) {cout << "minCount = " << minCount << endl;}
+	if (debuggering) {cout << "minCount = " << minCount << endl;}
 	
 	minOverlap = double(minCount) / double(numTaxa);
 	
@@ -693,11 +693,11 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 			cout << endl << "Minimum taxon overlap is: " << minOverlap << endl;
 			for (int taxonIter = numTaxa-1; taxonIter >= 0; taxonIter--)
 			{
-				if (DEBUG) {cout << "taxon '" << taxonNames[taxonIter] << "' has count: " << counts[taxonIter] << endl;}
+				if (debuggering) {cout << "taxon '" << taxonNames[taxonIter] << "' has count: " << counts[taxonIter] << endl;}
 				if (counts[taxonIter] == minCount)
 				{
 					excludedTaxa.push_back(taxonNames[taxonIter]);
-					if (DEBUG) {cout << "DELETE! taxonIter = " << taxonIter << "; taxon = " << taxonNames[taxonIter] << endl;}
+					if (debuggering) {cout << "DELETE! taxonIter = " << taxonIter << "; taxon = " << taxonNames[taxonIter] << endl;}
 					data.erase(data.begin()+taxonIter);
 					taxonNames.erase(taxonNames.begin()+taxonIter);
 					taxonWeights.erase(taxonWeights.begin()+taxonIter);
@@ -711,11 +711,11 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 			cout << endl << "Threshold taxon overlap is: " << thresholdValue << endl;
 			for (int taxonIter = numTaxa-1; taxonIter >= 0; taxonIter--)
 			{
-				if (DEBUG) {cout << "taxon '" << taxonNames[taxonIter] << "' has count: " << counts[taxonIter] << endl;}
+				if (debuggering) {cout << "taxon '" << taxonNames[taxonIter] << "' has count: " << counts[taxonIter] << endl;}
 				if (counts[taxonIter] <= thresholdCount)
 				{
 					excludedTaxa.push_back(taxonNames[taxonIter]);
-					if (DEBUG) {cout << "DELETE! taxonIter = " << taxonIter << "; taxon = " << taxonNames[taxonIter] << endl;}
+					if (debuggering) {cout << "DELETE! taxonIter = " << taxonIter << "; taxon = " << taxonNames[taxonIter] << endl;}
 					data.erase(data.begin()+taxonIter);
 					taxonNames.erase(taxonNames.begin()+taxonIter);
 					taxonWeights.erase(taxonWeights.begin()+taxonIter);
@@ -836,7 +836,7 @@ void mergeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, ve
 				sort(tempWeightVector.begin(), tempWeightVector.end());
 				reverse(tempWeightVector.begin(), tempWeightVector.end());
 				
-				int numLoci = tempIntVector[0].size();
+				int numLoci = (int)tempIntVector[0].size();
 				vector <int> mergedData (numLoci, 0);
 				for (int i = 0; i < numLoci; i++) // Merge data
 				{

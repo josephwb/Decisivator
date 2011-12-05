@@ -10,7 +10,7 @@ using namespace std;
 #include "Parse_Nexus.h"
 #include "Trees_Edges.h"
 
-extern bool DEBUG; // print out extra junk to screen
+extern bool debuggering; // print out extra junk to screen
 
 // *** Need to determine if translation table exists (it probably does). DONE. ***
 // *** Log with vector <int> (mapping names to translation table). DONE. ***
@@ -62,7 +62,7 @@ void getUserTrees (string const& treeFileName, vector <string> & rawTrees,
 	{
 		cout << "Translation table found." << endl;
 		cout << "Successfully read in coding for " << translationTable.size() << " taxa." << endl << endl;
-		if (DEBUG) {printVectorAsList(translationTable);}
+		if (debuggering) {printVectorAsList(translationTable);}
 	}
 	
 //	'tree MUSCLE50genePart = (((((((Rhynochetos:29.585829,Eurypyga:29.585829):39.775412,Phaethon:69.361241):2.341594,((Syrrhaptes:67.522426,(Podiceps:43.000'
@@ -92,7 +92,6 @@ void getUserTrees (string const& treeFileName, vector <string> & rawTrees,
 					stringPosition++;
 				}
 				
-				
 				bool weAreCool = false;
 				while (!weAreCool) // will skip rooting flavour indicator
 				{
@@ -106,18 +105,17 @@ void getUserTrees (string const& treeFileName, vector <string> & rawTrees,
 						weAreCool = true;
 					}
 				}
-				if (DEBUG) {cout << "Tree '" << name << "' = "<< treeDeclaration << endl << endl;}
+				if (debuggering) {cout << "Tree '" << name << "' = "<< treeDeclaration << endl << endl;}
 				
-//				rawTrees.push_back(treeDeclaration);
 				treeNames.push_back(name);
 				tempTree = parseTree(treeDeclaration, taxonNames, translationTable, treeTaxonOrdering);
 				userTrees.push_back(tempTree);
 				
 				
-				if (DEBUG)
+				if (debuggering)
 				{
 					cout << "Tree '" << name << "' = "<< treeDeclaration << endl;
-//					printTree(tempTree);
+					printTree(tempTree);
 				}
 			}
 			treeDeclaration.clear();
@@ -145,7 +143,7 @@ vector < vector <bool> > parseTree (string & tree, vector <string> const& taxonN
 	vector < vector <bool> > formattedTree;
 	bool complete = false;
 	string curentName;
-	int numTaxa = taxonNames.size();
+	int numTaxa = (int)taxonNames.size();
 	
 // Hmm... Should I use Ape-style tree storage?
 	
@@ -174,13 +172,13 @@ vector < vector <bool> > parseTree (string & tree, vector <string> const& taxonN
 			vector <int> dummy;
 			activeTaxa.push_back(dummy); // yeah, i know, ugly...
 			activeNode.push_back(true);
-			if (DEBUG) {cout << "Opening node #" << currentNode << endl;}
+			if (debuggering) {cout << "Opening node #" << currentNode << endl;}
 			continue;
 		}
 		else if (currentChar == ')') // close node
 		{
 			activeNode[currentNode] = false;
-			if (DEBUG) {cout << "Closing node #" << currentNode << endl;}
+			if (debuggering) {cout << "Closing node #" << currentNode << endl;}
 			for (int iterActive = 0; iterActive < (int)activeNode.size(); iterActive++) // find largest open node
 			{
 				if (activeNode[iterActive])
@@ -243,7 +241,7 @@ vector < vector <bool> > parseTree (string & tree, vector <string> const& taxonN
 		}
 		else if (currentChar == ';')
 		{
-			if (DEBUG) {cout << "End of tree description." << endl;}
+			if (debuggering) {cout << "End of tree description." << endl;}
 		}
 		else if (currentChar != ',') // tip name; could be an integer if a translation table is being used.
 		{
@@ -319,20 +317,13 @@ vector < vector <bool> > parseTree (string & tree, vector <string> const& taxonN
 	}
 	
 	treeTaxonOrdering.push_back(indexPosition);
-	
-	if (DEBUG)
-	{
-		cout << "Encountered " << numNodes << " nodes." << endl;
-		cout << "Encountered " << countTaxa + 1 << " taxa.." << endl;
-	}
-	
-	
+		
 // ok. so we have the tree parsed. now put it into binary tree format... fucker.
 	for (int nodeIter = 0; nodeIter < numNodes; nodeIter++)
 	{
 // vector < vector <int> > activeTaxa <- lists active taxa for each node. 
 		vector <bool> node;
-		int numActive = activeTaxa[nodeIter].size();
+		int numActive = (int)activeTaxa[nodeIter].size();
 		for (int taxaIter = 0; taxaIter < numTaxa; taxaIter++)
 		{
 			bool match = false;
@@ -370,8 +361,31 @@ vector < vector <bool> > parseTree (string & tree, vector <string> const& taxonN
 	reverse(formattedTree.begin(), formattedTree.end());
 
 // test!
-	if (DEBUG) {printTree(formattedTree);}
-	if (DEBUG) {cout << endl;}
+	if (debuggering) {printTree(formattedTree);}
+	
+	if (debuggering)
+	{
+		cout << "Encountered " << numNodes << " nodes." << endl;
+		cout << "Encountered " << countTaxa + 1 << " taxa." << endl;
+	}
+	
+	if (numNodes == ((int)taxonNames.size() - 1))
+	{
+		cout << "Tree is rooted." << endl;
+	}
+	else if (numNodes == ((int)taxonNames.size() - 2))
+	{
+		cout << "Tree is unrooted." << endl;
+	}
+	else
+	{
+		cout << "You don't know what you are doing, do you, asshole!" << endl;
+	}
+	
+//	printTree(formattedTree);
+	
+	
+	if (debuggering) {cout << endl;}
 	
 	return formattedTree;
 }
@@ -388,7 +402,7 @@ vector <int> collectTaxonCoding (vector <string> & rawInput, vector <string> con
 	vector <string> storeNames;	// for debugging
 	vector <int> storeIndices;	// for debugging
 	
-	int numTaxa = taxonNames.size();
+	int numTaxa = (int)taxonNames.size();
 	int countTaxa = -1;
 	
 // Looking for 'translate' command; will almost certainly be there
@@ -438,7 +452,7 @@ vector <int> collectTaxonCoding (vector <string> & rawInput, vector <string> con
 					tipName = removeStringSuffix(extractStringElement(*lineIter, 1), ',', commaEncountered);
 				}
 				storeNames.push_back(tipName);
-				if (DEBUG) {cout << "Stored index #" << index << " and name '" << tipName << "'."<< endl;}
+				if (debuggering) {cout << "Stored index #" << index << " and name '" << tipName << "'."<< endl;}
 // Check against taxonNames list
 				bool match = false;
 				for (int taxaIter = 0; taxaIter < numTaxa; taxaIter++)
@@ -447,7 +461,7 @@ vector <int> collectTaxonCoding (vector <string> & rawInput, vector <string> con
 					{
 						taxonCoding[index] = taxaIter;
 						match = true;
-						if (DEBUG) {cout << "Matched tip '" << tipName << "' at index #" << index << " to taxon '"
+						if (debuggering) {cout << "Matched tip '" << tipName << "' at index #" << index << " to taxon '"
 							<< taxonNames[taxaIter] << "' which is in " << taxaIter << " place in the alignment." << endl;}
 					}
 				}
@@ -456,12 +470,12 @@ vector <int> collectTaxonCoding (vector <string> & rawInput, vector <string> con
 					cout << "ERROR: Tree taxon '" << tipName << "' not found in input matrix. Exiting." << endl << endl;
 					exit(1);
 				}
-				if (DEBUG) {cout << "Encountered tree taxon '" << tipName << "' with index = " << index << endl;}
+				if (debuggering) {cout << "Encountered tree taxon '" << tipName << "' with index = " << index << endl;}
 			}
 		}
 	}
 	
-	if (DEBUG) // print out mapping of translation table to alignment
+	if (debuggering) // print out mapping of translation table to alignment
 	{
 		if (taxonCoding.size() != 0)
 		{
@@ -506,10 +520,9 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 	string outTrees = "Decisivator.trees";
 	checkValidOutputFile (outTrees);
 	
-	
 	annotated_trees.open(outTrees.c_str());
 	
-	int numTrees = rawTrees.size();
+	int numTrees = (int)rawTrees.size();
 	vector <double> currentDecisiveness;
 	string tree;
 	int annotationCount = 0;
@@ -575,7 +588,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 		tree = rawTrees[i];
 		reverse(currentDecisiveness.begin(), currentDecisiveness.end()); // this was flipped during searching. ugh. li.
 		
-		if (DEBUG) {cout << endl << tree << endl << endl;}
+		if (debuggering) {cout << endl << tree << endl << endl;}
 		
 		bool start = false;
 		int position = 0;
@@ -589,7 +602,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 			}
 			else
 			{
-				cout << temp << " ";
+//				cout << temp << " ";
 				annotated_trees << temp << " ";
 				position++;
 			}
@@ -600,14 +613,14 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 			char currentChar = tree[iterator];
 			if (currentChar == '(')
 			{
-				cout << currentChar;
+//				cout << currentChar;
 				annotated_trees << currentChar;
 				
 				continue;
 			}
 			else if (currentChar == ')') // close node; check if branch lengths or annotations exist
 			{
-				cout << currentChar;
+//				cout << currentChar;
 				annotated_trees << currentChar;
 				
 				iterator++;
@@ -615,20 +628,20 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 				currentChar = tree[iterator]; // end of tree; GET OUTTA THERE!!!
 				if (currentChar == ';')
 				{
-					cout << currentChar << endl;
+//					cout << currentChar << endl;
 					annotated_trees << currentChar << endl;
 					continue;
 				}
 				else if (currentChar == ',' || currentChar == ')') // no edgelengths present; simply a topology
 				{
-					cout << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
+//					cout << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 					annotated_trees << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 					annotationCount++;
 					iterator--;
 				}
 				else if (currentChar == ':') // edge length; need to look for '[' following
 				{
-					cout << currentChar;
+//					cout << currentChar;
 					annotated_trees << currentChar;
 					complete = false;
 					while (!complete)
@@ -637,7 +650,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 						currentChar = tree[iterator];
 						if (currentChar == ',' || currentChar == ')')
 						{
-							cout << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
+//							cout << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 							annotated_trees << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 							annotationCount++;
 							iterator--;
@@ -646,7 +659,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 						else if (currentChar == '[')
 						{
 							complete = false;
-							cout << currentChar;
+//							cout << currentChar;
 							annotated_trees << currentChar;
 							while (!complete)
 							{
@@ -655,12 +668,12 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 								if (currentChar == ']')
 								{
 									complete = true;
-									cout << ",decisiveness=" << currentDecisiveness[annotationCount] << "]";
+//									cout << ",decisiveness=" << currentDecisiveness[annotationCount] << "]";
 									annotated_trees << ",decisiveness=" << currentDecisiveness[annotationCount] << "]";
 								}
 								else
 								{
-									cout << currentChar;
+//									cout << currentChar;
 									annotated_trees << currentChar;
 								}
 							}
@@ -668,7 +681,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 						}
 						else
 						{
-							cout << currentChar; // print out edge length
+//							cout << currentChar; // print out edge length
 							annotated_trees << currentChar;
 						}
 					}
@@ -676,7 +689,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 				else if (currentChar == '[') // should work whether edge lengths are present or not
 				{
 					complete = false;
-					cout << currentChar;
+//					cout << currentChar;
 					annotated_trees << currentChar;
 					while (!complete)
 					{
@@ -685,12 +698,12 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 						if (currentChar == ']')
 						{
 							complete = true;
-							cout << ",decisiveness=" << currentDecisiveness[annotationCount] << "]";
+//							cout << ",decisiveness=" << currentDecisiveness[annotationCount] << "]";
 							annotated_trees << ",decisiveness=" << currentDecisiveness[annotationCount] << "]";
 						}
 						else
 						{
-							cout << currentChar;
+//							cout << currentChar;
 							annotated_trees << currentChar;
 						}
 					}
@@ -698,7 +711,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 				}
 				else // no edgelengths present; simply a topology
 				{	
-					cout << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
+//					cout << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 					annotated_trees << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 					annotationCount++;
 				}
@@ -706,7 +719,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 			else if (currentChar == '[') // annotation
 			{
 				complete = false;
-				cout << currentChar;
+//				cout << currentChar;
 				annotated_trees << currentChar;
 				while (!complete)
 				{
@@ -715,12 +728,12 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 					if (currentChar == ']')
 					{
 						complete = true;
-						cout << ",&decisiveness=" << currentDecisiveness[annotationCount] << "]";
+//						cout << ",&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 						annotated_trees << ",&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 					}
 					else
 					{
-						cout << currentChar;
+//						cout << currentChar;
 						annotated_trees << currentChar;
 					}
 				}
@@ -728,7 +741,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 			}
 			else if (currentChar == ':') // edge length
 			{
-				cout << currentChar;
+//				cout << currentChar;
 				annotated_trees << currentChar;
 				complete = false;
 				while (!complete)
@@ -742,7 +755,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 					}
 					else
 					{
-						cout << currentChar;
+//						cout << currentChar;
 						annotated_trees << currentChar;
 					}
 				}
@@ -750,20 +763,20 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 			}
 			else if (currentChar == ',')
 			{
-				cout << currentChar;
+//				cout << currentChar;
 				annotated_trees << currentChar;
 				continue;
 			}
 			else if (currentChar == ';')
 			{
-				if (DEBUG) {cout << "End of tree description." << endl;}
-				cout << currentChar << endl;
+				if (debuggering) {cout << "End of tree description." << endl;}
+//				cout << currentChar << endl;
 				annotated_trees << currentChar << endl;
 			}
 			else // tip name; could be an integer if a translation table is being used.
 			{
 				complete = false;
-				cout << currentChar;
+//				cout << currentChar;
 				annotated_trees << currentChar;
 				
 				currentChar = tree[iterator];
@@ -778,7 +791,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 					}
 					else
 					{
-						cout << currentChar;
+//						cout << currentChar;
 						annotated_trees << currentChar;
 					}
 				}

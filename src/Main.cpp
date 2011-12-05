@@ -92,16 +92,17 @@ using namespace std;
 #include "Parse_Nexus.h"
 #include "User_Tree.h"
 
-bool DEBUG = false; // Print out extra bits to screen
 
 // version information
-double version = 0.5;
-string month = "November";
+double version = 0.51;
+string month = "December";
 int year = 2011;
+
+bool debuggering = false;
 
 int main(int argc, char *argv[])
 {
-	srand ( time(NULL) );     // initialize random seed
+    srand ((unsigned int)time(NULL) );     // initialize random seed
 	string matrixFileName;
 	string locusWeightFileName;
 	string taxonWeightFileName;
@@ -160,6 +161,10 @@ int main(int argc, char *argv[])
 		cout << "Ergh. Something fucked up... Shit." << endl;
 		exit(1);
 	}
+	if (!matrixFileName.empty())
+	{
+		nexusFileName = matrixFileName;
+	}
 
 // *** If reference taxon IS present, put at bottom of taxon-gene matrix (as outgroup taxon is always last in tree)
 //     Will allow faster satisfaction (but not rejection) of internal edges.
@@ -169,8 +174,8 @@ int main(int argc, char *argv[])
 	{
 		getUserTrees (treeFileName, rawTrees, userTrees, taxonNames, translationTable, burnin,
 			thinning, treeTaxonOrdering);
-		numUserTrees = userTrees.size();
-		if (DEBUG)
+		numUserTrees = (int)userTrees.size();
+		if (debuggering)
 		{
 			cout << "userTrees has size " << numUserTrees << "; treeTaxonOrdering has size "
 				<< treeTaxonOrdering.size() << endl;
@@ -329,7 +334,7 @@ int main(int argc, char *argv[])
 			userTreeDecisiveness = determineDecisivenessUserTree (revisedData, userTrees,
 				treeTaxonOrdering, revisedTaxonNames, revisedLocusWeights, revisedTaxonWeights);
 			
-			writeAnnotatedTrees (rawTrees, translationTable, userTreeDecisiveness, taxonNames);
+			writeAnnotatedTrees(rawTrees, translationTable, userTreeDecisiveness, taxonNames);
 			
 			
 			

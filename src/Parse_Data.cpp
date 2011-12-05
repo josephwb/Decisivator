@@ -6,9 +6,9 @@
 
 using namespace std;
 
-#include "Parse_Data.h"
 #include "General.h"
 #include "Matrix_Scan.h"
+#include "Parse_Data.h"
 
 // Store data separately from taxon/locus names
 vector < vector <int> > storeData (vector <string> & inputData, int const& numLoci)
@@ -16,7 +16,7 @@ vector < vector <int> > storeData (vector <string> & inputData, int const& numLo
 	vector < vector <int> > data;
 	vector <string> tempStringVector;
 	vector <int> tempIntVector;
-	int numTaxa = inputData.size() - 1;
+	int numTaxa = (int)inputData.size() - 1;
 	
 	for (int i = 1; i <= numTaxa; i++)
 	{
@@ -36,13 +36,13 @@ void getWeights (string const& weightFileName, vector <double> & weights, vector
 {
 	vector <string> tempVector;
 	
-	int numElements = names.size();
+	int numElements = (int)names.size();
 	weights = vector <double> (numElements, 1.0); // By default, apply weight of 1.0 to all
 	
 	if (!weightFileName.empty())
 	{
 		tempVector = collectData(weightFileName);
-		int numReweight = tempVector.size();
+		int numReweight = (int)tempVector.size();
 		
 		for (int i = 1; i < numReweight; i++) // skip header line
 		{
@@ -60,7 +60,7 @@ void getWeights (string const& weightFileName, vector <double> & weights, vector
 vector <string> getTaxonNames(vector <string> & inputData)
 {
 	vector <string> names;
-	int numTaxa = inputData.size() - 1;
+	int numTaxa = (int)inputData.size() - 1;
 	
 	for (int i = 1; i <= numTaxa; i++)
 	{
@@ -80,6 +80,6 @@ void parseInputMatrix (string const& inputFileName, vector <string> & locusNames
 	inputData = collectData(inputFileName);
 	locusNames = storeStringVector(inputData[0]);
 	taxonNames = getTaxonNames(inputData);
-	numLoci = locusNames.size();
+	numLoci = (int)locusNames.size();
 	data = storeData(inputData, numLoci);
 }

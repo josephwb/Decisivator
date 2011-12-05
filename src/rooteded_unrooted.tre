@@ -1,7 +1,7 @@
-#NEXUS 
-
+#NEXUS
 Begin trees;  [Treefile saved Tue Oct 25 09:42:52 2011]
-tree foo = [&U] (Scer,(((((Spar,Smik),(Skud,Sbay)),Scas),Sklu),Calb));
 tree rooted = [&U] (Scer,(((((Spar,Sklu),(Skud,Sbay)),Scas),Calb),Smik));
 tree unrooted = [&U] (Scer,((((Spar,Sklu),(Skud,Sbay)),Scas),Calb),Smik);
+tree rooty = [&U] ((Scer,Sklu),((((Spar,(Skud,Sbay)),Scas),Calb),Smik));
+tree unrooty = [&U] ((Scer,Sklu),(((Spar,Sbay),Scas),Calb),(Smik,Skud));
 End;

@@ -6,12 +6,12 @@
 
 using namespace std;
 
+#include "General.h"
 #include "Matrix_Scan.h"
 #include "Trees_Edges.h"
-#include "General.h"
 #include "User_Interface.h"
 
-extern bool DEBUG;
+extern bool debuggering;
 
 void checkForMissingTaxa (vector < vector <int> > const& data, vector <string> const& taxonNames)
 {
@@ -51,8 +51,8 @@ bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & ref
 {
 	bool referencePresent = false;
 	referenceTaxa.clear();
-	int numTaxa = data.size();
-	int numLoci = data[0].size();
+	int numTaxa = (int)data.size();
+	int numLoci = (int)data[0].size();
 	int numReference = 0;
 	
 	cout << endl << "SEARCHING FOR REFERENCE TAXA..." << endl << endl;
@@ -64,11 +64,11 @@ bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & ref
 		{
 			if (!referencePresent)
 			{
-				if (DEBUG) {cout << endl << "Reference taxon (i.e. sequenced for all genes)." << endl;}
+				if (debuggering) {cout << endl << "Reference taxon (i.e. sequenced for all genes)." << endl;}
 			}
 			referencePresent = true;
 			referenceTaxa.push_back(i);
-			if (DEBUG) {cout << " " << numReference + 1 << ". " << taxonNames[i] << "." << endl;}
+			if (debuggering) {cout << " " << numReference + 1 << ". " << taxonNames[i] << "." << endl;}
 			cout << " " << numReference + 1 << ". " << taxonNames[i] << "." << endl;
 			numReference++;
 		}
@@ -82,10 +82,10 @@ bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & ref
 		{
 			int ref = referenceTaxa[0];
 			
-			if (DEBUG) {cout << "Moving reference taxon '" << taxonNames[ref] << "' to bottom of matrix. Don't be alarmed!" << endl;}
+			if (debuggering) {cout << "Moving reference taxon '" << taxonNames[ref] << "' to bottom of matrix. Don't be alarmed!" << endl;}
 			
 // need to fix reference taxon indexing; moving taxon i to end changes index for all taxa i+1 -> N
-			if (DEBUG) {cout << "Raw:" << endl;
+			if (debuggering) {cout << "Raw:" << endl;
 			printVectorAsList(referenceTaxa);}
 			
 			referenceTaxa.push_back(numTaxa);
@@ -96,7 +96,7 @@ bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & ref
 				referenceTaxa[i] = referenceTaxa[i] - 1;
 			}
 			
-			if (DEBUG) {cout << "Fixed:" << endl;
+			if (debuggering) {cout << "Fixed:" << endl;
 			printVectorAsList(referenceTaxa);}
 			
 			data.push_back(data[ref]);
@@ -122,8 +122,8 @@ void searchForAllTriplets (vector < vector <int> > const& data, vector < vector 
 	tripletLocations.clear();
 	triplets.clear();
 	
-	int numTaxa = data.size();
-	int numLoci = data[1].size();
+	int numTaxa = (int)data.size();
+	int numLoci = (int)data[1].size();
 	BigInt tripletCounter = 0;
 	BigInt numPresent = 0;
 	BigInt numPossibleTriplets = choose(numTaxa, 3);
@@ -187,8 +187,8 @@ void searchForAllQuartets (vector < vector <int> > const& data, vector < vector 
 // Clear vector, as dimensions may have changed
 	missingQuartets.clear();
 	
-	int numTaxa = data.size();
-	int numLoci = data[1].size();
+	int numTaxa = (int)data.size();
+	int numLoci = (int)data[1].size();
 	BigInt quartetCounter = 0;
 	BigInt numPresent = 0;
 	BigInt numPossibleQuartets = choose(numTaxa, 4);
@@ -252,9 +252,9 @@ void searchForAllQuartets (vector < vector <int> > const& data, vector < vector 
 void searchForQuartetsWithReferenceBIG (vector < vector <int> > const& data, vector <int> & missingQuartetsByTaxa,
 	vector <int> const& referenceTaxa, vector <string> const& taxonNames)
 {
-	int numTaxa = data.size();
-	int numLoci = data[1].size();
-	int numReferenceTaxa = referenceTaxa.size();
+	int numTaxa = (int)data.size();
+	int numLoci = (int)data[1].size();
+	int numReferenceTaxa = (int)referenceTaxa.size();
 	vector <int> temp (numTaxa, 0);
 	missingQuartetsByTaxa = temp;
 	
@@ -279,7 +279,7 @@ void searchForQuartetsWithReferenceBIG (vector < vector <int> > const& data, vec
 			availableTaxa.push_back(i);		
 		}
 	}
-	numTaxaToConsider = availableTaxa.size();
+	numTaxaToConsider = (int)availableTaxa.size();
 	
 	if (availableTaxa.size() == 0)
 	{
@@ -297,7 +297,7 @@ void searchForQuartetsWithReferenceBIG (vector < vector <int> > const& data, vec
 		}
 	}
 	
-	if (DEBUG)
+	if (debuggering)
 	{
 		cout << "numTaxaToConsider = " << numTaxaToConsider << ":" << endl;
 		for (int i = 0; i < numTaxaToConsider; i++)
@@ -369,9 +369,9 @@ void searchForQuartetsWithReference (vector < vector <int> > const& data, vector
 // Clear vector, as dimensions may have changed
 	missingQuartets.clear();
 	
-	int numTaxa = data.size();
-	int numLoci = data[1].size();
-	int numReferenceTaxa = referenceTaxa.size();
+	int numTaxa = (int)data.size();
+	int numLoci = (int)data[1].size();
+	int numReferenceTaxa = (int)referenceTaxa.size();
 	BigInt quartetCounter = 0;
 	BigInt numPresent = 0;
 	int numTaxaToConsider = 0;
@@ -393,7 +393,7 @@ void searchForQuartetsWithReference (vector < vector <int> > const& data, vector
 			availableTaxa.push_back(i);		
 		}
 	}
-	numTaxaToConsider = availableTaxa.size();
+	numTaxaToConsider = (int)availableTaxa.size();
 	
 	if (availableTaxa.size() == 0)
 	{
@@ -414,7 +414,7 @@ void searchForQuartetsWithReference (vector < vector <int> > const& data, vector
 	vector <int> reference;
 	reference.push_back(referenceTaxa[0]);
 	
-	if (DEBUG)
+	if (debuggering)
 	{
 		cout << "numTaxaToConsider = " << numTaxaToConsider << ":" << endl;
 		for (int i = 0; i < numTaxaToConsider; i++)
@@ -494,9 +494,9 @@ void whichTaxaProblematic (vector < vector <int> > const& missingGroups, vector 
 	string const& grouping, vector <int> const& referenceTaxa)
 {
 	vector <int> missingTaxa;
-	int numTaxa = taxonNames.size();
-	int numGroups = missingGroups.size();
-	int numReferenceTaxa = referenceTaxa.size();
+	int numTaxa = (int)taxonNames.size();
+	int numGroups = (int)missingGroups.size();
+	int numReferenceTaxa = (int)referenceTaxa.size();
 	
 	for (int i = 0; i < numTaxa; i++)
 	{
@@ -539,7 +539,7 @@ void whichTaxaProblematicBIG (vector <int> const& missingQuartetsByTaxa, vector 
 	string const& grouping, vector <int> const& referenceTaxa)
 {
 	vector <int> missingTaxa;
-	int numTaxa = taxonNames.size();
+	int numTaxa = (int)taxonNames.size();
 	int currentMax = 0;
 	
 	for (int i = 0; i < numTaxa; i++)
@@ -571,8 +571,8 @@ void getCoverage (vector < vector <int> > & data, double & taxonCoverage)
 	int taxonGeneCount = 0;
 	taxonCoverage = 0;
 	taxonGeneCount = 0;
-	int numTaxa = data.size();
-	int numLoci = data[1].size();
+	int numTaxa = (int)data.size();
+	int numLoci = (int)data[1].size();
 	
 	for (int i = 0; i < numTaxa; i++)
 	{
@@ -620,14 +620,14 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 		vector < vector <int> > storedSatisfiedClades;
 		double currentDecisiveness = 0.0;
 		double numEdgesSatisfied = 0;
-		tree = fastBinaryTree(data.size(), sibNodes, referenceTaxonPresent);
-		if (DEBUG) {printTree(tree);}
+		tree = fastBinaryTree((int)data.size(), sibNodes, referenceTaxonPresent);
+		if (debuggering) {printTree(tree);}
 		
 //		printTree(tree);
 //		sort(tree.begin()+numTaxa,tree.end());
 //		printTree(tree);
 				
-		if (DEBUG) {cout << endl << "Edges:" << endl;}
+		if (debuggering) {cout << endl << "Edges:" << endl;}
 		for (int i = 0; i < numInternalEdges; ++i) // Walk through all internal edges
 		{
 			getEdges(i, tree, sibNodes, referenceTaxonPresent, left, right, sib, upper);
@@ -667,9 +667,9 @@ int searchEdgePartitions (vector < vector <int> > const& data, vector <int> cons
 	vector <int> const& right, vector <int> const& sib, vector <int> const& upper, bool const& findAll,
 	bool const& referenceTaxonPresent, vector < vector <int> > const& storedSatisfiedClades)
 {
-	int numLoci = data[0].size();
+	int numLoci = (int)data[0].size();
 	int numSatisfied = 0;
-	int numUpper = upper.size();
+	int numUpper = (int)upper.size();
 	
 	if (!findAll && referenceTaxonPresent) // only consider a single reference taxon for upper; if it fails, all will
 	{
@@ -693,7 +693,7 @@ int searchEdgePartitions (vector < vector <int> > const& data, vector <int> cons
 							if (!findAll)
 							{
 								numSatisfied++;
-								if (DEBUG) {cout << "Quartet (" << left[i] << "," << right[j] << "," << sib[k] << "," << upper[l] << ") found at locus " << m << "!" << endl;}
+								if (debuggering) {cout << "Quartet (" << left[i] << "," << right[j] << "," << sib[k] << "," << upper[l] << ") found at locus " << m << "!" << endl;}
 								return(numSatisfied); // exit: one is all that is needed
 							}
 							else
@@ -762,8 +762,8 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
 	vector <int> sib;
 	vector <int> upper;
 	double treeCount = 0;
-	int numTaxa = userTrees[0][0].size();
-	int numTrees = userTrees.size();
+	int numTaxa = (int)userTrees[0][0].size();
+	int numTrees = (int)userTrees.size();
 	bool findAll = true;
 	
 	vector < vector <int> > storedSatisfiedClades;
@@ -772,7 +772,7 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
 	
 	double numInternalEdges = userTrees[0][0].size() - 3; // *should* be the same for all trees in a file...
 	
-	if (DEBUG) {cout << "Here I am! numTrees = " << numTrees << ". numInternalEdges = " << numInternalEdges
+	if (debuggering) {cout << "Here I am! numTrees = " << numTrees << ". numInternalEdges = " << numInternalEdges
 		<< ". numTaxa = " << numTaxa << "." << endl;}
 	
 	for (int j = 0; j < numTrees; j++)
@@ -790,7 +790,7 @@ options:
 */
 		rawTree = userTrees[j];
 		taxonOrdering = treeTaxonOrdering[j];
-		if (DEBUG)
+		if (debuggering)
 		{
 //			cout << "Raw tree:" << endl;
 //			printTree(rawTree);
@@ -812,7 +812,7 @@ options:
 			clade.clear();
 		}
 		
-		if (DEBUG)
+		if (debuggering)
 		{
 //			cout << "Formatted tree:" << endl;
 //			printTree(formattedTree);
@@ -820,8 +820,8 @@ options:
 		
 		sibNodes = getSibNodes(formattedTree); // get sibling node relationships; expected downstream
 		
-		if (DEBUG) {printTree(formattedTree);}
-		if (DEBUG) {cout << endl << "Edges:" << endl;}
+		if (debuggering) {printTree(formattedTree);}
+		if (debuggering) {cout << endl << "Edges:" << endl;}
 		for (int i = 0; i < numInternalEdges; ++i) // this is the important bit; *** NEED TO INCORPORATE TAXON CODING ***
 		{
 			currentClade = formattedTree[numTaxa + i];
@@ -834,7 +834,7 @@ options:
 // *** Scan taxon-gene matrix here ***
 			 numEdgesSatisfied = searchEdgePartitions(data, left, right, sib, upper, findAll, 0, storedSatisfiedClades);
 			 
-			if (DEBUG)
+			if (debuggering)
 			{
 				cout << "Considering " << numPossibleQuartets << " ways to satisfy current node " << i + numTaxa << ":" << endl;
 				printClade(currentClade);
@@ -858,11 +858,11 @@ options:
 		
 		if (numTrees > 1)
 		{
-			cout << "Average decisiveness for tree " << j + 1 << " is: " << sum(decisivenessCurrentTree)/decisivenessCurrentTree.size() << endl;
+			cout << "Average decisiveness for tree " << j + 1 << " is: " << sum(decisivenessCurrentTree)/(double)decisivenessCurrentTree.size() << endl;
 		}
 		else
 		{
-			cout << "Average decisiveness for this tree is: " << sum(decisivenessCurrentTree)/decisivenessCurrentTree.size() << endl;
+			cout << "Average decisiveness for this tree is: " << sum(decisivenessCurrentTree)/(double)decisivenessCurrentTree.size() << endl;
 		}
 // empty vectors for next tree
 		rawTree.clear();

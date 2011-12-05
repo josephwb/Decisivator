@@ -9,7 +9,7 @@ using namespace std;
 
 #include "General.h"
 
-extern bool DEBUG;
+extern bool debuggering;
 
 // Perform case-insenstive char match test
 bool checkCharValue (char const& charInput, char const& charToMatch)
@@ -97,7 +97,7 @@ bool checkValidOutputFile (string & outputFileName)
 		else
 		{
 			testIn.close();
-			cout << endl << "File exists!  Change name (0) or overwrite (1)? ";
+			cout << endl << "File '" << outputFileName << "' exists!  Change name (0) or overwrite (1)? ";
 			cin >> keepFileName;
 			if (!keepFileName)
 			{
@@ -306,7 +306,7 @@ vector <string> storeStringVector (string & stringToParse)
 void printVectorAsList (vector <string> const& vectorToPrint)
 {
 	string tempString = vectorToPrint[0];
-	int numElements = vectorToPrint.size();
+	int numElements = (int)vectorToPrint.size();
 	string maxString;
 	int longestName = 0;
 	
@@ -360,7 +360,7 @@ void printVectorAsList (vector <string> const& vectorToPrint)
 
 void printVectorAsList (vector <int> const& vectorToPrint) // overloading for debugging
 {
-	int numElements = vectorToPrint.size();
+	int numElements = (int)vectorToPrint.size();
 	for (int i = 0; i < numElements; i++)
 	{		
 		cout << "  ";
@@ -389,7 +389,7 @@ void printVectorAsList (vector <int> const& vectorToPrint) // overloading for de
 void printVectorAsList (vector <double> const& vectorToPrint, string const& columnOneName,
 	string const& columnTwoName) // overloading for debugging
 {
-	int numElements = vectorToPrint.size();
+	int numElements = (int)vectorToPrint.size();
 	for (int i = -1; i < numElements; i++)
 	{		
 		if (i >= 0)
@@ -503,9 +503,9 @@ bool checkWhiteSpaceOnly (string stringToParse)
 	return whiteSpaceOnly;
 }
 
-float sum (vector <double> const& x)
+double sum (vector <double> const& x)
 {
-	float total = 0.0;  // the sum is accumulated here
+	double total = 0.0;  // the sum is accumulated here
 	for (int i = 0; i < (int)x.size(); i++)
 	{
 		total = total + x[i];  

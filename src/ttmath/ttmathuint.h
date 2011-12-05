@@ -1260,7 +1260,7 @@ private:
 			UInt<ss_size*2> res;
 			Mul2Big2<ss_size>(ss1, ss2, res);
 
-			for(uint i=0 ; i<ss_size*2 ; ++i)
+			for(uint i=0 ; i<(ss_size*2) ; ++i)
 				result[i] = res.table[i];
 
 		return;
@@ -1356,7 +1356,7 @@ private:
 		Mul3Big2<first_size>(temp.table, temp2.table, z1.table);
 
 		// clearing the rest of z1
-		for(i=first_size*2 ; i<first_size*3 ; ++i)
+		for(i=first_size*2 ; i<(first_size*3) ; ++i)
 			z1.table[i] = 0;
 
 		
@@ -1375,7 +1375,7 @@ private:
 
 		if( xc && yc )
 		{
-			for( i=first_size*2 ; i<first_size*3 ; ++i )
+			for( i=first_size*2 ; i<(first_size*3) ; ++i )
 				if( ++z1.table[i] != 0 )
 					break;  // break if there was no carry 
 		}
@@ -1396,7 +1396,7 @@ private:
 			uint z1_size = result_size - first_size;
 			TTMATH_ASSERT( z1_size <= first_size*3 )
 
-			for(i=z1_size ; i<first_size*3 ; ++i)
+			for(i=z1_size ; i<(first_size*3) ; ++i)
 			{
 				TTMATH_ASSERT( z1.table[i] == 0 )
 			}

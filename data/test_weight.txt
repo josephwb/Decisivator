@@ -1,0 +1,5 @@
+Taxon Weight
+Taxon_3	5
+Taxon_7	3
+Taxon_8	0.5
+Taxon_2	0.1
