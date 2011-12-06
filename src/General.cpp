@@ -358,6 +358,80 @@ void printVectorAsList (vector <string> const& vectorToPrint)
 	}
 }
 
+void printVectorAsList (vector <string> const& vectorOneToPrint, vector <int> const& vectorTwoToPrint,
+	vector <double> const& vectorThreeToPrint, string const& columnOneName, string const& columnTwoName,
+	string const& columnThreeName, string const& columnFourName)
+{
+	cout.precision(3);
+	cout.setf(ios::fixed,ios::floatfield);
+	
+	string tempString = vectorOneToPrint[0];
+	int numElements = (int)vectorOneToPrint.size();
+	string maxString;
+	int longestName = 0;
+	
+	for (int i = 0; i < numElements; i++)
+	{		
+		string currentString = vectorOneToPrint[i];
+		if (currentString.size() > maxString.size())
+		{
+			maxString = currentString;
+		}
+	}
+// Determine length of longest name
+	for (string::const_iterator iterCharacters = maxString.begin(); iterCharacters < maxString.end(); ++iterCharacters)
+	{
+		longestName++;
+	}
+	
+	for (int i = -1; i < numElements; i++)
+	{		
+		if (i >= 0)
+		{
+			cout << "  ";
+			if (numElements >= 1000)
+			{
+				if (i + 1 < 10) {cout << "   ";}
+				else if (i + 1 < 100) {cout << "  ";}
+				else if (i + 1 < 1000) {cout << " ";}
+			}
+			else if (numElements >= 100)
+			{
+				if (i + 1 < 10) {cout << "  ";}
+				else if (i + 1 < 100) {cout << " ";}
+			}
+			else if (numElements >= 10)
+			{
+				if (i + 1 < 10) {cout << " ";}
+			}
+			cout << i + 1 << ". ";
+	// Print out leading spaces
+			string tempName = vectorOneToPrint[i];
+			if (tempName.size() < maxString.size())
+			{
+				string::size_type tempDiffSize;
+				tempDiffSize = maxString.size() - tempName.size();
+				for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
+				{
+					cout << " ";
+				}
+			}
+			cout << tempName << "   " << vectorTwoToPrint[i] << "   " << vectorThreeToPrint[i] << endl;
+		}
+		else
+		{
+			cout << " " << columnOneName;
+			string::size_type tempDiffSize;
+			tempDiffSize = maxString.size() - columnTwoName.size();
+			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
+			{
+				cout << " ";
+			}
+			cout << columnTwoName << "   " << columnThreeName << "  " << columnFourName << endl;
+		}
+	}
+}
+
 void printVectorAsList (vector <int> const& vectorToPrint) // overloading for debugging
 {
 	int numElements = (int)vectorToPrint.size();
@@ -386,10 +460,11 @@ void printVectorAsList (vector <int> const& vectorToPrint) // overloading for de
 	cout << endl;
 }
 
-void printVectorAsList (vector <double> const& vectorToPrint, string const& columnOneName,
-	string const& columnTwoName) // overloading for debugging
+void printVectorAsList (vector <double> const& vectorOneToPrint,
+	vector <double> const& vectorTwoToPrint, string const& columnOneName,
+	string const& columnTwoName, string const& columnThreeName) // overloading for debugging
 {
-	int numElements = (int)vectorToPrint.size();
+	int numElements = (int)vectorOneToPrint.size();
 	for (int i = -1; i < numElements; i++)
 	{		
 		if (i >= 0)
@@ -410,8 +485,8 @@ void printVectorAsList (vector <double> const& vectorToPrint, string const& colu
 			{
 				if (i + 1 < 10) {cout << " ";}
 			}
-			cout << i + 1 << ". ";
-			cout << vectorToPrint[i] << endl;
+			cout << i + 1 << ".  ";
+			cout << vectorOneToPrint[i] << "  " << vectorTwoToPrint[i] << endl;
 		}
 		else
 		{
@@ -426,11 +501,11 @@ void printVectorAsList (vector <double> const& vectorToPrint, string const& colu
 			}
 			if (numElements > 10)
 			{
-				cout << columnOneName << "  " << columnTwoName << endl;
+				cout << columnOneName << "  " << columnTwoName << "  " << columnThreeName << endl;
 			}
 			else
 			{
-				cout << columnOneName << " " << columnTwoName << endl;
+				cout << columnOneName << " " << columnTwoName << "  " << columnThreeName << endl;
 			}
 		}
 	}

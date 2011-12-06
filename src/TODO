@@ -29,3 +29,7 @@
 8. automatically report version/month/year - DONE!
 9. write rudimentary manual - STARTED
 10. make CHARSET formatting less Draconian (low priority until informed otherwise)
+11. switch to APE tree-formatting
+12. print out locus-specific coverage - DONE!
+13. print out taxon-specific coverage - DONE!
+14. give better options for deleting partitions

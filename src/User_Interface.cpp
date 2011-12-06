@@ -395,12 +395,13 @@ void printMatrix (vector < vector <int> > const& data, vector <string> const& ta
 	
 	int numTaxa = (int)data.size();
 	int numLoci = (int)data[0].size();
-	vector <double> proportionDataPresent;
+	vector <double> proportionTaxonDataPresent;
+	vector <double> proportionPartitionDataPresent;
 	
 	string maxString;
 	int longestName = 0;
 	
-// get proportion of data present
+// get proportion of data present for taxa
 	for (int i = 0; i < numTaxa; i++)
 	{
 		double temp = 0.0;
@@ -412,7 +413,21 @@ void printMatrix (vector < vector <int> > const& data, vector <string> const& ta
 			}
 		}
 		temp = temp / (double)numLoci;
-		proportionDataPresent.push_back(temp);
+		proportionTaxonDataPresent.push_back(temp);
+	}
+// now for loci
+	for (int i = 0; i < numLoci; i++)
+	{
+		double temp = 0.0;
+		for (int j = 0; j < numTaxa; j++)
+		{
+			if (data[j][i])
+			{
+				temp ++;
+			}
+		}
+		temp = temp / (double)numTaxa;
+		proportionPartitionDataPresent.push_back(temp);
 	}
 	
 	for (int i = 0; i < numTaxa; i++)
@@ -454,13 +469,13 @@ void printMatrix (vector < vector <int> > const& data, vector <string> const& ta
 		{
 			cout << data[i][j];
 		}
-		cout << "   " << proportionDataPresent[i];
+		cout << "   " << proportionTaxonDataPresent[i];
 		cout << "   " << taxonWeights[i] << endl;
 	}
 	cout << endl;
 	
-	cout << "Partition weights:" << endl << endl;
-	printVectorAsList (locusWeights, "Part", "Weight");
+	cout << "Partition coverage and weights:" << endl << endl;
+	printVectorAsList (proportionPartitionDataPresent, locusWeights, "Part.", "Prop.", "Weight");
 	cout << endl;
 }
 

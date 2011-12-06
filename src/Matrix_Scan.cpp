@@ -812,15 +812,11 @@ options:
 			clade.clear();
 		}
 		
-		if (debuggering)
-		{
 //			cout << "Formatted tree:" << endl;
 //			printTree(formattedTree);
-		}
 		
 		sibNodes = getSibNodes(formattedTree); // get sibling node relationships; expected downstream
 		
-		if (debuggering) {printTree(formattedTree);}
 		if (debuggering) {cout << endl << "Edges:" << endl;}
 		for (int i = 0; i < numInternalEdges; ++i) // this is the important bit; *** NEED TO INCORPORATE TAXON CODING ***
 		{

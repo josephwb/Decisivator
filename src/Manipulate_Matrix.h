@@ -3,7 +3,8 @@
 
 void addTaxonGeneToMatrix (vector < vector <int> > & data, vector <string> const& taxonNames,
 	vector <string> & locusNames, vector <double> & locusWeights, vector <double> & taxonWeights);
-void deleteGenesFromMatrix (vector < vector <int> > & data, vector <string> & locusNames, vector <double> & locusWeights);
+void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string> & locusNames,
+	vector <double> & locusWeights, double & revisedCoverage);
 void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, vector <double> & taxonWeights,
 	double & revisedCoverage, vector <string> const& locusNames);
 void mergeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, vector <double> & revisedTaxonWeights);

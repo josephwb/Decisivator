@@ -272,7 +272,7 @@ int main(int argc, char *argv[])
 		}
 		else if (deleteGenes) // Um, not useful...
 		{
-			deleteGenesFromMatrix(revisedData, revisedLocusNames, revisedLocusWeights);
+			deletePartitionsFromMatrix(revisedData, revisedLocusNames, revisedLocusWeights, revisedCoverage);
 		}
 		else if (exclude) // get rid of shitty taxa to improve matrix decisiveness
 		{
@@ -355,8 +355,9 @@ int main(int argc, char *argv[])
 		}
 		if (partialTreewise || partialBranchwise || testCompleteDeciveness || summarize || merge || deleteGenes || exclude || addGenes)
 		{
-			printSummaryInformation(locusNames, taxonNames, data, taxonCoverage, referenceTaxa, matrixDecisive,
-				treewiseDecisiveness, branchwiseDecisiveness, completeDecisivenessDetermined, nexusFileName,
+			printSummaryInformation(revisedLocusNames, revisedTaxonNames, revisedData,
+				taxonCoverage, revisedReferenceTaxa, matrixDecisive, treewiseDecisiveness,
+				branchwiseDecisiveness, completeDecisivenessDetermined, nexusFileName,
 				numRandomTrees, numUserTrees);
 		}
 	}

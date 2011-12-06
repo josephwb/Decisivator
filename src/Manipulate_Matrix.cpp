@@ -130,78 +130,208 @@ void addTaxonGeneToMatrix (vector < vector <int> > & data, vector <string> const
 	}
 }
 
-// Um, I guess not useful
-void deleteGenesFromMatrix (vector < vector <int> > & data, vector <string> & locusNames, vector <double> & locusWeights)
+void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string> & locusNames,
+	vector <double> & locusWeights, double & revisedCoverage)
 {
 	bool done = false;
 	vector <int> userInput;
 	bool validIntEntry = false;
 	int numTaxa = (int)data.size();
+	int numPartitions = (int)data[0].size();
 	int numEntries = 0;
-	int geneSelection;
-	
+	int userSelection;
+	string locusName;
+	vector <double> proportionPartitionDataPresent;
+	vector <int> numPartitionPresent;
+
+// get partition coverage
+	for (int i = 0; i < numPartitions; i++)
+	{
+		double temp = 0.0;
+		for (int j = 0; j < numTaxa; j++)
+		{
+			if (data[j][i])
+			{
+				temp ++;
+			}
+		}
+		numPartitionPresent.push_back(temp);
+		temp = temp / (double)numTaxa;
+		proportionPartitionDataPresent.push_back(temp);
+	}
+
 	while (!done)
 	{
-		cout << endl << "Loci available:" << endl;
-		printVectorAsList(locusNames);
+		userInput.clear();
+		bool validChoice = false;
 		
-		cout << endl << "Enter indicies of loci you would like to delete (if multiple, separated by spaces), or 0 to exit: ";
-		numEntries = 0;	
-		string tempString;
-		getline(cin,tempString);
-		
-// Ability to read in multiple inputs
-		validIntEntry = false;
-		istringstream tempStream(tempString);
-		while (tempStream >> geneSelection)
+		while (!validChoice)
 		{
-			validIntEntry = true;
-			userInput.push_back(geneSelection);
-			numEntries++;
-		}
-		if (geneSelection == 0)
-		{
-			done = true;
-			continue;
-		}
-		if (!validIntEntry)
-		{
-			cout << endl << "*** Invalid input. Integer must be between 0 and " << locusNames.size() << " ***" << endl;
-			cin.clear();
-			userInput.clear();
-			done = false;
-			continue;
-		}
-		if (validIntEntry)
-		{
-			if (cin.fail() || geneSelection < 0 || geneSelection > int(locusNames.size()))
+			char userChoice;
+			numPartitions = (int)data[0].size();
+			getCoverage (data, revisedCoverage);
+			
+			cout << endl << endl << "EXCLUDE PARTITIONS FROM MATRIX" << endl << endl;
+			cout << "Matrix currently contains " << numPartitions << " partitions." << endl
+			<< "Matrix coverage is currently at: " << revisedCoverage << endl << endl
+			<< "Exclude:" << endl
+			<< " Partitions by [I]ndex" << endl
+			<< " Partitions by [N]ame" << endl
+			<< " Partitions missing [E]xactly N taxa" << endl
+			<< " Partitions missing N or [M]ore taxa" << endl
+			<< " Partitions possessing [O]nly N taxa" << endl
+			<< " Partitions possessing N or [F]ewer taxa" << endl
+			<< " [B]ack to main menu" << endl
+			<< endl
+			<< "Enter desired option: ";
+			
+			cin >> userChoice;
+			cin.ignore(200, '\n');
+			
+			if (checkCharValue(userChoice,'i')) // by index
 			{
-				cout << endl << "*** Invalid input. Integer must be between 0 and " << locusNames.size() << " ***" << endl;
-				cin.clear();
-				userInput.clear();
-				done = false;
+				validChoice = true;
+				
+				cout << endl << "Partitions available:" << endl;
+				printVectorAsList (locusNames, numPartitionPresent, proportionPartitionDataPresent, "Part.", "Name", "Num.", "Prop.");
+				
+				cout << endl << "Enter indicies of partition(s) you would like to delete (if multiple, separated by spaces), or 0 to exit: ";
+				numEntries = 0;	
+				string tempString;
+				getline(cin,tempString);
+				
+		// Ability to read in multiple inputs
+				validIntEntry = false;
+				istringstream tempStream(tempString);
+				while (tempStream >> userSelection)
+				{
+					validIntEntry = true;
+					userInput.push_back(userSelection);
+					numEntries++;
+				}
+				if (userSelection == 0)
+				{
+					done = true;
+					continue;
+				}
+				if (!validIntEntry)
+				{
+					cout << endl << "*** Invalid input. Integer must be between 0 and " << numPartitions << " ***" << endl;
+					cin.clear();
+					userInput.clear();
+					done = false;
+					continue;
+				}
+				if (validIntEntry)
+				{
+					if (cin.fail() || userSelection < 0 || userSelection > int(locusNames.size()))
+					{
+						cout << endl << "*** Invalid input. Integer must be between 0 and " << numPartitions << " ***" << endl;
+						cin.clear();
+						userInput.clear();
+						done = false;
+						continue;
+					}
+					else
+					{
+						sort(userInput.begin(), userInput.end());
+		// Order from 'largest' to 'smallest' index; otherwise need keep track of changing indices
+						reverse(userInput.begin(), userInput.end());
+						
+						for (int editIter = 0; editIter < numEntries; editIter++)
+						{
+							int currentPartitionID = userInput[editIter] - 1;
+							for (int i = 0; i < numTaxa; i++)
+							{
+								data[i].erase(data[i].begin()+currentPartitionID);
+							}
+							locusNames.erase(locusNames.begin()+currentPartitionID);
+							locusWeights.erase(locusWeights.begin()+currentPartitionID);
+						}
+						userInput.clear();
+					}
+				}
+			}
+			else if (checkCharValue(userChoice,'n')) // by name
+			{
+				cout << endl << "Partitions available:" << endl;
+				printVectorAsList (locusNames, numPartitionPresent, proportionPartitionDataPresent, "Part.", "Name", "Num.", "Prop.");
+				cout << endl << "Enter name(s) of taxa you would like to exclude (separated by spaces), or 0 to exit: ";
+				numEntries = 0;	
+				string tempString;
+				getline(cin,tempString);
+				vector <string> tempVector;
+				
+		// Ability to read in multiple inputs
+				istringstream tempStream(tempString);
+				while (tempStream >> locusName)
+				{
+					tempVector.push_back(locusName);
+					numEntries++;
+				}
+				if (userSelection == 0)
+				{
+					done = true;
+					continue;
+				}
+				else
+				{
+					vector <int> matched;
+					for (int editIter = 0; editIter < numEntries; editIter++)
+					{
+						string toMatch = tempVector[0];
+						bool match = false;
+						for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++)
+						{
+							if (caseInsensitiveStringCompare(toMatch, locusNames[partitionIter]))
+							{
+								match = true;
+								matched.push_back(partitionIter);
+								partitionIter = numPartitions;
+								continue;
+							}
+						}
+						if (!match)
+						{
+							cout << endl << "OOPS!!! No match found for entry '" << toMatch << "'. Typo?" << endl;
+						}
+					}
+					if (matched.size() > 0)
+					{
+						sort (matched.begin(), matched.end());
+						reverse(matched.begin(), matched.end());
+						
+						for (int editIter = 0; editIter < int(matched.size()); editIter++)
+						{
+							int currentPartitionID = matched[editIter] - 1;
+							for (int i = 0; i < numTaxa; i++)
+							{
+								data[i].erase(data[i].begin()+currentPartitionID);
+								
+							}
+							locusNames.erase(locusNames.begin()+currentPartitionID);
+							locusWeights.erase(locusWeights.begin()+currentPartitionID);
+						}
+						userInput.clear();
+					}
+				}
+				
+				tempVector.clear();
+			}
+			else if (checkCharValue(userChoice,'b'))
+			{
+				validChoice = true;
+				done = true;
 				continue;
 			}
-			else
+			else // gah, fucked up
 			{
-				sort(userInput.begin(), userInput.end());
-// Order from 'largest' to 'smallest' index; otherwise need keep track of changing indices
-				reverse(userInput.begin(), userInput.end());
-				
-				for (int editIter = 0; editIter < numEntries; editIter++)
-				{
-					int currentLocusID = userInput[editIter] - 1;
-					for (int i = 0; i < numTaxa; i++)
-					{
-						data[i].erase(data[i].begin()+currentLocusID);
-					}
-					locusNames.erase(locusNames.begin()+currentLocusID);
-					locusWeights.erase(locusWeights.begin()+currentLocusID);
-				}
-				userInput.clear();
+				cout << "Invalid input option (" << userChoice << "). Try again." << endl;
 			}
+			
+						
+			
 		}
-		done = true;
 	}
 }
 

@@ -1,3 +1,7 @@
+2011-12-4
+  * fixed bug where summary function did not print updated taxon and partition information after exclusion
+2011-12-4
+  * added check for overwriting tree output files
 2011-12-2
   * made transition to xcode project
   * added check for taxa with completely missing data
