@@ -525,7 +525,6 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 	int numTrees = (int)rawTrees.size();
 	vector <double> currentDecisiveness;
 	string tree;
-	int annotationCount = 0;
 	
 	cout << "Preparing to print out " << numTrees << " trees." << endl;
 	bool complete = false;
@@ -588,6 +587,8 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 		tree = rawTrees[i];
 		reverse(currentDecisiveness.begin(), currentDecisiveness.end()); // this was flipped during searching. ugh. li.
 		
+		printVectorAsList(currentDecisiveness); // huh. this far works
+		
 		if (debuggering) {cout << endl << tree << endl << endl;}
 		
 		bool start = false;
@@ -599,49 +600,42 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 			{
 				start = true;
 				tree = temp;
+				continue;
 			}
 			else
 			{
-//				cout << temp << " ";
 				annotated_trees << temp << " ";
 				position++;
 			}
 		}
-		
+		int annotationCount = 0;
 		for (int iterator = 0; iterator != (int)tree.size(); ++iterator)
 		{
 			char currentChar = tree[iterator];
 			if (currentChar == '(')
 			{
-//				cout << currentChar;
 				annotated_trees << currentChar;
-				
 				continue;
 			}
 			else if (currentChar == ')') // close node; check if branch lengths or annotations exist
 			{
-//				cout << currentChar;
 				annotated_trees << currentChar;
-				
 				iterator++;
 				
 				currentChar = tree[iterator]; // end of tree; GET OUTTA THERE!!!
 				if (currentChar == ';')
 				{
-//					cout << currentChar << endl;
 					annotated_trees << currentChar << endl;
 					continue;
 				}
 				else if (currentChar == ',' || currentChar == ')') // no edgelengths present; simply a topology
 				{
-//					cout << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 					annotated_trees << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 					annotationCount++;
 					iterator--;
 				}
 				else if (currentChar == ':') // edge length; need to look for '[' following
 				{
-//					cout << currentChar;
 					annotated_trees << currentChar;
 					complete = false;
 					while (!complete)
@@ -650,7 +644,6 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 						currentChar = tree[iterator];
 						if (currentChar == ',' || currentChar == ')')
 						{
-//							cout << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 							annotated_trees << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 							annotationCount++;
 							iterator--;
@@ -659,7 +652,6 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 						else if (currentChar == '[')
 						{
 							complete = false;
-//							cout << currentChar;
 							annotated_trees << currentChar;
 							while (!complete)
 							{
@@ -668,12 +660,10 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 								if (currentChar == ']')
 								{
 									complete = true;
-//									cout << ",decisiveness=" << currentDecisiveness[annotationCount] << "]";
 									annotated_trees << ",decisiveness=" << currentDecisiveness[annotationCount] << "]";
 								}
 								else
 								{
-//									cout << currentChar;
 									annotated_trees << currentChar;
 								}
 							}
@@ -681,7 +671,6 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 						}
 						else
 						{
-//							cout << currentChar; // print out edge length
 							annotated_trees << currentChar;
 						}
 					}
@@ -689,7 +678,6 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 				else if (currentChar == '[') // should work whether edge lengths are present or not
 				{
 					complete = false;
-//					cout << currentChar;
 					annotated_trees << currentChar;
 					while (!complete)
 					{
@@ -698,12 +686,10 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 						if (currentChar == ']')
 						{
 							complete = true;
-//							cout << ",decisiveness=" << currentDecisiveness[annotationCount] << "]";
 							annotated_trees << ",decisiveness=" << currentDecisiveness[annotationCount] << "]";
 						}
 						else
 						{
-//							cout << currentChar;
 							annotated_trees << currentChar;
 						}
 					}
@@ -711,7 +697,6 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 				}
 				else // no edgelengths present; simply a topology
 				{	
-//					cout << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 					annotated_trees << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 					annotationCount++;
 				}
@@ -719,7 +704,6 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 			else if (currentChar == '[') // annotation
 			{
 				complete = false;
-//				cout << currentChar;
 				annotated_trees << currentChar;
 				while (!complete)
 				{
@@ -728,12 +712,10 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 					if (currentChar == ']')
 					{
 						complete = true;
-//						cout << ",&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 						annotated_trees << ",&decisiveness=" << currentDecisiveness[annotationCount] << "]";
 					}
 					else
 					{
-//						cout << currentChar;
 						annotated_trees << currentChar;
 					}
 				}
@@ -741,7 +723,6 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 			}
 			else if (currentChar == ':') // edge length
 			{
-//				cout << currentChar;
 				annotated_trees << currentChar;
 				complete = false;
 				while (!complete)
@@ -755,7 +736,6 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 					}
 					else
 					{
-//						cout << currentChar;
 						annotated_trees << currentChar;
 					}
 				}
@@ -763,20 +743,17 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 			}
 			else if (currentChar == ',')
 			{
-//				cout << currentChar;
 				annotated_trees << currentChar;
 				continue;
 			}
 			else if (currentChar == ';')
 			{
 				if (debuggering) {cout << "End of tree description." << endl;}
-//				cout << currentChar << endl;
 				annotated_trees << currentChar << endl;
 			}
 			else // tip name; could be an integer if a translation table is being used.
 			{
 				complete = false;
-//				cout << currentChar;
 				annotated_trees << currentChar;
 				
 				currentChar = tree[iterator];
@@ -791,13 +768,13 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 					}
 					else
 					{
-//						cout << currentChar;
 						annotated_trees << currentChar;
 					}
 				}
 			}
 		}
 		tree.clear();
+		currentDecisiveness.clear();
 	}
 	annotated_trees << "End;";
 }

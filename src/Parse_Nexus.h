@@ -4,13 +4,14 @@
 
 void parseNexus (string const& nexusFileName, vector < vector <int> > & data, vector <string> & taxonNames,
 	vector <string> & locusNames, int & numChar, vector < vector <string> > & taxaAlignment,
-	vector < vector <int> > & includedLocusRanges);
+	vector < vector <int> > & includedLocusRanges, string & dataType);
 
 bool checkCommentLine (string stringToParse);
 string removeStringSuffix (string stringToParse, char suffixToRemove, bool & suffixEncountered);
 string removeStringPrefix (string stringToParse, char characterToRemove);
 
-void getNumTaxaChar (string fileName, int & numTaxa, int & numChar, bool & interleavedData);
+void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interleavedData,
+	string & dataType);
 vector <string> collectCharsets (string charsetFileName, vector<string> inputCharsets,
 	vector < vector <int> > & includedLocusRanges, int const& numChar);
 vector < vector <string> > collectTaxaAlignment (string fileName, int const& numTaxa, int const& numChar,

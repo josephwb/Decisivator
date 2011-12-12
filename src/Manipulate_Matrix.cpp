@@ -131,7 +131,7 @@ void addTaxonGeneToMatrix (vector < vector <int> > & data, vector <string> const
 }
 
 void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string> & locusNames,
-	vector <double> & locusWeights, double & revisedCoverage)
+	vector <double> & locusWeights, double & revisedCoverage, vector <double> & partitionDecisiveness)
 {
 	bool done = false;
 	vector <int> userInput;
@@ -141,30 +141,30 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 	int numEntries = 0;
 	int userSelection;
 	string locusName;
-	vector <double> proportionPartitionDataPresent;
-	vector <int> numPartitionPresent;
-
-// get partition coverage
-	for (int i = 0; i < numPartitions; i++)
-	{
-		double temp = 0.0;
-		for (int j = 0; j < numTaxa; j++)
-		{
-			if (data[j][i])
-			{
-				temp ++;
-			}
-		}
-		numPartitionPresent.push_back(temp);
-		temp = temp / (double)numTaxa;
-		proportionPartitionDataPresent.push_back(temp);
-	}
 
 	while (!done)
 	{
 		userInput.clear();
 		bool validChoice = false;
 		
+		vector <double> proportionPartitionDataPresent;
+		vector <int> numPartitionPresent;
+	
+	// get partition coverage
+		for (int i = 0; i < numPartitions; i++)
+		{
+			double temp = 0.0;
+			for (int j = 0; j < numTaxa; j++)
+			{
+				if (data[j][i])
+				{
+					temp ++;
+				}
+			}
+			numPartitionPresent.push_back(temp);
+			temp = temp / (double)numTaxa;
+			proportionPartitionDataPresent.push_back(temp);
+		}
 		while (!validChoice)
 		{
 			char userChoice;
@@ -177,10 +177,9 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 			<< "Exclude:" << endl
 			<< " Partitions by [I]ndex" << endl
 			<< " Partitions by [N]ame" << endl
-			<< " Partitions missing [E]xactly N taxa" << endl
 			<< " Partitions missing N or [M]ore taxa" << endl
-			<< " Partitions possessing [O]nly N taxa" << endl
 			<< " Partitions possessing N or [F]ewer taxa" << endl
+			<< " Partitions exhibiting minimal [C]overage" << endl
 			<< " [B]ack to main menu" << endl
 			<< endl
 			<< "Enter desired option: ";
@@ -247,6 +246,7 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 							}
 							locusNames.erase(locusNames.begin()+currentPartitionID);
 							locusWeights.erase(locusWeights.begin()+currentPartitionID);
+							partitionDecisiveness.erase(partitionDecisiveness.begin()+currentPartitionID);
 						}
 						userInput.clear();
 					}
@@ -254,6 +254,8 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 			}
 			else if (checkCharValue(userChoice,'n')) // by name
 			{
+				validChoice = true;
+				
 				cout << endl << "Partitions available:" << endl;
 				printVectorAsList (locusNames, numPartitionPresent, proportionPartitionDataPresent, "Part.", "Name", "Num.", "Prop.");
 				cout << endl << "Enter name(s) of taxa you would like to exclude (separated by spaces), or 0 to exit: ";
@@ -311,6 +313,7 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 							}
 							locusNames.erase(locusNames.begin()+currentPartitionID);
 							locusWeights.erase(locusWeights.begin()+currentPartitionID);
+							partitionDecisiveness.erase(partitionDecisiveness.begin()+currentPartitionID);
 						}
 						userInput.clear();
 					}
@@ -324,14 +327,148 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 				done = true;
 				continue;
 			}
+			else if (checkCharValue(userChoice,'m')) // N or more missing
+			{
+				bool validRange = false;
+				int taxaMissing;
+				while (!validRange)
+				{
+					taxaMissing = checkValidIntInput ("Enter minimum number of missing taxa to consider: ");
+					if (taxaMissing >= 1 && taxaMissing <= numTaxa)
+					{
+						validRange = true;
+					}
+					else
+					{
+						cout << "Invalid entry '" << taxaMissing << "'. Must be between 1 and "
+							<< numTaxa << ". Try again." << endl;
+					}
+				}
+				excludePartitionsMissingNTaxa (taxaMissing, data, locusNames, locusWeights,
+					partitionDecisiveness);
+			}
+			else if (checkCharValue(userChoice,'f')) // possess N or fewer
+			{
+				bool validRange = false;
+				int taxaPossessed;
+				while (!validRange)
+				{
+					taxaPossessed = checkValidIntInput ("Enter minimum number of possessed taxa to consider: ");
+					if (taxaPossessed >= 0 && taxaPossessed <= numTaxa - 1)
+					{
+						validRange = true;
+					}
+					else
+					{
+						cout << "Invalid entry '" << taxaPossessed << "'. Must be between 0 and "
+							<< numTaxa - 1 << ". Try again." << endl;
+					}
+				}
+				excludePartitionsPossessingNTaxa (taxaPossessed, data, locusNames, locusWeights,
+					partitionDecisiveness);
+			}
 			else // gah, fucked up
 			{
 				cout << "Invalid input option (" << userChoice << "). Try again." << endl;
 			}
-			
-						
-			
 		}
+	}
+}
+
+void excludePartitionsMissingNTaxa (int const& partitionsMissing, vector < vector <int> > & data,
+	vector <string> & locusNames, vector <double> & locusWeights, vector <double> & partitionDecisiveness)
+{
+	vector <string> excludedPartitions;
+	vector <int> excludedIndices;
+	int numTaxa = (int)data.size();
+	int numPartitions = (int)data[0].size();
+	
+	for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++)
+	{
+		int sum = 0;
+		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++)
+		{
+			sum += data[taxonIter][partitionIter];
+		}
+		if (sum <= (numTaxa - partitionsMissing))
+		{
+			excludedIndices.push_back(partitionIter);
+			excludedPartitions.push_back(locusNames[partitionIter]);
+		}
+	}
+	if (excludedIndices.size() != 0)
+	{
+		int numExcluded = (int)excludedPartitions.size();
+		cout << endl << "Excluded partitions:" << endl;
+		printVectorAsList (excludedPartitions);
+		
+// reverse-sort vector
+		reverse(excludedIndices.begin(),excludedIndices.end());
+		
+		for (int editIter = 0; editIter < numExcluded; editIter++)
+		{
+			for (int i = 0; i < numTaxa; i++)
+			{
+				data[i].erase(data[i].begin()+excludedIndices[editIter]);
+				
+			}
+			locusNames.erase(locusNames.begin()+excludedIndices[editIter]);
+			locusWeights.erase(locusWeights.begin()+excludedIndices[editIter]);
+			partitionDecisiveness.erase(partitionDecisiveness.begin()+excludedIndices[editIter]);
+		}
+	}
+	else
+	{
+		cout << "No currently implemented partitions conform to condition. Your data are better than that. Yay!" << endl;
+	}
+}
+
+void excludePartitionsPossessingNTaxa (int const& partitionsPossessed, vector < vector <int> > & data,
+	vector <string> & locusNames, vector <double> & locusWeights, vector <double> & partitionDecisiveness)
+{
+	vector <string> excludedPartitions;
+	vector <int> excludedIndices;
+	int numTaxa = (int)data.size();
+	int numPartitions = (int)data[0].size();
+	
+	for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++)
+	{
+		int sum = 0;
+		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++)
+		{
+			sum += data[taxonIter][partitionIter];
+		}
+		if (sum <= partitionsPossessed)
+		{
+			excludedIndices.push_back(partitionIter);
+			excludedPartitions.push_back(locusNames[partitionIter]);
+		}
+	}
+
+	if (excludedIndices.size() != 0)
+	{
+		int numExcluded = (int)excludedPartitions.size();
+		cout << endl << "Excluded partitions:" << endl;
+		printVectorAsList (excludedPartitions);
+		
+// reverse-sort vector
+		reverse(excludedIndices.begin(),excludedIndices.end());
+		
+		for (int editIter = 0; editIter < numExcluded; editIter++)
+		{
+			for (int i = 0; i < numTaxa; i++)
+			{
+				data[i].erase(data[i].begin()+excludedIndices[editIter]);
+				
+			}
+			locusNames.erase(locusNames.begin()+excludedIndices[editIter]);
+			locusWeights.erase(locusWeights.begin()+excludedIndices[editIter]);
+			partitionDecisiveness.erase(partitionDecisiveness.begin()+excludedIndices[editIter]);
+		}
+	}
+	else
+	{
+		cout << "No currently implemented partition conform to condition. Your data are better than that. Yay!" << endl;
 	}
 }
 
@@ -495,28 +632,78 @@ void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, 
 			}
 			else if (checkCharValue(userChoice,'e')) // exactly N missing
 			{
-				int partitionsMissing = checkValidIntInput ("Enter exact number of missing partitions to consider: ");
-				
-// Put in error-checking regarding number of actual genes
-				
+				bool validRange = false;
+				int partitionsMissing;
+				while (!validRange)
+				{
+					partitionsMissing = checkValidIntInput ("Enter minimum number of possessed partitions to consider: ");
+					if (partitionsMissing >= 1 && partitionsMissing <= numPartitions - 1)
+					{
+						validRange = true;
+					}
+					else
+					{
+						cout << "Invalid entry '" << partitionsMissing << "'. Must be between 1 and "
+							<< numPartitions - 1 << ". Try again." << endl;
+					}
+				}
 				excludeTaxaMissingNGenes (partitionsMissing, data, taxonNames, taxonWeights, true);
 			}
 			else if (checkCharValue(userChoice,'m')) // N or more missing
 			{
-				int partitionsMissing = checkValidIntInput ("Enter minimum number of missing partitions to consider: ");
+				bool validRange = false;
+				int partitionsMissing;
+				while (!validRange)
+				{
+					partitionsMissing = checkValidIntInput ("Enter minimum number of missing partitions to consider: ");
+					if (partitionsMissing >= 1 && partitionsMissing <= numPartitions - 1)
+					{
+						validRange = true;
+					}
+					else
+					{
+						cout << "Invalid entry '" << partitionsMissing << "'. Must be between 1 and "
+							<< numPartitions - 1 << ". Try again." << endl;
+					}
+				}
 				excludeTaxaMissingNGenes (partitionsMissing, data, taxonNames, taxonWeights, false);
 			}
 			else if (checkCharValue(userChoice,'o')) // possess only N
 			{
-				int partitionsPossessed = checkValidIntInput ("Enter exact number of possessed partitions to consider: ");
-				
-// Put in error-checking regarding number of actual genes
-				
+				bool validRange = false;
+				int partitionsPossessed;
+				while (!validRange)
+				{
+					partitionsPossessed = checkValidIntInput ("Enter minimum number of possessed partitions to consider: ");
+					if (partitionsPossessed >= 1 && partitionsPossessed <= numPartitions - 1)
+					{
+						validRange = true;
+					}
+					else
+					{
+						cout << "Invalid entry '" << partitionsPossessed << "'. Must be between 1 and "
+							<< numPartitions - 1 << ". Try again." << endl;
+					}
+				}
 				excludeTaxaPossessingNGenes (partitionsPossessed, data, taxonNames, taxonWeights, true);
 			}
 			else if (checkCharValue(userChoice,'f')) // possess N or fewer
 			{
-				int partitionsPossessed = checkValidIntInput ("Enter maximum number of possessed partitions to consider: ");
+				bool validRange = false;
+				int partitionsPossessed;
+				while (!validRange)
+				{
+					partitionsPossessed = checkValidIntInput ("Enter minimum number of possessed partitions to consider: ");
+					if (partitionsPossessed >= 1 && partitionsPossessed <= numPartitions - 1)
+					{
+						validRange = true;
+					}
+					else
+					{
+						cout << "Invalid entry '" << partitionsPossessed << "'. Must be between 1 and "
+							<< numPartitions - 1 << ". Try again." << endl;
+					}
+				}
 				excludeTaxaPossessingNGenes (partitionsPossessed, data, taxonNames, taxonWeights, false);
 			}
 			else if (checkCharValue(userChoice,'s')) // only present for a specific partition
@@ -688,7 +875,7 @@ void excludeTaxaMissingNGenes (int const& partitionsMissing, vector < vector <in
 	}
 	else
 	{
-		cout << "No currently implemented taxa conform to condition." << endl;
+		cout << "No currently implemented taxa conform to condition. Your data are better than that. Yay!" << endl;
 	}
 }
 
@@ -749,7 +936,7 @@ void excludeTaxaPossessingNGenes (int const& partitionsPossessed, vector < vecto
 	}
 	else
 	{
-		cout << "No currently implemented taxa conform to condition." << endl;
+		cout << "No currently implemented taxa conform to condition. Your data are better than that. Yay!" << endl;
 	}
 }
 

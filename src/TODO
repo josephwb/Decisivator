@@ -1,5 +1,5 @@
 1. read in user tree(s)
-   1. single tree - DONE
+   1. single tree - DONE!
    2. allow multiple trees - DONE!
    3. allow translation table - DONE!
    4. rearrange user tree(s) to reflect alignment ordering (or just map) - DONE!
@@ -16,7 +16,7 @@
 	- with edge lengths and existing annotations (i.e. BEAST-style) - DONE!
 3. make parallel ***
 4. make for general data (not just nucleotides) - DONE!
-5. exclude taxa:
+5. exclude taxa: - DONE!
    1. by index - DONE!
    2. missing N genes - DONE!
    3. missing <= N genes - DONE!
@@ -28,8 +28,13 @@
 7. print log so can be run in background - IMPLEMENTED FOR USER TREES, BUT NOTHING ELSE (YET)
 8. automatically report version/month/year - DONE!
 9. write rudimentary manual - STARTED
-10. make CHARSET formatting less Draconian (low priority until informed otherwise)
-11. switch to APE tree-formatting
+10. make formatting less Draconian (low priority until informed otherwise)
+   1. CHARSETs - allow referential CHARSETS, multiple ranges, etc.
+   2. allow more flexibility in attributes definitions - DONE!
+11. switch to APE tree-formatting - STARTED
 12. print out locus-specific coverage - DONE!
 13. print out taxon-specific coverage - DONE!
-14. give better options for deleting partitions
+14. give better options for deleting partitions - DONE!
+15. implement genetic algorithm (via Daniel)
+   1. add N genes
+   2. delete taxa until decisive

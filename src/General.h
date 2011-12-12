@@ -23,6 +23,7 @@ double convertStringtoDouble (string stringToConvert);
 vector <string> storeStringVector (string & stringToParse);
 void printVectorAsList (vector <string> const& vectorToPrint);
 void printVectorAsList (vector <int> const& vectorToPrint); // overloading for debugging
+void printVectorAsList (vector <double> const& vectorToPrint); // overloading for debugging
 void printVectorAsList (vector <double> const& vectorOneToPrint,
 	vector <double> const& vectorTwoToPrint, string const& columnOneName,
 	string const& columnTwoName, string const& columnThreeName); // overloading for debugging

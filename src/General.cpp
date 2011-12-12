@@ -267,7 +267,6 @@ string extractStringElement (string & stringToParse, int const& position)
 	return returnString;
 }
 
-// At the moment, assume matrix is filled with "1" and "0" only; generalize later (e.g. "?", "NA", etc.)
 int convertStringtoInt (string stringToConvert)
 {
 	int tempInt = 0;
@@ -318,12 +317,7 @@ void printVectorAsList (vector <string> const& vectorToPrint)
 			maxString = currentString;
 		}
 	}
-// Determine length of longest name
-	for (string::const_iterator iterCharacters = maxString.begin(); iterCharacters < maxString.end(); ++iterCharacters)
-	{
-		longestName++;
-	}
-	
+	longestName = (int)maxString.size();
 	for (int i = 0; i < numElements; i++)
 	{		
 		cout << "  ";
@@ -378,12 +372,7 @@ void printVectorAsList (vector <string> const& vectorOneToPrint, vector <int> co
 			maxString = currentString;
 		}
 	}
-// Determine length of longest name
-	for (string::const_iterator iterCharacters = maxString.begin(); iterCharacters < maxString.end(); ++iterCharacters)
-	{
-		longestName++;
-	}
-	
+	longestName = (int)maxString.size();
 	for (int i = -1; i < numElements; i++)
 	{		
 		if (i >= 0)
@@ -459,6 +448,35 @@ void printVectorAsList (vector <int> const& vectorToPrint) // overloading for de
 	}
 	cout << endl;
 }
+
+void printVectorAsList (vector <double> const& vectorToPrint) // overloading for debugging
+{
+	int numElements = (int)vectorToPrint.size();
+	for (int i = 0; i < numElements; i++)
+	{		
+		cout << "  ";
+		if (numElements >= 1000)
+		{
+			if (i + 1 < 10) {cout << "   ";}
+			else if (i + 1 < 100) {cout << "  ";}
+			else if (i + 1 < 1000) {cout << " ";}
+		}
+		else if (numElements >= 100)
+		{
+			if (i + 1 < 10) {cout << "  ";}
+			else if (i + 1 < 100) {cout << " ";}
+		}
+		else if (numElements >= 10)
+		{
+			if (i + 1 < 10) {cout << " ";}
+		}
+		cout << i + 1 << ". ";
+// Print out leading spaces
+		cout << vectorToPrint[i] << endl;
+	}
+	cout << endl;
+}
+
 
 void printVectorAsList (vector <double> const& vectorOneToPrint,
 	vector <double> const& vectorTwoToPrint, string const& columnOneName,

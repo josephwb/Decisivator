@@ -7,7 +7,6 @@ vector < vector <bool> > fastBinaryTree (int const& numTaxa, vector < vector <in
 
 vector < vector <int> > convertTreeToApeFormat (vector < vector <bool> > const& tree);
 
-
 void printClade (vector <int> const& clade);
 void printClade (vector <bool> const& clade); // overloaded for debugging
 void printTree (vector < vector <bool> > const& tree);

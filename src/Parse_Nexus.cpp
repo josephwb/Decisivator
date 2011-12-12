@@ -20,7 +20,7 @@ extern bool debuggering;
 
 void parseNexus (string const& nexusFileName, vector < vector <int> > & data, vector <string> & taxonNames,
 	vector <string> & locusNames, int & numChar, vector < vector <string> > & taxaAlignment,
-	vector < vector <int> > & includedLocusRanges)
+	vector < vector <int> > & includedLocusRanges, string & dataType)
 {
 //	vector < vector <int> > includedLocusRanges;
 	
@@ -28,7 +28,7 @@ void parseNexus (string const& nexusFileName, vector < vector <int> > & data, ve
 	string fileName;
 	int numTaxa = 0;
 	
-	getNumTaxaChar(nexusFileName, numTaxa, numChar, interleavedData);
+	getAttributes(nexusFileName, numTaxa, numChar, interleavedData, dataType);
 	cout << endl << "Parsing Nexus file of " << numTaxa << " taxa and " << numChar << " characters..." << endl;
 	taxaAlignment = collectTaxaAlignment(nexusFileName, numTaxa, numChar, interleavedData, taxonNames);
 	locusNames = collectCharsets(nexusFileName, locusNames, includedLocusRanges, numChar);
@@ -38,13 +38,15 @@ void parseNexus (string const& nexusFileName, vector < vector <int> > & data, ve
 
 
 // Problems parsing when spaces surround '='
-void getNumTaxaChar (string fileName, int & numTaxa, int & numChar, bool & interleavedData)
+void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interleavedData,
+	string & dataType)
 {
 	ifstream inputUserFile;
 	bool commentLine = false;
 	bool whiteSpaceOnly = false;
 	bool numTaxaEncountered = false;
 	bool numCharEncountered = false;
+	bool dataTypeEncountered = false;
 	bool equalSignEncountered = false;
 	bool semicolonEncountered = false;
 	bool done = false; // know to stop looking
@@ -52,11 +54,15 @@ void getNumTaxaChar (string fileName, int & numTaxa, int & numChar, bool & inter
 	inputUserFile.open(fileName.c_str());
 	string line;
 	
-// Looking for pattern like 'dimensions ntax=53 nchar=16620;'
+// Looking for pattern like:
+//   Begin data;
+//   Dimensions ntax=8 nchar=125851;
+//   Format datatype=dna missing=? interleave=yes;
+//   Matrix
 // 	- can be in either order, but must be stated on same line (for now)
 // 	- no spaces allowed next to equal sign (for now)
 
-// Looking for pattern like 'Format datatype=dna [gap=-] [missing=?] {[interleave=yes] or [interleave]};'
+// some optional entries 'Format datatype=dna [gap=-] [missing=?] {[interleave=yes] or [interleave] [interleave=no]};'
 // 	- no spaces allowed next to equal sign (for now)
 	
 	while (getline(inputUserFile,line) && !done)
@@ -84,58 +90,213 @@ void getNumTaxaChar (string fileName, int & numTaxa, int & numChar, bool & inter
 				while (!numTaxaEncountered || !numCharEncountered)
 				{
 					stringPosition++;
-					string tempString = removeStringSuffix(extractStringElement(line,stringPosition), '=', equalSignEncountered);
+					string tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered); // check for end of line
+					if (tempString == ";")
+					{
+						if (!dataTypeEncountered) // not specified; is this even allowed?
+						{
+							dataType = "standard";
+							cout << "No datatype specified. Treating as standard." << endl;
+							dataTypeEncountered = true;
+							continue;
+						}
+					}
+					tempString = removeStringSuffix(extractStringElement(line,stringPosition), '=', equalSignEncountered);
 					if (checkStringValue(tempString, "ntax", 0))
 					{
-						tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
-						tempString = removeStringSuffix(tempString, ';', numTaxaEncountered);
-						numTaxa = convertStringtoInt(tempString);
+						if (equalSignEncountered) // format: ntax=8 or ntax= 8
+						{
+							tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
+							if (!tempString.empty()) // format: ntax=8
+							{
+								tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
+								numTaxa = convertStringtoInt(tempString);
+							}
+							else // format: ntax= 8
+							{
+								stringPosition++;
+								tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered); // possibly last
+								numTaxa = convertStringtoInt(tempString);
+							}
+						}
+						else // format: ntax = 8 or ntax =8
+						{
+							stringPosition++;
+							tempString = extractStringElement(line,stringPosition);
+							if (tempString == "=") // format: ntax = 8
+							{
+								stringPosition++;
+								tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered);
+								numTaxa = convertStringtoInt(tempString);
+							}
+							else// format: ntax =8
+							{
+								tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
+								tempString = removeStringSuffix(tempString, ';', semicolonEncountered);
+								numTaxa = convertStringtoInt(tempString);
+							}
+						}
 						if (debuggering) {cout << "NTax = " << numTaxa << endl;}
 						numTaxaEncountered = true;
 					}
 					if (checkStringValue(tempString, "nchar", 0))
 					{
-						tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
-						tempString = removeStringSuffix(tempString, ';', numCharEncountered);
-						numChar = convertStringtoInt(tempString);
-						if (debuggering) {cout << "NChar = " << numChar << endl;}
+						if (equalSignEncountered) // format: nchar=8 or nchar= 8
+						{
+							tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
+							if (!tempString.empty()) // format: nchar=8
+							{
+								tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
+								numChar = convertStringtoInt(tempString);
+							}
+							else // format: nchar= 8
+							{
+								stringPosition++;
+								tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered); // possibly last
+								numChar = convertStringtoInt(tempString);
+							}
+						}
+						else // format: nchar = 8 or nchar =8
+						{
+							stringPosition++;
+							tempString = extractStringElement(line,stringPosition);
+							if (tempString == "=") // format: nchar = 8
+							{
+								stringPosition++;
+								tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered);
+								numChar = convertStringtoInt(tempString);
+							}
+							else// format: nchar =8
+							{
+								tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
+								tempString = removeStringSuffix(tempString, ';', semicolonEncountered);
+								numChar = convertStringtoInt(tempString);
+							}
+						}
+						if (debuggering) {cout << "NChar = " << numTaxa << endl;}
 						numCharEncountered = true;
 					}
 				}
 			}
-			else if (checkStringValue(line, "format", stringPosition)) // check to see if interleaved
+			else if (checkStringValue(line, "format", stringPosition)) // check to see if interleaved, datatype
 			{
 				stringPosition = 0;
-				while (!semicolonEncountered)
+				while (!semicolonEncountered || !dataTypeEncountered)
 				{
 					stringPosition++;
-					string tempString = removeStringSuffix(extractStringElement(line,stringPosition), '=', equalSignEncountered); // where '=' is used i.e. 'interleave=yes;'
-					if (checkStringValue(tempString, "interleave", 0))
+					string tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered); // check for end of line
+					if (tempString == ";")
 					{
-						tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
-						tempString = removeStringSuffix(tempString, ';', semicolonEncountered);
-						if (checkStringValue(tempString, "yes", 0))
+						if (!dataTypeEncountered) // not specified; is this even allowed?
 						{
-							interleavedData = true;
-							semicolonEncountered = true;
-							cout << "Data are in interleaved format." << endl;
-							continue;
-						}
-						else if (checkStringValue(tempString, "no", 0))
-						{
-							interleavedData = false;
-							semicolonEncountered = true;
-							cout << "Data are not in interleaved format." << endl;
+							dataType = "standard";
+							cout << "No datatype specified. Treating as standard." << endl;
+							dataTypeEncountered = true;
 							continue;
 						}
 					}
-					tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered); // where '=' is NOT used i.e. 'interleave;'
-					if (checkStringValue(tempString, "interleave", 0))											  // OR a space follows interleave declaration i.e. 'interleave [=];'
+					tempString = removeStringSuffix(extractStringElement(line,stringPosition), '=', equalSignEncountered); // where '=' is used i.e. 'interleave=yes;'
+					if (checkStringValue(tempString, "interleave", 0)) // format: interleave=yes or interleave= yes or interleave = yes or interleave
 					{
-						interleavedData = true;
-						semicolonEncountered = true;
-						cout << "Data are in interleaved format." << endl;
-						continue;
+						if (equalSignEncountered) // format: interleave=yes or interleave= yes
+						{
+							tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
+							if (!tempString.empty()) // format: interleave=yes
+							{
+								tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
+								if (checkStringValue(tempString, "yes", 0))
+								{
+									interleavedData = true;
+									cout << "Data are in interleaved format." << endl;
+									continue;
+								}
+								else if (checkStringValue(tempString, "no", 0))
+								{
+									interleavedData = false;
+									cout << "Data are not in interleaved format." << endl;
+									continue;
+								}
+							}
+							else // format: interleave= yes
+							{
+								stringPosition++;
+								tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
+								if (checkStringValue(tempString, "yes", 0))
+								{
+									interleavedData = true;
+									cout << "Data are in interleaved format." << endl;
+									continue;
+								}
+								else if (checkStringValue(tempString, "no", 0))
+								{
+									interleavedData = false;
+									cout << "Data are not in interleaved format." << endl;
+									continue;
+								}
+							}
+						}
+						else // format: interleave = yes or interleave
+						{
+							stringPosition++;
+							tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
+							if (checkStringValue(tempString, "yes", 0))
+							{
+								interleavedData = true;
+								cout << "Data are in interleaved format." << endl;
+								continue;
+							}
+							else if (checkStringValue(tempString, "no", 0))
+							{
+								interleavedData = false;
+								cout << "Data are not in interleaved format." << endl;
+								continue;
+							}
+							else
+							{
+								interleavedData = false;
+								cout << "Data are not in interleaved format." << endl;
+								stringPosition--;
+								continue;
+							}
+						}
+					}
+					else if (checkStringValue(tempString, "datatype", 0))
+					{
+						if (equalSignEncountered) // format: datatype=dna or datatype= dna
+						{
+							tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
+							if (!tempString.empty()) // format: datatype=8
+							{
+								tempString = removeStringSuffix(tempString, ';', numTaxaEncountered); // possibly last
+								dataType = tempString;
+							}
+							else // format: datatype= dna
+							{
+								stringPosition++;
+								tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', numTaxaEncountered); // possibly last
+								dataType = tempString;
+							}
+						}
+						else // format: datatype = dna or datatype =dna
+						{
+							stringPosition++;
+							tempString = extractStringElement(line,stringPosition);
+							if (tempString == "=") // format: datatype = dna
+							{
+								stringPosition++;
+								tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', numTaxaEncountered);
+								dataType = tempString;
+							}
+							else// format: datatype =dna
+							{
+								tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
+								tempString = removeStringSuffix(tempString, ';', numTaxaEncountered);
+								dataType = tempString;
+							}
+						}
+						if (debuggering) {cout << "Datatype = " << dataType << endl;}
+						cout << "Datatype = " << dataType << endl;
+						dataTypeEncountered = true;
 					}
 				}
 			}

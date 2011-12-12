@@ -1,4 +1,10 @@
-2011-12-4
+2011-12-7
+  * added a whackload of error checking for Nexus attributes; less Draconian
+  * fixed major (but only recent) bug that involved partial decisiveness
+  * fixed bug in annotating user trees
+2011-12-6
+  * added a whackload of error checking for taxa/partition exclusion
+2011-12-5
   * fixed bug where summary function did not print updated taxon and partition information after exclusion
 2011-12-4
   * added check for overwriting tree output files

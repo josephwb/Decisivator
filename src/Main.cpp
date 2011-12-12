@@ -91,10 +91,11 @@ using namespace std;
 #include "User_Interface.h"
 #include "Parse_Nexus.h"
 #include "User_Tree.h"
+#include "Genetic_Algorithm.h"
 
 
 // version information
-double version = 0.51;
+double version = 0.55;
 string month = "December";
 int year = 2011;
 
@@ -125,14 +126,14 @@ int main(int argc, char *argv[])
 	vector < vector <string> > taxaAlignment;
 	vector < vector <int> > includedLocusRanges;
 	vector <int> translationTable;
+	vector <double> locusWeights; // default of 1.0; user can change
+	vector <double> taxonWeights; // default of 1.0; user can change
+	string dataType;
 	
 	vector < vector <int> > triplets;
 	vector < vector <int> > tripletLocations;
 	vector < vector <int> > missingTriplets;
-	
 	vector < vector <int> > missingQuartets;
-	vector <double> locusWeights; // default of 1.0; user can change
-	vector <double> taxonWeights; // default of 1.0; user can change
 	bool referenceTaxonPresent = false;
 	vector <int> referenceTaxa;	// Possible that there are several
 	vector <int> missingQuartetsByTaxa; // for very large matrices
@@ -150,7 +151,8 @@ int main(int argc, char *argv[])
 // Read in data, store
 	if (!nexusFileName.empty())
 	{
-		parseNexus(nexusFileName, data, taxonNames, locusNames, numChar, taxaAlignment, includedLocusRanges);
+		parseNexus(nexusFileName, data, taxonNames, locusNames, numChar, taxaAlignment,
+			includedLocusRanges, dataType);
 	}
 	else if (!matrixFileName.empty())
 	{
@@ -189,6 +191,7 @@ int main(int argc, char *argv[])
 	getWeights(taxonWeightFileName, taxonWeights, taxonNames);
 	getCoverage(data, taxonCoverage);
 	
+	int numPartitions = (int)data[0].size();
 // Data structures for revised matrix; these will be deprecated when reorganized in object-oriented form
 	vector < vector <int> > revisedData = data;
 	vector < vector <int> > revisedTriplets;
@@ -202,6 +205,7 @@ int main(int argc, char *argv[])
 	bool revisedReferenceTaxonPresent = referenceTaxonPresent;
 	vector <int> revisedReferenceTaxa = referenceTaxa;	// Possible that there are several
 	double revisedCoverage = taxonCoverage;
+	vector <double> partitionDecisiveness(numPartitions, 0.0);
 	int numRandomTrees = 0;
 	
 // this is a placeholder; currently cannot prune taxa from a tree
@@ -230,6 +234,8 @@ int main(int argc, char *argv[])
 		bool reweightTaxa = false;
 		bool partialBranchwise = false;
 		bool partialTreewise = false;
+		bool partialIndividualPartition = false;
+		bool partialEachPartition = false;
 		bool testCompleteDeciveness = false;
 		bool summarize = false;
 		bool writeCurrentMatrix = false;
@@ -238,7 +244,7 @@ int main(int argc, char *argv[])
 		
 		printProgamOptions (addGenes, merge, exclude, deleteGenes, revert, quit, print, reweightLoci,
 			reweightTaxa, partialTreewise, partialBranchwise, summarize, testCompleteDeciveness,
-			writeCurrentMatrix, testUserTree);
+			writeCurrentMatrix, testUserTree, partialIndividualPartition, partialEachPartition);
 		
 		if (revert)	// User wants to start over manipulating original taxon-gene matrix
 		{
@@ -262,9 +268,10 @@ int main(int argc, char *argv[])
 			
 			completeDecisivenessDetermined = false; // NO LONGER APPROPRIATE
 			
-			printSummaryInformation(locusNames, taxonNames, data, taxonCoverage, referenceTaxa, matrixDecisive,
-				treewiseDecisiveness, branchwiseDecisiveness, completeDecisivenessDetermined, nexusFileName,
-				numRandomTrees, numUserTrees);
+			printSummaryInformation(revisedLocusNames, revisedTaxonNames, revisedData,
+				revisedCoverage, revisedReferenceTaxa, revisedMatrixDecisive,
+				treewiseDecisiveness, branchwiseDecisiveness, completeDecisivenessDetermined,
+				nexusFileName, numRandomTrees, numUserTrees);
 		}
 		else if (merge)
 		{
@@ -272,7 +279,8 @@ int main(int argc, char *argv[])
 		}
 		else if (deleteGenes) // Um, not useful...
 		{
-			deletePartitionsFromMatrix(revisedData, revisedLocusNames, revisedLocusWeights, revisedCoverage);
+			deletePartitionsFromMatrix(revisedData, revisedLocusNames, revisedLocusWeights,
+				revisedCoverage, partitionDecisiveness);
 		}
 		else if (exclude) // get rid of shitty taxa to improve matrix decisiveness
 		{
@@ -280,9 +288,10 @@ int main(int argc, char *argv[])
 		}
 		else if (addGenes) // virtual genes i.e. for targetted sequencing
 		{
-			addTaxonGeneToMatrix(revisedData, revisedTaxonNames, revisedLocusNames, revisedLocusWeights, revisedTaxonWeights);
+			addTaxonGeneToMatrix(revisedData, revisedTaxonNames, revisedLocusNames,
+				revisedLocusWeights, revisedTaxonWeights);
 		}
-		else if (partialTreewise || partialBranchwise)
+		else if (partialTreewise || partialBranchwise || partialIndividualPartition || partialEachPartition)
 		{
 			if (partialTreewise)
 			{
@@ -290,11 +299,25 @@ int main(int argc, char *argv[])
 				treewiseDecisiveness = calculatePartialDecisiveness(revisedReferenceTaxonPresent,
 					numRandomTrees, revisedData, findAll);
 			}
-			else
+			else if (partialBranchwise)
 			{
 				findAll = true;
 				branchwiseDecisiveness = calculatePartialDecisiveness(revisedReferenceTaxonPresent,
 					numRandomTrees, revisedData, findAll);
+			}
+			else if (partialIndividualPartition)
+			{
+				findAll = false;
+				int partitionID = selectPartition (revisedData, revisedLocusNames);
+				partitionDecisiveness[partitionID] = calculatePartialDecisivenessSinglePartition(revisedReferenceTaxonPresent,
+					numRandomTrees, revisedData, findAll, partitionID, revisedLocusNames);
+			}
+			else if (partialEachPartition)
+			{
+				findAll = false;
+				calculatePartialDecisivenessEachPartition (partitionDecisiveness,
+					revisedReferenceTaxonPresent, numRandomTrees, revisedData, findAll,
+					revisedLocusNames);
 			}
 		}
 		else if (testCompleteDeciveness)
@@ -316,14 +339,10 @@ int main(int argc, char *argv[])
 		}
 		else if (writeCurrentMatrix) // output matrix in nexus or phylip format
 		{
-			writeMatrix (revisedTaxonNames, numChar, taxaAlignment, includedLocusRanges, locusNames);
+			writeMatrix (revisedTaxonNames, numChar, taxaAlignment, includedLocusRanges, revisedLocusNames);
 		}
 		else if (testUserTree) // determine decisiveness on passed-in user tree
 		{
-			
-			
-			
-// WORKING
 // if doesn't yet exist, get filename from user
 			if (treeFileName.size() == 0)
 			{
@@ -334,10 +353,7 @@ int main(int argc, char *argv[])
 			userTreeDecisiveness = determineDecisivenessUserTree (revisedData, userTrees,
 				treeTaxonOrdering, revisedTaxonNames, revisedLocusWeights, revisedTaxonWeights);
 			
-			writeAnnotatedTrees(rawTrees, translationTable, userTreeDecisiveness, taxonNames);
-			
-			
-			
+			writeAnnotatedTrees(rawTrees, translationTable, userTreeDecisiveness, revisedTaxonNames);
 		}
 		else if (quit)
 		{
@@ -356,9 +372,9 @@ int main(int argc, char *argv[])
 		if (partialTreewise || partialBranchwise || testCompleteDeciveness || summarize || merge || deleteGenes || exclude || addGenes)
 		{
 			printSummaryInformation(revisedLocusNames, revisedTaxonNames, revisedData,
-				taxonCoverage, revisedReferenceTaxa, matrixDecisive, treewiseDecisiveness,
-				branchwiseDecisiveness, completeDecisivenessDetermined, nexusFileName,
-				numRandomTrees, numUserTrees);
+				revisedCoverage, revisedReferenceTaxa, revisedMatrixDecisive,
+				treewiseDecisiveness, branchwiseDecisiveness, completeDecisivenessDetermined,
+				nexusFileName, numRandomTrees, numUserTrees);
 		}
 	}
 	

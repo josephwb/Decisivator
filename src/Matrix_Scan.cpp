@@ -566,7 +566,7 @@ void whichTaxaProblematicBIG (vector <int> const& missingQuartetsByTaxa, vector 
 	}
 }
 
-void getCoverage (vector < vector <int> > & data, double & taxonCoverage)
+void getCoverage (vector < vector <int> > const& data, double & taxonCoverage)
 {
 	int taxonGeneCount = 0;
 	taxonCoverage = 0;
@@ -600,7 +600,7 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 	vector <int> upper;
 	double treeCount = 0;
 	double numInternalEdges = data.size() - 3;
-//	int numTaxa = data.size();
+	int numTaxa = data.size();
 	
 	
 // should this be fixed or flexible?
@@ -617,10 +617,9 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 	{
 		printProgress("Tree", j + 1, numTrees);
 		treeCount++;
-		vector < vector <int> > storedSatisfiedClades;
 		double currentDecisiveness = 0.0;
 		double numEdgesSatisfied = 0;
-		tree = fastBinaryTree((int)data.size(), sibNodes, referenceTaxonPresent);
+		tree = fastBinaryTree(numTaxa, sibNodes, referenceTaxonPresent);
 		if (debuggering) {printTree(tree);}
 		
 //		printTree(tree);
@@ -633,13 +632,9 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 			getEdges(i, tree, sibNodes, referenceTaxonPresent, left, right, sib, upper);
 			
 // *** Scan taxon-gene matrix here ***
-			if (searchEdgePartitions(data, left, right, sib, upper, findAll, referenceTaxonPresent, storedSatisfiedClades))
+			if (searchEdgePartitions(data, left, right, sib, upper, findAll, referenceTaxonPresent))
 			{
 				numEdgesSatisfied++;
-				storedSatisfiedClades.push_back(left);
-				storedSatisfiedClades.push_back(right);
-				storedSatisfiedClades.push_back(sib);
-				storedSatisfiedClades.push_back(upper);
 			}
 			
 // empty vectors for next edge
@@ -651,7 +646,6 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 // empty vectors for next tree
 		tree.clear();
 		sibNodes.clear();
-		storedSatisfiedClades.clear();
 		currentDecisiveness = numEdgesSatisfied/numInternalEdges;
 		partialDecisiveness = ((((treeCount - 1)/treeCount) * partialDecisiveness) + (currentDecisiveness/treeCount));
 	}
@@ -662,10 +656,80 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 	return(partialDecisiveness);
 }
 
+double calculatePartialDecisivenessSinglePartition (bool const& referenceTaxonPresent, int & numTrees,
+	vector < vector <int> > const& data, bool const& findAll, int const& partitionID,
+	vector <string> const& locusNames)
+{
+	double partialDecisiveness = 0.0; // keep track with running mean to avoid possible overflow
+	vector < vector <bool> > tree;
+	vector < vector <int> > sibNodes;
+	vector <int> left;
+	vector <int> right;
+	vector <int> sib;
+	vector <int> upper;
+	double treeCount = 0;
+	double numInternalEdges = data.size() - 3;
+	int numTaxa = data.size();
+	vector < vector <int> > partitionToQuery;
+	
+	for (int i = 0; i < numTaxa; i++) // extract partition of interest
+	{
+		vector <int> temp;
+		temp.push_back(data[i][partitionID]);
+		partitionToQuery.push_back(temp);
+	}
+	
+// should this be fixed or flexible?
+	if (numTrees == 0)
+	{
+		numTrees = checkValidIntInput("Specify number of trees to simulate for calculating partial decisiveness: ");
+	}
+	
+	cout << endl << "Simulating " << numTrees << " trees and testing for satisfaction of internal edges..." << endl;
+	
+	for (int j = 0; j < numTrees; j++)
+	{
+		printProgress("Tree", j + 1, numTrees);
+		treeCount++;
+		double currentDecisiveness = 0.0;
+		double numEdgesSatisfied = 0;
+		tree = fastBinaryTree(numTaxa, sibNodes, referenceTaxonPresent);
+		if (debuggering) {printTree(tree);}
+		
+		if (debuggering) {cout << endl << "Edges:" << endl;}
+		for (int i = 0; i < numInternalEdges; ++i) // Walk through all internal edges
+		{
+			getEdges(i, tree, sibNodes, referenceTaxonPresent, left, right, sib, upper);
+			
+// *** Scan taxon-gene matrix here ***
+			if (searchEdgePartitions(partitionToQuery, left, right, sib, upper, findAll, referenceTaxonPresent))
+			{
+				numEdgesSatisfied++;
+			}
+			
+// empty vectors for next edge
+			left.clear();
+			right.clear();
+			sib.clear();
+			upper.clear();
+		}
+// empty vectors for next tree
+		tree.clear();
+		sibNodes.clear();
+		currentDecisiveness = numEdgesSatisfied/numInternalEdges;
+		partialDecisiveness = ((((treeCount - 1)/treeCount) * partialDecisiveness) + (currentDecisiveness/treeCount));
+	}
+	cout << endl << "Done." << endl << endl;
+	
+	cout << "Partial decisiveness for partition '" << locusNames[partitionID] << "' is: " << partialDecisiveness << endl;
+	
+	return(partialDecisiveness);
+}
+
 // findAll below switches between boolean and count
 int searchEdgePartitions (vector < vector <int> > const& data, vector <int> const& left,
 	vector <int> const& right, vector <int> const& sib, vector <int> const& upper, bool const& findAll,
-	bool const& referenceTaxonPresent, vector < vector <int> > const& storedSatisfiedClades)
+	bool const& referenceTaxonPresent)
 {
 	int numLoci = (int)data[0].size();
 	int numSatisfied = 0;
@@ -766,8 +830,6 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
 	int numTrees = (int)userTrees.size();
 	bool findAll = true;
 	
-	vector < vector <int> > storedSatisfiedClades;
-	
 	printMatrixToFile (data, taxonNames, locusWeights, taxonWeights);
 	
 	double numInternalEdges = userTrees[0][0].size() - 3; // *should* be the same for all trees in a file...
@@ -828,7 +890,7 @@ options:
 			int numPossibleQuartets = (int)left.size() * (int)right.size() * (int)sib.size() * (int)upper.size();
 			
 // *** Scan taxon-gene matrix here ***
-			 numEdgesSatisfied = searchEdgePartitions(data, left, right, sib, upper, findAll, 0, storedSatisfiedClades);
+			 numEdgesSatisfied = searchEdgePartitions(data, left, right, sib, upper, findAll, 0);
 			 
 			if (debuggering)
 			{
@@ -849,6 +911,7 @@ options:
 			sib.clear();
 			upper.clear();
 		}
+		
 		printBipartitionTable(formattedTree, decisivenessCurrentTree, numSatisfied, numPossible, numTaxa, numTrees, j);
 		result.push_back(decisivenessCurrentTree);
 		
@@ -1008,4 +1071,60 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
 	}
 	cout << endl;
 	log << endl;
+}
+
+void calculatePartialDecisivenessEachPartition (vector <double> & partitionDecisiveness,
+	bool const& referenceTaxonPresent, int & numTrees, vector < vector <int> > const& data,
+	bool const& findAll, vector <string> const& locusNames)
+{
+	int numLoci = (int)locusNames.size();
+	string maxString;
+	int longestName = 0;
+	
+	for (int i = 0; i < numLoci; i++)
+	{		
+		string currentString = locusNames[i];
+		if (currentString.size() > maxString.size())
+		{
+			maxString = currentString;
+		}
+	}
+	longestName = (int)maxString.size();
+	
+	for (int i = 0; i < numLoci; i++)
+	{
+		partitionDecisiveness[i] = calculatePartialDecisivenessSinglePartition(referenceTaxonPresent,
+					numTrees, data, findAll, i, locusNames);
+	}
+	
+	cout << endl << endl
+	<< "Partition-specific decisiveness scores:" << endl << endl;
+	for (int i = 0; i < longestName; i++)
+	{
+		cout << " ";
+	}
+	cout << " 0.0  0.1  0.2  0.3  0.4  0.5  0.6  0.7  0.8  0.9  1.0" << endl;
+	for (int i = 0; i < longestName; i++)
+	{
+		cout << " ";
+	}
+	cout << "  |----|----|----|----|----|----|----|----|----|----|" << endl;
+	
+	for (int i = 0; i < numLoci; i++)
+	{
+		double currentDecisiveness = partitionDecisiveness[i] * 50;
+		for (int k = 0; k < (longestName - (int)locusNames[i].size()); k++)
+		{
+			cout << " ";
+		}
+		cout << locusNames[i];
+		cout << "  |";
+		for (int j = 0; j < (int)currentDecisiveness; j++)
+		{
+			cout << "*";
+		}
+		cout << endl;
+	}
+	
+	
 }

@@ -71,7 +71,6 @@ vector < vector <bool> > fastBinaryTree (int const& numTaxa, vector < vector <in
 		newClade.clear();
 		toCoalesce.clear();
 	}
-/*	
 	if (revisedReferenceTaxonPresent) // reference taxon present; add to tree
 	{
 		vector <bool> root (numTaxa, true); // add reference taxon as root
@@ -81,20 +80,26 @@ vector < vector <bool> > fastBinaryTree (int const& numTaxa, vector < vector <in
 		}
 		tree.push_back(root);
 	}
-*/
 	
-	if (debuggering) {printTree(tree);}
-	
-	printTree(tree);
-	
-	
-	
-	
-	
-	cout << "anc	dec" << endl;
-	for (int i = 0; i < (int)anc.size(); i++)
+	if (debuggering)
 	{
-		cout << anc[i] << "	" << dec[i] << endl;
+		printTree(tree);
+		
+		cout << "Sibnodes:" << endl;
+		for (int i = 0; i < (int)sibNodes.size(); i++)
+		{
+			printClade(sibNodes[i]);
+		}
+		cout << endl;
+	}
+	
+	if (debuggering)
+	{
+		cout << "anc	dec" << endl;
+		for (int i = 0; i < (int)anc.size(); i++)
+		{
+			cout << anc[i] << "	" << dec[i] << endl;
+		}
 	}
 	
 	return (tree);
@@ -160,7 +165,6 @@ void printClade (vector <bool> const& clade) // overloaded for debugging
 	}
 }
 
-
 // Just for debugging
 void printTree (vector < vector <bool> > const& tree)
 {
@@ -209,6 +213,85 @@ vector <int> getRemainingTaxa (vector <int> & includedTips, int const& numTaxa)
 		}
 	}
 	return(remainingTaxa);
+}
+
+void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < vector <int> > & sibNodes,
+	bool const& revisedReferenceTaxonPresent, vector <int> & left, vector <int> & right, vector <int> & sib,
+	vector <int> & upper)
+{
+	int numTaxa = (int)tree[0].size();
+	int simTaxa = 0;
+	vector <int> includedTips;
+	
+	if (revisedReferenceTaxonPresent) // reference taxon will root the tree
+	{
+		simTaxa = numTaxa - 1;
+	}
+	else
+	{
+		simTaxa = numTaxa;
+	}
+	
+	int node = edge + simTaxa; // first N nodes are 'singletons'. Gah! who wrote this shit?!? Oh, yeah...
+	int sibID = 0;
+	if (debuggering) {cout << endl << "Internal node #" << node << endl;}
+	
+// Right and left children:
+	includedTips = gatherTips(includedTips, tree[sibNodes[edge][0]]);
+	left = gatherTips(left, tree[sibNodes[edge][0]]);
+	includedTips = gatherTips(includedTips, tree[sibNodes[edge][1]]);
+	right = gatherTips(right, tree[sibNodes[edge][1]]);
+	
+//	cout << "Ancestral node: (";
+	for (int j = edge + 1; j < int(sibNodes.size()); j++)
+	{
+		if (sibNodes[j][0] == node)
+		{
+//			cout << simTaxa + j << ");" << endl;	// ancestral node
+			sibID = sibNodes[j][1];
+			sib = gatherTips(sib, tree[sibNodes[j][1]]);
+			includedTips = gatherTips(includedTips, tree[sibNodes[j][1]]);
+		}
+		else if (sibNodes[j][1] == node)
+		{
+//			cout << simTaxa + j << ");" << endl;	// ancestral node
+			sibID = sibNodes[j][0];
+			sib = gatherTips(sib, tree[sibNodes[j][0]]);
+			includedTips = gatherTips(includedTips, tree[sibNodes[j][0]]);
+		}
+	}
+	
+	upper = getRemainingTaxa(includedTips, numTaxa);
+	
+	if (debuggering)
+	{
+		if (upper.empty())
+		{
+			cout << "*** UPPER IS EMPTY!!! ***" << endl;
+			cout << "Left:";  printClade(left);
+			cout << "Right:"; printClade(right);
+			cout << "Sib:";   printClade(sib);
+			cout << "Upper:"; printClade(upper);
+			cout << endl << "Fixed:" << endl;
+		}
+	}
+	
+	if (upper.size() == 0) // only occurs for 'unrooted' trees
+	{
+		splitEdge(sib, upper, sibNodes, sibID - numTaxa, tree);
+	}
+	includedTips.clear();
+	
+// reverse the 'upper' vector, as reference taxon (if present) will be the last taxon
+	reverse(upper.begin(), upper.end());
+	
+	if (debuggering)
+	{
+		cout << "Left:";  printClade(left);
+		cout << "Right:"; printClade(right);
+		cout << "Sib:";   printClade(sib);
+		cout << "Upper:"; printClade(upper);
+	}
 }
 
 // Unrooted tree; split sib edge
@@ -309,84 +392,4 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree)
 	if (debuggering) {cout << "Got all sibNodes!" << endl; printTree(tree);}
 	
 	return (sibNodes);
-}
-
-void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < vector <int> > & sibNodes,
-	bool const& revisedReferenceTaxonPresent, vector <int> & left, vector <int> & right, vector <int> & sib,
-	vector <int> & upper)
-{
-	int numTaxa = (int)tree[0].size();
-	int simTaxa = 0;
-	vector <int> includedTips;
-	
-	if (revisedReferenceTaxonPresent)
-	{
-		simTaxa = numTaxa - 1;
-	}
-	else
-	{
-		simTaxa = numTaxa;
-	}
-		
-	int node = edge + simTaxa; // first N nodes are 'singletons'. Gah! who wrote this shit?!? Oh, yeah...
-	int sibID = 0;
-	if (debuggering) {cout << endl << "Internal node #" << node << endl;}
-	
-// Right and left children:
-	includedTips = gatherTips(includedTips, tree[sibNodes[edge][0]]);
-	left = gatherTips(left, tree[sibNodes[edge][0]]);
-	includedTips = gatherTips(includedTips, tree[sibNodes[edge][1]]);
-	right = gatherTips(right, tree[sibNodes[edge][1]]);
-	
-//	cout << "Ancestral node: (";
-	for (int j = edge + 1; j < int(sibNodes.size()); j++)
-	{
-		if (sibNodes[j][0] == node)
-		{
-//			cout << simTaxa + j << ");" << endl;	// ancestral node
-			sibID = sibNodes[j][1];
-			sib = gatherTips(sib, tree[sibNodes[j][1]]);
-			includedTips = gatherTips(includedTips, tree[sibNodes[j][1]]);
-		}
-		else if (sibNodes[j][1] == node)
-		{
-//			cout << simTaxa + j << ");" << endl;	// ancestral node
-			sibID = sibNodes[j][0];
-			sib = gatherTips(sib, tree[sibNodes[j][0]]);
-			includedTips = gatherTips(includedTips, tree[sibNodes[j][0]]);
-		}
-	}
-	
-	
-	upper = getRemainingTaxa(includedTips, numTaxa);
-	
-	if (debuggering)
-	{
-		if (upper.empty())
-		{
-			cout << "*** UPPER IS EMPTY!!! ***" << endl;
-			cout << "Left:";  printClade(left);
-			cout << "Right:"; printClade(right);
-			cout << "Sib:";   printClade(sib);
-			cout << "Upper:"; printClade(upper);
-			cout << endl << "Fixed:" << endl;
-		}
-	}
-	
-	if (upper.size() == 0) // only occurs for 'unrooted' trees
-	{
-		splitEdge(sib, upper, sibNodes, sibID - numTaxa, tree);
-	}
-	includedTips.clear();
-	
-// reverse the 'upper' vector, as reference taxon (if present) will be the last taxon
-	reverse(upper.begin(), upper.end());
-	
-	if (debuggering)
-	{
-		cout << "Left:";  printClade(left);
-		cout << "Right:"; printClade(right);
-		cout << "Sib:";   printClade(sib);
-		cout << "Upper:"; printClade(upper);
-	}
 }

@@ -1,8 +1,8 @@
 #NEXUS 
 
 Begin data;
-	Dimensions ntax=8 nchar=5;
-	Format datatype=dna missing=?;
+	Dimensions ntax=8 nchar=5 ;
+	Format datatype =dna missing=? ;
 	Matrix
 
 Scer AATAG

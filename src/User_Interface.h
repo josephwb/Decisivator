@@ -8,7 +8,8 @@ void printMatrix (vector < vector <int> > const& data, vector <string> const& ta
 void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & deleteGenes, bool & revert,
 	bool & quit, bool & print, bool & reweightLoci, bool & reweightTaxa, bool & partialTreewise,
 	bool & partialBranchwise, bool & summarize, bool & testCompleteDeciveness,
-	bool & writeCurrentMatrix, bool & testUserTree);
+	bool & writeCurrentMatrix, bool & testUserTree, bool & partialIndividualPartition,
+	bool & partialEachPartition);
 void printSummaryInformation (vector <string> const& locusNames, vector <string> const& taxonNames,
 	vector < vector <int> > const& data, double const& taxonCoverage, vector <int> const& referenceTaxa, bool const& matrixDecisive,
 	double const& treewiseDecisiveness, double const& branchwiseDecisiveness, bool const& completeDecisivenessDetermined, string const& nexusFileName,
@@ -26,5 +27,6 @@ void writeNexus (int const& numTaxa, int const& numChar, vector <string> const& 
 	vector <string> const& locusNames);
 void writePhylip (int const& numTaxa, int const& numChar, vector <string> const& taxonNames,
 	string & fileName, vector < vector <string> > const& taxaAlignment);
+int selectPartition (vector < vector <int> > const& data, vector <string> const& locusNames);
 
 #endif /* _USER_INTERFACE_H_ */
