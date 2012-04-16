@@ -1,4 +1,0 @@
-#NEXUS
-Begin trees;
-tree unrooted = [&U] (Scer,((((Spar,Sklu)[&decisiveness=1],(Skud,Sbay)[&decisiveness=1])[&decisiveness=1],Scas)[&decisiveness=1],Calb)[&decisiveness=1],Smik);
-End;
