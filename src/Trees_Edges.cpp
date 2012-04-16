@@ -109,7 +109,7 @@ vector < vector <bool> > fastBinaryTree (int const& numTaxa, vector < vector <in
 
 
 
-// return two-column list of edges
+// return two-column list of edges; should be more efficient
 vector < vector <int> > convertTreeToApeFormat (vector < vector <bool> > const& tree)
 {
 	vector < vector <int> > treeEdges;

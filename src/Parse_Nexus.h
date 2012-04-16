@@ -1,7 +1,6 @@
 #ifndef _PARSE_NEXUS_H_
 #define _PARSE_NEXUS_H_
 
-
 void parseNexus (string const& nexusFileName, vector < vector <int> > & data, vector <string> & taxonNames,
 	vector <string> & locusNames, int & numChar, vector < vector <string> > & taxaAlignment,
 	vector < vector <int> > & includedLocusRanges, string & dataType);

@@ -4,6 +4,10 @@ To compile, type the following in a unix prompt:
 
 make
 
+To compile with multi-threading, type:
+
+make -f MakefileMT
+
 To run, type:
 
 ./Decisivator [-d data_file] [-m taxon-gene_matrix] [-t tree_file] [-b burnin] [-n thinning]

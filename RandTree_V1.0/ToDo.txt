@@ -1,0 +1,118 @@
+Even better: 
+convert to array with indirect indexing (get rid of memory mgt calls)
+use macros or inline code for simple routines
+check dumpS for efficiency
+
+Convert simple check routines (_TOP, _BOTTOM) to macros
+check that recursion is tail recursion, optimize compile
+Check DUMP routines for efficiency
+
+think about multi-threading
+
+optimize stack and pointer code
+implement Luke's algorithm with optimized code
+add expected error condition tests to all files
+
+see individual header files
+
+==GRPOF report==
+
+granularity: each sample hit covers 4 byte(s) no time propagated
+
+                                  called/total       parents 
+index  %time    self descendents  called+self    name    	index
+                                  called/total       children
+
+                0.00        0.00       1/2837        _STACK_INIT [347]
+                0.00        0.00     149/2837        _PTRTREE_NODE_MERGE [83]
+                0.00        0.00     149/2837        _STACK_PUT [352]
+                0.00        0.00     149/2837        _STACK_IS_EMPTY [348]
+                0.00        0.00     149/2837        _STACK_LIFT [350]
+                0.00        0.00     149/2837        _STACK_SWAP [353]
+                0.00        0.00     150/2837        _PTRTREE_SET [81]
+                0.00        0.00     150/2837        _PTRTREE_NODE_CREATE [82]
+                0.00        0.00     150/2837        _STACK_PUSH [84]
+                0.00        0.00     150/2837        _STACK_TOP_IS [354]
+                0.00        0.00     298/2837        _PTRTREE_NODE_ID [341]
+                0.00        0.00     299/2837        _STACK_GET [346]
+                0.00        0.00     894/2837        _STACK_BOTTOM_IS [343]
+[79]     0.0    0.00        0.00    2837         _makeRandomTree [79]
+                0.00        0.00       1/2           _main [85]
+
+-----------------------------------------------
+
+                                     298             __PTRTREE_DUMP_NEWICK_REC [80]
+                0.00        0.00     896/896         _PTRTREE_IS_EMPTY [336]
+[80]     0.0    0.00        0.00     896+298    __PTRTREE_DUMP_NEWICK_REC [80]
+                0.00        0.00       1/1           _PTRTREE_DUMP_NEWICK [86]
+                                     298             __PTRTREE_DUMP_NEWICK_REC [80]
+
+-----------------------------------------------
+
+                0.00        0.00     598/598         ___inline_strcpy_chk [875]
+[81]     0.0    0.00        0.00     598         _PTRTREE_SET [81]
+                0.00        0.00     299/299         _PTRTREE_NODE_CREATE [82]
+                0.00        0.00     150/2837        _makeRandomTree [79]
+                0.00        0.00     149/298         _PTRTREE_NODE_MERGE [83]
+
+-----------------------------------------------
+
+                0.00        0.00     299/299         _PTRTREE_SET [81]
+[82]     0.0    0.00        0.00     299         _PTRTREE_NODE_CREATE [82]
+                0.00        0.00     150/2837        _makeRandomTree [79]
+                0.00        0.00     149/298         _PTRTREE_NODE_MERGE [83]
+
+-----------------------------------------------
+
+                0.00        0.00     149/298         _PTRTREE_SET [81]
+                0.00        0.00     149/298         _PTRTREE_NODE_CREATE [82]
+[83]     0.0    0.00        0.00     298         _PTRTREE_NODE_MERGE [83]
+                0.00        0.00     149/2837        _makeRandomTree [79]
+
+-----------------------------------------------
+
+                0.00        0.00     150/150         _STACK_IS_FULL [349]
+[84]     0.0    0.00        0.00     150         _STACK_PUSH [84]
+                0.00        0.00     150/2837        _makeRandomTree [79]
+
+-----------------------------------------------
+
+                0.00        0.00       1/2           _PTRTREE_DUMP_NEWICK [86]
+                0.00        0.00       1/2           _makeRandomTree [79]
+[85]     0.0    0.00        0.00       2         _main [85]
+                0.00        0.00       1/1           __start [87]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           __PTRTREE_DUMP_NEWICK_REC [80]
+[86]     0.0    0.00        0.00       1         _PTRTREE_DUMP_NEWICK [86]
+                0.00        0.00       1/2           _main [85]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _main [85]
+[87]     0.0    0.00        0.00       1         __start [87]
+
+-----------------------------------------------
+
+
+
+granularity: each sample hit covers 4 byte(s) no time accumulated
+
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+  0.0       0.00     0.00     2837     0.00     0.00  _makeRandomTree [79]
+  0.0       0.00     0.00      896     0.00     0.00  __PTRTREE_DUMP_NEWICK_REC [80]
+  0.0       0.00     0.00      598     0.00     0.00  _PTRTREE_SET [81]
+  0.0       0.00     0.00      299     0.00     0.00  _PTRTREE_NODE_CREATE [82]
+  0.0       0.00     0.00      298     0.00     0.00  _PTRTREE_NODE_MERGE [83]
+  0.0       0.00     0.00      150     0.00     0.00  _STACK_PUSH [84]
+  0.0       0.00     0.00        2     0.00     0.00  _main [85]
+  0.0       0.00     0.00        1     0.00     0.00  _PTRTREE_DUMP_NEWICK [86]
+  0.0       0.00     0.00        1     0.00     0.00  __start [87]
+
+Index by function name
+
+  [86] _PTRTREE_DUMP_NEWIC  [81] _PTRTREE_SET         [87] __start            
+  [82] _PTRTREE_NODE_CREAT  [84] _STACK_PUSH          [85] _main              
+  [83] _PTRTREE_NODE_MERGE  [80] __PTRTREE_DUMP_NEWI  [79] _makeRandomTree    

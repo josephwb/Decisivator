@@ -1,3 +1,8 @@
+2012-03-29
+  * now using openmp to allow multithreading
+2012-03-16
+  * removed 'BigInt'; slowed things down considerably (and only via the process counter!)
+	- courtesy of James Foster
 2011-12-7
   * added a whackload of error checking for Nexus attributes; less Draconian
   * fixed major (but only recent) bug that involved partial decisiveness

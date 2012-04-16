@@ -349,6 +349,8 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 		
 		if (checkStringValue(*lineIter, "charset", stringPosition))
 		{
+			cout << "CHARSET line: " << *lineIter << endl;
+			
 			charsetsEncountered = true;
 			bool equalSignEncountered = false;
 			stringPosition++;
@@ -374,6 +376,7 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 				if (separatorEncountered)
 				{
 					if (debuggering) {cout << "Interval CHARSET encountered: '" << *lineIter << "." << endl;}
+					cout << "Interval CHARSET encountered: '" << *lineIter << "." << endl;
 					extractIntervalRange(charsetDeclaration, start, stop, interval);
 					tempIntVector.push_back(1);		// Code for interval range
 					tempIntVector.push_back(start);
@@ -383,6 +386,7 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 				}
 				else
 				{
+					cout << "Simple CHARSET encountered: '" << *lineIter << "." << endl;
 					extractSimpleCharsetRanges(charsetDeclaration, start, stop);
 					tempIntVector.push_back(0);		// Code for simple range
 					tempIntVector.push_back(start);

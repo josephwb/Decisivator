@@ -9,11 +9,13 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
 	bool & quit, bool & print, bool & reweightLoci, bool & reweightTaxa, bool & partialTreewise,
 	bool & partialBranchwise, bool & summarize, bool & testCompleteDeciveness,
 	bool & writeCurrentMatrix, bool & testUserTree, bool & partialIndividualPartition,
-	bool & partialEachPartition);
+	bool & printRefTaxa);
 void printSummaryInformation (vector <string> const& locusNames, vector <string> const& taxonNames,
-	vector < vector <int> > const& data, double const& taxonCoverage, vector <int> const& referenceTaxa, bool const& matrixDecisive,
-	double const& treewiseDecisiveness, double const& branchwiseDecisiveness, bool const& completeDecisivenessDetermined, string const& nexusFileName,
-	int const& numRandomTrees, int const& numUserTrees);
+	vector < vector <int> > const& data, double const& taxonCoverage, vector <int> const& referenceTaxa,
+	bool const& matrixDecisive, double const& treewiseDecisiveness, double const& branchwiseDecisiveness,
+	bool const& completeDecisivenessDetermined, string const& nexusFileName, int const& numRandomTrees,
+	int const& numUserTrees, int const& numProcs);
+void printReferenceTaxa (vector <int> const& referenceTaxa, vector <string> const& taxonNames);
 void processCommandLineArguments(int argc, char *argv[], string & matrixFileName,
 	string & nexusFileName, string & locusWeightFileName, string & taxonWeightFileName,
 	string & treeFileName, int & burnin, int & thinning);

@@ -209,7 +209,6 @@ bool checkStringValue (string stringToParse, string stringToMatch, int stringPos
 	
 	for (size_t i = 0; i < testString.size(); ++i)
 	{
-// 
 		if (testString[i] == stringToMatch[i] || testString[i]+32 == stringToMatch[i] || testString[i] == stringToMatch[i]+32)
 		{
 			continue;
@@ -222,41 +221,26 @@ bool checkStringValue (string stringToParse, string stringToMatch, int stringPos
 	return true;
 }
 
-BigInt choose (int const& n, int const& r)
+unsigned long choose (int const& n, int const& r)
 {
-	BigInt result = 0;
+	unsigned long result = 0;
 	if (r == 0) {return (1);}
 	
-	BigInt numerator = n;
+	unsigned long numerator = n;
 	for (int i = n - 1; i > n - r; i --)
 	{
 		numerator *= i;
 	}
-	BigInt denominator = factorial(r);
+	unsigned long denominator = factorial(r);
 	result = numerator / denominator;
 	return (result);
 }
 
-BigInt factorial (int const& num)
+unsigned long factorial (int const& num)
 {
 	if (num <= 1) return (1);
 	return factorial(num - 1) * num; // recursive call
 }
-
-/*
-BigInt Stirling2ndKind (int const& n, int const& k)
-{
-	BigInt S2K = 0;
-	
-	if (n == k) {return (1);}
-	for (int i = 0; i < n; i++)
-	{
-		S2K += pow(-1,i) * choose(k,i) * pow(k-i,n);
-	}
-	S2K = S2K / factorial(k);
-	return(S2K);
-}
-*/
 
 // Given some existing string, extract (copy) the ith element and store as new string
 string extractStringElement (string & stringToParse, int const& position)
@@ -477,7 +461,6 @@ void printVectorAsList (vector <double> const& vectorToPrint) // overloading for
 	cout << endl;
 }
 
-
 void printVectorAsList (vector <double> const& vectorOneToPrint,
 	vector <double> const& vectorTwoToPrint, string const& columnOneName,
 	string const& columnTwoName, string const& columnThreeName) // overloading for debugging
@@ -554,7 +537,7 @@ vector <string> collectData (string const& fileName)
 	return inputData;
 }
 
-void printProgress (string const& elementType, BigInt const& current, BigInt const& upper)
+void printProgress (string const& elementType, unsigned long const& current, unsigned long const& upper)
 {
 	cout << "  " << elementType << ": " << current << " of " << upper << "\r" << flush;
 }
@@ -605,3 +588,21 @@ double sum (vector <double> const& x)
     }
     return total;
 }
+
+
+// *** DEPRECATED CODE *** //
+
+/*
+unsigned long Stirling2ndKind (int const& n, int const& k)
+{
+	unsigned long S2K = 0;
+	
+	if (n == k) {return (1);}
+	for (int i = 0; i < n; i++)
+	{
+		S2K += pow(-1,i) * choose(k,i) * pow(k-i,n);
+	}
+	S2K = S2K / factorial(k);
+	return(S2K);
+}
+*/

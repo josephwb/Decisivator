@@ -26,7 +26,7 @@ void printProgramInfo()
 	"              University of Idaho"                << endl <<
 	"       Department of Biological Sciences"         << endl <<
 	"        Complaints: josephwb@uidaho.edu"          << endl <<
-	"                " << month <<", " << year <<        endl << 
+	"                 " << month <<", " << year <<        endl << 
 	"************************************************" << endl << endl;
 }
 
@@ -34,7 +34,7 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
 	bool & quit, bool & print, bool & reweightLoci, bool & reweightTaxa, bool & partialTreewise,
 	bool & partialBranchwise, bool & summarize, bool & testCompleteDeciveness,
 	bool & writeCurrentMatrix, bool & testUserTree, bool & partialIndividualPartition,
-	bool & partialEachPartition)
+	bool & printRefTaxa)
 {
 	bool validChoice = false;
 	char userChoice;
@@ -52,6 +52,7 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
 		<< " [T]est of complete decisiveness (can take a while for large taxon samples)" << endl
 		<< " [I]nvestigate decisiveness on a provided user-tree" << endl
 		<< " [S]ummarize current status" << endl
+		<< " [L]ist current reference taxa (i.e. have data for all partitions)" << endl
 		<< " [W]rite current matrix" << endl
 		<< " [R]evert to original matrix" << endl
 		<< " [Q]uit" << endl
@@ -105,8 +106,7 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
 				<< "Calculate partial decisiveness:" << endl
 				<< " [T]ree-wise" << endl
 				<< " [B]ranch-wise" << endl
-				<< " [I]ndividual partition" << endl
-				<< " [E]ach individual partition" << endl;
+				<< " [I]ndividual partition" << endl;
 				cin >> userChoice;
 				cin.ignore(200, '\n');
 				
@@ -125,11 +125,6 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
 					partialIndividualPartition = true;
 					validChoice = true;
 				}
-				else if (checkCharValue(userChoice,'e'))
-				{
-					partialEachPartition = true;
-					validChoice = true;
-				}
 				else
 				{
 					cout << endl << "Invalid input option (" << userChoice << "). Try again." << endl << endl;
@@ -146,6 +141,12 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
 		else if (checkCharValue(userChoice,'t'))
 		{
 			testCompleteDeciveness = true;
+			validChoice = true;
+			continue;
+		}
+		else if (checkCharValue(userChoice,'l'))
+		{
+			printRefTaxa = true;
 			validChoice = true;
 			continue;
 		}
@@ -305,29 +306,37 @@ void printHelp ()
 }
 
 void printSummaryInformation (vector <string> const& locusNames, vector <string> const& taxonNames,
-	vector < vector <int> > const& data, double const& taxonCoverage, vector <int> const& referenceTaxa, bool const& matrixDecisive,
-	double const& treewiseDecisiveness, double const& branchwiseDecisiveness, bool const& completeDecisivenessDetermined, string const& nexusFileName,
-	int const& numRandomTrees, int const& numUserTrees)
+	vector < vector <int> > const& data, double const& taxonCoverage, vector <int> const& referenceTaxa,
+	bool const& matrixDecisive, double const& treewiseDecisiveness, double const& branchwiseDecisiveness,
+	bool const& completeDecisivenessDetermined, string const& nexusFileName, int const& numRandomTrees,
+	int const& numUserTrees, int const& numProcs)
 {
 	cout << endl << endl
 	<< "*******************************" << endl
 	<< "*** SUMMARY OF CURRENT DATA ***" << endl
 	<< "*******************************" << endl;
 	
+	if (numProcs == 1)
+	{
+		cout << endl << "1 processor available for analyisis." << endl;
+	}
+	else
+	{
+		cout << endl << numProcs << " processors available for analyisis." << endl;
+	}
+	
+	cout << "Input file: '" << nexusFileName << "'." << endl;
+	cout << "A total of " << locusNames.size() << " partitions read for " << taxonNames.size() << " taxa." << endl;
 	
 	if (!referenceTaxa.empty())
 	{
 		if (referenceTaxa.size() == 1)
 		{
-			cout << endl <<  "Taxon '" << taxonNames[referenceTaxa[0]] << "' serves as a reference taxon (i.e. has data for all partitions)." << endl;
+			cout << "Taxon '" << taxonNames[referenceTaxa[0]] << "' serves as a reference taxon (i.e. has data for all partitions)." << endl;
 		}
 		else
 		{
-			cout << endl << referenceTaxa.size() << " reference taxa found (i.e. have data for all partitions):" << endl;
-			for (int i = 0; i < (int)referenceTaxa.size(); i++)
-			{
-				cout << " " << i + 1 << ". " << taxonNames[referenceTaxa[i]] << endl;
-			}
+			cout << referenceTaxa.size() << " reference taxa found (i.e. have data for all partitions)." << endl;
 		}
 	}
 	else
@@ -342,11 +351,7 @@ void printSummaryInformation (vector <string> const& locusNames, vector <string>
 		printVectorAsList(taxonNames);
 		cout << endl;
 	}
-	else
-	{
-		cout << endl << "Input file: '" << nexusFileName << "'." << endl;
-		cout << "A total of " << locusNames.size() << " partitions read for " << taxonNames.size() << " taxa." << endl;
-	}
+	
 	if (numUserTrees != 0)
 	{
 		if (numUserTrees == 1)
@@ -398,6 +403,24 @@ void printSummaryInformation (vector <string> const& locusNames, vector <string>
 	}
 	checkForMissingTaxa (data, taxonNames);
 }
+
+void printReferenceTaxa (vector <int> const& referenceTaxa, vector <string> const& taxonNames)
+{
+	if (referenceTaxa.size() != 0)
+	{
+		cout << endl << referenceTaxa.size() << " reference taxa found (i.e. have data for all partitions):" << endl;
+		for (int i = 0; i < (int)referenceTaxa.size(); i++)
+		{
+			cout << " " << i + 1 << ". " << taxonNames[referenceTaxa[i]] << endl;
+		}
+	}
+	else
+	{
+		cout << endl << "No reference taxa found (i.e. have data for all partitions)." << endl;
+	}
+	cout << endl;
+}
+
 
 // print our proportion of data present
 void printMatrix (vector < vector <int> > const& data, vector <string> const& taxonNames, 
@@ -634,7 +657,7 @@ void writeNexus (int const& numTaxa, int const& numChar, vector <string> const& 
 	<< "[ *** via PuRGe University of Idaho 2011 ***]"<< endl << endl
 	<< "Begin data;" << endl
 	<< "	Dimensions ntax=" << numTaxa << " nchar=" << numChar << ";" << endl
-	<< "	Format datatype=dna missing=? gap=- interleave=no;" << endl
+	<< "	Format datatype=dna missing=? interleave=yes;" << endl
 	<< "	Matrix" << endl << endl;
 	
 	for (int i = 0; i < numTaxa; i++)

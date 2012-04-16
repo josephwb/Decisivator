@@ -1,0 +1,12 @@
+K 10
+svn:ignore
+V 47
+rt
+t.tre
+t.tree
+gmon.out
+rt.prof
+test.dot
+temp
+
+END

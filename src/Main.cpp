@@ -81,6 +81,12 @@ Oh, and assumes unix line breaks.
 #include <vector>
 #include <cstdlib>
 
+#ifdef _OPENMP
+    #include <omp.h>
+#else
+    #define omp_get_num_procs() 1
+#endif
+
 using namespace std;
 
 #include "General.h"
@@ -95,9 +101,9 @@ using namespace std;
 
 
 // version information
-double version = 0.55;
-string month = "December";
-int year = 2011;
+double version = 0.56;
+string month = "March";
+int year = 2012;
 
 bool debuggering = false;
 
@@ -108,6 +114,7 @@ int main(int argc, char *argv[])
 	string locusWeightFileName;
 	string taxonWeightFileName;
 	string nexusFileName;
+	int numProcs = omp_get_num_procs();
 	
 // Trees
 	string treeFileName;
@@ -144,6 +151,8 @@ int main(int argc, char *argv[])
 	int numChar = 0;
 	
 	printProgramInfo();
+	
+	cout << numProcs << " processors available for analyisis." << endl << endl;
 	
 	processCommandLineArguments(argc, argv, matrixFileName, nexusFileName, locusWeightFileName,
 		taxonWeightFileName, treeFileName, burnin, thinning);
@@ -214,7 +223,7 @@ int main(int argc, char *argv[])
 		
 	printSummaryInformation(locusNames, taxonNames, data, taxonCoverage, referenceTaxa, matrixDecisive,
 		treewiseDecisiveness, branchwiseDecisiveness, completeDecisivenessDetermined, nexusFileName,
-		numRandomTrees, numUserTrees);
+		numRandomTrees, numUserTrees, numProcs);
 		
 	bool doneEditing = false;
 	bool newMatrix = false;
@@ -235,16 +244,16 @@ int main(int argc, char *argv[])
 		bool partialBranchwise = false;
 		bool partialTreewise = false;
 		bool partialIndividualPartition = false;
-		bool partialEachPartition = false;
 		bool testCompleteDeciveness = false;
 		bool summarize = false;
+		bool printRefTaxa = false;
 		bool writeCurrentMatrix = false;
 		bool testUserTree = false;
 		bool findAll = false;
 		
 		printProgamOptions (addGenes, merge, exclude, deleteGenes, revert, quit, print, reweightLoci,
 			reweightTaxa, partialTreewise, partialBranchwise, summarize, testCompleteDeciveness,
-			writeCurrentMatrix, testUserTree, partialIndividualPartition, partialEachPartition);
+			writeCurrentMatrix, testUserTree, partialIndividualPartition, printRefTaxa);
 		
 		if (revert)	// User wants to start over manipulating original taxon-gene matrix
 		{
@@ -271,7 +280,7 @@ int main(int argc, char *argv[])
 			printSummaryInformation(revisedLocusNames, revisedTaxonNames, revisedData,
 				revisedCoverage, revisedReferenceTaxa, revisedMatrixDecisive,
 				treewiseDecisiveness, branchwiseDecisiveness, completeDecisivenessDetermined,
-				nexusFileName, numRandomTrees, numUserTrees);
+				nexusFileName, numRandomTrees, numUserTrees, numProcs);
 		}
 		else if (merge)
 		{
@@ -279,8 +288,7 @@ int main(int argc, char *argv[])
 		}
 		else if (deleteGenes) // Um, not useful...
 		{
-			deletePartitionsFromMatrix(revisedData, revisedLocusNames, revisedLocusWeights,
-				revisedCoverage, partitionDecisiveness);
+			deletePartitionsFromMatrix(revisedData, revisedLocusNames, revisedLocusWeights, revisedCoverage);
 		}
 		else if (exclude) // get rid of shitty taxa to improve matrix decisiveness
 		{
@@ -288,36 +296,28 @@ int main(int argc, char *argv[])
 		}
 		else if (addGenes) // virtual genes i.e. for targetted sequencing
 		{
-			addTaxonGeneToMatrix(revisedData, revisedTaxonNames, revisedLocusNames,
-				revisedLocusWeights, revisedTaxonWeights);
+			addTaxonGeneToMatrix(revisedData, revisedTaxonNames, revisedLocusNames, revisedLocusWeights, revisedTaxonWeights);
 		}
-		else if (partialTreewise || partialBranchwise || partialIndividualPartition || partialEachPartition)
+		else if (partialTreewise || partialBranchwise || partialIndividualPartition)
 		{
 			if (partialTreewise)
 			{
 				findAll = false;
 				treewiseDecisiveness = calculatePartialDecisiveness(revisedReferenceTaxonPresent,
-					numRandomTrees, revisedData, findAll);
+					numRandomTrees, revisedData, findAll, numProcs);
 			}
 			else if (partialBranchwise)
 			{
 				findAll = true;
 				branchwiseDecisiveness = calculatePartialDecisiveness(revisedReferenceTaxonPresent,
-					numRandomTrees, revisedData, findAll);
+					numRandomTrees, revisedData, findAll, numProcs);
 			}
 			else if (partialIndividualPartition)
 			{
-				findAll = false;
+				findAll = true;
 				int partitionID = selectPartition (revisedData, revisedLocusNames);
 				partitionDecisiveness[partitionID] = calculatePartialDecisivenessSinglePartition(revisedReferenceTaxonPresent,
 					numRandomTrees, revisedData, findAll, partitionID, revisedLocusNames);
-			}
-			else if (partialEachPartition)
-			{
-				findAll = false;
-				calculatePartialDecisivenessEachPartition (partitionDecisiveness,
-					revisedReferenceTaxonPresent, numRandomTrees, revisedData, findAll,
-					revisedLocusNames);
 			}
 		}
 		else if (testCompleteDeciveness)
@@ -336,6 +336,10 @@ int main(int argc, char *argv[])
 		else if (print)
 		{
 			printMatrix(revisedData, revisedTaxonNames, revisedLocusWeights, revisedTaxonWeights);
+		}
+		else if (printRefTaxa)
+		{
+			printReferenceTaxa (revisedReferenceTaxa, revisedTaxonNames);
 		}
 		else if (writeCurrentMatrix) // output matrix in nexus or phylip format
 		{
@@ -374,7 +378,7 @@ int main(int argc, char *argv[])
 			printSummaryInformation(revisedLocusNames, revisedTaxonNames, revisedData,
 				revisedCoverage, revisedReferenceTaxa, revisedMatrixDecisive,
 				treewiseDecisiveness, branchwiseDecisiveness, completeDecisivenessDetermined,
-				nexusFileName, numRandomTrees, numUserTrees);
+				nexusFileName, numRandomTrees, numUserTrees, numProcs);
 		}
 	}
 	

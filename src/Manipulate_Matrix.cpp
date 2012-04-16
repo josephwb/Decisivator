@@ -131,7 +131,7 @@ void addTaxonGeneToMatrix (vector < vector <int> > & data, vector <string> const
 }
 
 void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string> & locusNames,
-	vector <double> & locusWeights, double & revisedCoverage, vector <double> & partitionDecisiveness)
+	vector <double> & locusWeights, double & revisedCoverage)
 {
 	bool done = false;
 	vector <int> userInput;
@@ -246,7 +246,6 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 							}
 							locusNames.erase(locusNames.begin()+currentPartitionID);
 							locusWeights.erase(locusWeights.begin()+currentPartitionID);
-							partitionDecisiveness.erase(partitionDecisiveness.begin()+currentPartitionID);
 						}
 						userInput.clear();
 					}
@@ -313,7 +312,6 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 							}
 							locusNames.erase(locusNames.begin()+currentPartitionID);
 							locusWeights.erase(locusWeights.begin()+currentPartitionID);
-							partitionDecisiveness.erase(partitionDecisiveness.begin()+currentPartitionID);
 						}
 						userInput.clear();
 					}
@@ -344,8 +342,7 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 							<< numTaxa << ". Try again." << endl;
 					}
 				}
-				excludePartitionsMissingNTaxa (taxaMissing, data, locusNames, locusWeights,
-					partitionDecisiveness);
+				excludePartitionsMissingNTaxa (taxaMissing, data, locusNames, locusWeights);
 			}
 			else if (checkCharValue(userChoice,'f')) // possess N or fewer
 			{
@@ -364,8 +361,7 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 							<< numTaxa - 1 << ". Try again." << endl;
 					}
 				}
-				excludePartitionsPossessingNTaxa (taxaPossessed, data, locusNames, locusWeights,
-					partitionDecisiveness);
+				excludePartitionsPossessingNTaxa (taxaPossessed, data, locusNames, locusWeights);
 			}
 			else // gah, fucked up
 			{
@@ -376,7 +372,7 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 }
 
 void excludePartitionsMissingNTaxa (int const& partitionsMissing, vector < vector <int> > & data,
-	vector <string> & locusNames, vector <double> & locusWeights, vector <double> & partitionDecisiveness)
+	vector <string> & locusNames, vector <double> & locusWeights)
 {
 	vector <string> excludedPartitions;
 	vector <int> excludedIndices;
@@ -414,7 +410,6 @@ void excludePartitionsMissingNTaxa (int const& partitionsMissing, vector < vecto
 			}
 			locusNames.erase(locusNames.begin()+excludedIndices[editIter]);
 			locusWeights.erase(locusWeights.begin()+excludedIndices[editIter]);
-			partitionDecisiveness.erase(partitionDecisiveness.begin()+excludedIndices[editIter]);
 		}
 	}
 	else
@@ -424,7 +419,7 @@ void excludePartitionsMissingNTaxa (int const& partitionsMissing, vector < vecto
 }
 
 void excludePartitionsPossessingNTaxa (int const& partitionsPossessed, vector < vector <int> > & data,
-	vector <string> & locusNames, vector <double> & locusWeights, vector <double> & partitionDecisiveness)
+	vector <string> & locusNames, vector <double> & locusWeights)
 {
 	vector <string> excludedPartitions;
 	vector <int> excludedIndices;
@@ -463,7 +458,6 @@ void excludePartitionsPossessingNTaxa (int const& partitionsPossessed, vector < 
 			}
 			locusNames.erase(locusNames.begin()+excludedIndices[editIter]);
 			locusWeights.erase(locusWeights.begin()+excludedIndices[editIter]);
-			partitionDecisiveness.erase(partitionDecisiveness.begin()+excludedIndices[editIter]);
 		}
 	}
 	else
