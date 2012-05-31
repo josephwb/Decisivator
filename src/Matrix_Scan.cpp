@@ -460,6 +460,7 @@ void getCoverage (vector < vector <int> > const& data, double & taxonCoverage)
 
 
 // Eventually pass in more stuff e.g. keep track of missing clades, etc.
+// multithreading implemented via openmp
 double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & numTrees,
 	vector < vector <int> > const& data, bool const& findAll, int const& numProcs)
 {
