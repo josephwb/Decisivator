@@ -489,7 +489,7 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 		vector <int> sib;
 		vector <int> upper;
 		double privateTreeCount = 0.0; // needed for multithreading
-		double privateDecisiveness = 0.0;
+		//double privateDecisiveness = 0.0;
 		
 		int thread_id = omp_get_thread_num();
 		

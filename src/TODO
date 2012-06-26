@@ -38,3 +38,4 @@
 15. implement genetic algorithm (via Daniel)
    1. add N genes
    2. delete taxa until decisive
+16. allow input of phylip-formatted data (and separate partition file)
