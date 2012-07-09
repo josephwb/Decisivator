@@ -1,3 +1,6 @@
+2012-07-08
+  * genetic algorithm fully integrated.
+	- Fitness function may need tweaking, as well and population size, selection, etc.
 2012-03-29
   * now using openmp to allow multithreading
 2012-03-16

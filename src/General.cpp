@@ -260,6 +260,16 @@ int convertStringtoInt (string stringToConvert)
 	return tempInt;
 }
 
+string convertIntToString (int & intToConvert)
+{
+	string tempString;
+	stringstream tempStream;
+	tempStream << intToConvert;
+	tempString = tempStream.str();
+	
+	return tempString;
+}
+
 double convertStringtoDouble (string stringToConvert)
 {
 	double tempDouble = 0;
@@ -323,10 +333,10 @@ void printVectorAsList (vector <string> const& vectorToPrint)
 		cout << i + 1 << ". ";
 // Print out leading spaces
 		string tempName = vectorToPrint[i];
-		if (tempName.size() < maxString.size())
+		if ((int)tempName.size() < longestName)
 		{
 			string::size_type tempDiffSize;
-			tempDiffSize = maxString.size() - tempName.size();
+			tempDiffSize = longestName - tempName.size();
 			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
 			{
 				cout << " ";
@@ -380,10 +390,10 @@ void printVectorAsList (vector <string> const& vectorOneToPrint, vector <int> co
 			cout << i + 1 << ". ";
 	// Print out leading spaces
 			string tempName = vectorOneToPrint[i];
-			if (tempName.size() < maxString.size())
+			if ((int)tempName.size() < longestName)
 			{
 				string::size_type tempDiffSize;
-				tempDiffSize = maxString.size() - tempName.size();
+				tempDiffSize = longestName - tempName.size();
 				for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
 				{
 					cout << " ";
@@ -395,7 +405,7 @@ void printVectorAsList (vector <string> const& vectorOneToPrint, vector <int> co
 		{
 			cout << " " << columnOneName;
 			string::size_type tempDiffSize;
-			tempDiffSize = maxString.size() - columnTwoName.size();
+			tempDiffSize = longestName - columnTwoName.size();
 			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
 			{
 				cout << " ";

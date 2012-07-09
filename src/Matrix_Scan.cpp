@@ -462,7 +462,7 @@ void getCoverage (vector < vector <int> > const& data, double & taxonCoverage)
 // Eventually pass in more stuff e.g. keep track of missing clades, etc.
 // multithreading implemented via openmp
 double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & numTrees,
-	vector < vector <int> > const& data, bool const& findAll, int const& numProcs)
+	vector < vector <int> > const& data, bool const& findAll, int const& numProcs, bool const& verbose)
 {
 	double partialDecisiveness = 0.0; // keep track with running mean to avoid possible overflow
 	double numInternalEdges = data.size() - 3;
@@ -476,7 +476,10 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 		numTrees = checkValidIntInput("Specify number of trees to simulate for calculating partial decisiveness: ");
 	}
 	
-	cout << endl << "Simulating " << numTrees << " trees and testing for satisfaction of internal edges..." << endl;
+	if (verbose)
+	{
+		cout << endl << "Simulating " << numTrees << " trees and testing for satisfaction of internal edges..." << endl;
+	}
 	
 // Running mean: ((((count - 1)/count) * runningMean) + (currentResult/count)); // prevent overflow
 	
@@ -499,7 +502,7 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 		#pragma omp for
 		for (int j = 0; j < numTrees; j++)
 		{
-			if (numProcs == 1) {printProgress("Tree", j + 1, numTrees);}
+			if (numProcs == 1 && verbose) {printProgress("Tree", j + 1, numTrees);}
 			privateTreeCount++;
 			double currentDecisiveness = 0.0;
 			double numEdgesSatisfied = 0.0;
@@ -517,6 +520,7 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 				getEdges(i, tree, sibNodes, referenceTaxonPresent, left, right, sib, upper);
 				
 // *** Scan taxon-gene matrix here ***
+		// treating searchEdgePartitions here as boolean, but returns an int
 				if (searchEdgePartitions(data, left, right, sib, upper, findAll, referenceTaxonPresent))
 				{
 					numEdgesSatisfied++;
@@ -542,40 +546,32 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 		{
 //			cout << "Thread " << thread_id << " analyzed (" << privateTreeCount << ") trees. Yay!"
 //				<< " Partial decisiveness for this thread is: " << temp << endl;
-			cout << "Partial decisiveness for thread " << thread_id << " is: " << sum / privateTreeCount << endl;
-//			partialDecisiveness += privateDecisiveness;
+			if (verbose) {cout << "Partial decisiveness for thread " << thread_id << " is: "
+				<< sum / privateTreeCount << endl;}
 		//	foo += sum / privateTreeCount;
 			foo += sum;
 		}
 	}
-	cout << endl << "Done." << endl << endl;
+	if (verbose) {cout << endl << "Done." << endl << endl;}
 	
-//	partialDecisiveness = partialDecisiveness / numProcs;
-	
-//	cout << "Counted " << treeCount << " trees." << endl;
-	
-//	cout << "Partial decisiveness is currently: " << partialDecisiveness << endl;
-//	cout << "Foo decisiveness is currently: " << foo / numProcs << endl;
-	cout << "Foo decisiveness is currently: " << foo / numTrees << endl;
+	partialDecisiveness = (foo / numTrees);
+	if (verbose) {cout << "Decisiveness is currently: " << partialDecisiveness << endl;}
 	
 	return(partialDecisiveness);
 }
 
+
+// need multithreading here!
 double calculatePartialDecisivenessSinglePartition (bool const& referenceTaxonPresent, int & numTrees,
 	vector < vector <int> > const& data, bool const& findAll, int const& partitionID,
-	vector <string> const& locusNames)
+	bool const& verbose, int const& numProcs)
 {
 	double partialDecisiveness = 0.0; // keep track with running mean to avoid possible overflow
-	vector < vector <bool> > tree;
-	vector < vector <int> > sibNodes;
-	vector <int> left;
-	vector <int> right;
-	vector <int> sib;
-	vector <int> upper;
-	double treeCount = 0;
 	double numInternalEdges = data.size() - 3;
 	int numTaxa = data.size();
 	vector < vector <int> > partitionToQuery;
+	
+	double foo = 0.0;
 	
 	for (int i = 0; i < numTaxa; i++) // extract partition of interest
 	{
@@ -590,43 +586,76 @@ double calculatePartialDecisivenessSinglePartition (bool const& referenceTaxonPr
 		numTrees = checkValidIntInput("Specify number of trees to simulate for calculating partial decisiveness: ");
 	}
 	
-	cout << endl << "Simulating " << numTrees << " trees and testing for satisfaction of internal edges..." << endl;
-	
-	for (int j = 0; j < numTrees; j++)
+	if (verbose)
 	{
-		printProgress("Tree", j + 1, numTrees);
-		treeCount++;
-		double currentDecisiveness = 0.0;
-		double numEdgesSatisfied = 0;
-		tree = fastBinaryTree(numTaxa, sibNodes, referenceTaxonPresent);
-		if (debuggering) {printTree(tree);}
-		
-		if (debuggering) {cout << endl << "Edges:" << endl;}
-		for (int i = 0; i < numInternalEdges; ++i) // Walk through all internal edges
-		{
-			getEdges(i, tree, sibNodes, referenceTaxonPresent, left, right, sib, upper);
-			
-// *** Scan taxon-gene matrix here ***
-			if (searchEdgePartitions(partitionToQuery, left, right, sib, upper, findAll, referenceTaxonPresent))
-			{
-				numEdgesSatisfied++;
-			}
-			
-// empty vectors for next edge
-			left.clear();
-			right.clear();
-			sib.clear();
-			upper.clear();
-		}
-// empty vectors for next tree
-		tree.clear();
-		sibNodes.clear();
-		currentDecisiveness = numEdgesSatisfied/numInternalEdges;
-		partialDecisiveness = ((((treeCount - 1)/treeCount) * partialDecisiveness) + (currentDecisiveness/treeCount));
+		cout << endl << "Simulating " << numTrees << " trees and testing for satisfaction of internal edges..." << endl;
 	}
-	cout << endl << "Done." << endl << endl;
 	
-	cout << "Partial decisiveness for partition '" << locusNames[partitionID] << "' is: " << partialDecisiveness << endl;
+	#pragma omp parallel
+	{
+		vector < vector <bool> > tree;
+		vector < vector <int> > sibNodes;
+		vector <int> left;
+		vector <int> right;
+		vector <int> sib;
+		vector <int> upper;
+		double treeCount = 0;
+		double privateTreeCount = 0.0;
+		
+		int thread_id = omp_get_thread_num();
+		
+		double sum = 0.0;
+		
+		#pragma omp for
+		for (int j = 0; j < numTrees; j++)
+		{
+			if (numProcs == 1 && verbose) {printProgress("Tree", j + 1, numTrees);}
+			treeCount++;
+			privateTreeCount++;
+			double currentDecisiveness = 0.0;
+			double numEdgesSatisfied = 0;
+			tree = fastBinaryTree(numTaxa, sibNodes, referenceTaxonPresent);
+			if (debuggering) {printTree(tree);}
+			
+			if (debuggering) {cout << endl << "Edges:" << endl;}
+			for (int i = 0; i < numInternalEdges; ++i) // Walk through all internal edges
+			{
+				getEdges(i, tree, sibNodes, referenceTaxonPresent, left, right, sib, upper);
+				
+	// *** Scan taxon-gene matrix here ***
+				if (searchEdgePartitions(partitionToQuery, left, right, sib, upper, findAll, referenceTaxonPresent))
+				{
+					numEdgesSatisfied++;
+				}
+				
+	// empty vectors for next edge
+				left.clear();
+				right.clear();
+				sib.clear();
+				upper.clear();
+			}
+	// empty vectors for next tree
+			tree.clear();
+			sibNodes.clear();
+			currentDecisiveness = numEdgesSatisfied/numInternalEdges;
+			sum += currentDecisiveness;
+			//partialDecisiveness = ((((treeCount - 1)/treeCount) * partialDecisiveness) + (currentDecisiveness/treeCount));
+		}
+		
+		#pragma omp critical
+		{
+//			cout << "Thread " << thread_id << " analyzed (" << privateTreeCount << ") trees. Yay!"
+//				<< " Partial decisiveness for this thread is: " << temp << endl;
+			if (verbose) {cout << "Partial decisiveness for thread " << thread_id << " is: "
+				<< sum / privateTreeCount << endl;}
+		//	foo += sum / privateTreeCount;
+			foo += sum;
+		}
+	}
+	if (verbose) {cout << endl << "Done." << endl << endl;}
+	
+	partialDecisiveness = (foo / numTrees);
+	//cout << "Partial decisiveness for partition '" << partitionID << "' is: " << partialDecisiveness << endl;
 	
 	return(partialDecisiveness);
 }
@@ -649,11 +678,11 @@ int searchEdgePartitions (vector < vector <int> > const& data, vector <int> cons
 //	cout << endl << "Searching for presence of all possible taxon quartets..." << endl;
 	for (int l = 0; l < numUpper; l++)
 	{
-		for (int i = 0; i < int(left.size()); i++)
+		for (int i = 0; i < (int)left.size(); i++)
 		{
-			for (int j = 0; j < int(right.size()); j++)
+			for (int j = 0; j < (int)right.size(); j++)
 			{
-				for (int k = 0; k < int(sib.size()); k++)
+				for (int k = 0; k < (int)sib.size(); k++)
 				{
 					for (int m = 0; m < numLoci; m++)	// Loop over loci
 					{
@@ -676,7 +705,7 @@ int searchEdgePartitions (vector < vector <int> > const& data, vector <int> cons
 			}
 		}
 	}
-	return(numSatisfied);
+	return(numSatisfied); // hmm. returning int here, but treated as boolean elsewhere
 }
 
 bool testCompleteDecisivness (vector < vector <int> > const& data, bool const& referenceTaxonPresent,

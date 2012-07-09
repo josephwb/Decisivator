@@ -1,4 +1,4 @@
-OBJS = Main.o General.o Trees_Edges.o Manipulate_Matrix.o Matrix_Scan.o Parse_Data.o User_Interface.o Parse_Nexus.o User_Tree.o
+OBJS = Main.o General.o Trees_Edges.o Manipulate_Matrix.o Matrix_Scan.o Parse_Data.o User_Interface.o Parse_Nexus.o User_Tree.o GAoptimize.o
 CC = g++
 DEBUG = -g
 CFLAGS = -Wall -c -m64 -O3 -funroll-loops $(DEBUG)
@@ -34,8 +34,8 @@ Parse_Nexus.o: Parse_Nexus.cpp Parse_Nexus.h
 User_Tree.o: User_Tree.cpp User_Tree.h
 	$(CC) $(CFLAGS) User_Tree.cpp
 
-Genetic_Algorithm.o: Genetic_Algorithm.cpp Genetic_Algorithm.h
-	$(CC) $(CFLAGS) Genetic_Algorithm.cpp
+GAoptimize.o: GAoptimize.cpp GAoptimize.h
+	$(CC) $(CFLAGS) GAoptimize.cpp
 
 clean:
-	rm -rf Main.o General.o Trees_Edges.o Manipulate_Matrix.o Matrix_Scan.o Parse_Data.o User_Interface.o Parse_Nexus.o User_Tree.o
+	rm -rf *.o

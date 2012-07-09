@@ -35,7 +35,11 @@
 12. print out locus-specific coverage - DONE!
 13. print out taxon-specific coverage - DONE!
 14. give better options for deleting partitions - DONE!
-15. implement genetic algorithm (via Daniel)
-   1. add N genes
-   2. delete taxa until decisive
-16. allow input of phylip-formatted data (and separate partition file)
+15. implement genetic algorithm (via Daniel) - DONE!
+   1. add N genes - DONE!
+   2. add until decisive
+   3. delete taxa until decisive
+   4. print out augmented matrix to file - DONE!
+   5. need to tweak GA parameters: population size, tournament size, mutation
+   6. have irregular hill-climbing steps (code there, just not used/optimized)
+16. allow input of phylip-formatted data (and separate partition file) e.g. ala RAxML

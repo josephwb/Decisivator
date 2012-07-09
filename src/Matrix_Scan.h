@@ -19,7 +19,7 @@ void whichTaxaProblematic (vector < vector <int> > const& missingGroups, vector 
 //	string const& grouping, vector <int> const& referenceTaxa);
 void getCoverage (vector < vector <int> > const& data, double & taxonCoverage);
 double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & numTrees,
-	vector < vector <int> > const& data, bool const& findAll, int const& numProcs);
+	vector < vector <int> > const& data, bool const& findAll, int const& numProcs, bool const& verbose);
 int searchEdgePartitions (vector < vector <int> > const& data, vector <int> const& left,
 	vector <int> const& right, vector <int> const& sib, vector <int> const& upper, bool const& findAll,
 	bool const& referenceTaxonPresent);
@@ -35,6 +35,6 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
 	int const& numTrees, int const& treeNumber);
 double calculatePartialDecisivenessSinglePartition (bool const& referenceTaxonPresent, int & numTrees,
 	vector < vector <int> > const& data, bool const& findAll, int const& partitionID,
-	vector <string> const& locusNames);
+	bool const& verbose, int const& numProcs);
 
 #endif /* _MATRIX_SCAN_H_ */

@@ -21,6 +21,7 @@ unsigned long factorial (int const& num);
 //unsigned long Stirling2ndKind (int const& n, int const& k);
 string extractStringElement (string & stringToParse, int const& position);
 int convertStringtoInt (string stringToConvert);
+string convertIntToString (int & intToConvert);
 double convertStringtoDouble (string stringToConvert);
 vector <string> storeStringVector (string & stringToParse);
 void printVectorAsList (vector <string> const& vectorToPrint);

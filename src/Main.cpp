@@ -97,12 +97,12 @@ using namespace std;
 #include "User_Interface.h"
 #include "Parse_Nexus.h"
 #include "User_Tree.h"
-#include "Genetic_Algorithm.h"
+#include "GAoptimize.h"
 
 
 // version information
-double version = 0.56;
-string month = "March";
+double version = 0.57;
+string month = "July";
 int year = 2012;
 
 bool debuggering = false;
@@ -149,6 +149,7 @@ int main(int argc, char *argv[])
 	double branchwiseDecisiveness = 0.0;
 	double treewiseDecisiveness = 0.0;
 	int numChar = 0;
+	double GADecisiveness = 0.0;
 	
 	printProgramInfo();
 	
@@ -217,6 +218,10 @@ int main(int argc, char *argv[])
 	vector <double> partitionDecisiveness(numPartitions, 0.0);
 	int numRandomTrees = 0;
 	
+	
+	bool verbose = true;
+	
+	
 // this is a placeholder; currently cannot prune taxa from a tree
 	vector < vector < vector <bool> > > revisedUserTrees = userTrees; // i.e. if taxa are deleted
 	bool completeDecisivenessDetermined = false; // UPDATE THIS!
@@ -226,7 +231,7 @@ int main(int argc, char *argv[])
 		numRandomTrees, numUserTrees, numProcs);
 		
 	bool doneEditing = false;
-	bool newMatrix = false;
+	// bool newMatrix = false;
 	bool revisedMatrixDecisive = matrixDecisive;
 	
 // Where user interfaces
@@ -250,10 +255,12 @@ int main(int argc, char *argv[])
 		bool writeCurrentMatrix = false;
 		bool testUserTree = false;
 		bool findAll = false;
+		bool useGA = false;
+		int numAddGA = 0;
 		
 		printProgamOptions (addGenes, merge, exclude, deleteGenes, revert, quit, print, reweightLoci,
 			reweightTaxa, partialTreewise, partialBranchwise, summarize, testCompleteDeciveness,
-			writeCurrentMatrix, testUserTree, partialIndividualPartition, printRefTaxa);
+			writeCurrentMatrix, testUserTree, partialIndividualPartition, printRefTaxa, useGA);
 		
 		if (revert)	// User wants to start over manipulating original taxon-gene matrix
 		{
@@ -304,20 +311,22 @@ int main(int argc, char *argv[])
 			{
 				findAll = false;
 				treewiseDecisiveness = calculatePartialDecisiveness(revisedReferenceTaxonPresent,
-					numRandomTrees, revisedData, findAll, numProcs);
+					numRandomTrees, revisedData, findAll, numProcs, verbose);
 			}
 			else if (partialBranchwise)
 			{
 				findAll = true;
 				branchwiseDecisiveness = calculatePartialDecisiveness(revisedReferenceTaxonPresent,
-					numRandomTrees, revisedData, findAll, numProcs);
+					numRandomTrees, revisedData, findAll, numProcs, verbose);
 			}
 			else if (partialIndividualPartition)
 			{
 				findAll = true;
 				int partitionID = selectPartition (revisedData, revisedLocusNames);
 				partitionDecisiveness[partitionID] = calculatePartialDecisivenessSinglePartition(revisedReferenceTaxonPresent,
-					numRandomTrees, revisedData, findAll, partitionID, revisedLocusNames);
+					numRandomTrees, revisedData, findAll, partitionID, 0, numProcs); // set verbose to false
+				cout << "Partial decisiveness for partition '" << locusNames[partitionID]
+					<< "' is: " << partitionDecisiveness[partitionID] << endl;
 			}
 		}
 		else if (testCompleteDeciveness)
@@ -329,9 +338,18 @@ int main(int argc, char *argv[])
 			else // some change to matrix has been made; recalculate complete deciveness
 			{
 				revisedMatrixDecisive = testCompleteDecisivness(revisedData, revisedReferenceTaxonPresent, revisedReferenceTaxa, revisedTaxonNames, revisedMissingQuartets, revisedTriplets, revisedTripletLocations, revisedMissingTriplets);
-				newMatrix = false;
+				// newMatrix = false;
 				completeDecisivenessDetermined = true;
 			}
+		}
+		else if (useGA)
+		{
+			cout << endl;
+			numAddGA = checkValidIntInput("Enter how many virtual taxon-character(s) to add to matrix: ");
+			
+			revisedData = GAHandler(numAddGA, revisedData, GADecisiveness, revisedReferenceTaxonPresent, numProcs);
+			printGADataToFile(revisedData, taxonNames, nexusFileName, numAddGA);
+			
 		}
 		else if (print)
 		{
@@ -368,7 +386,7 @@ int main(int argc, char *argv[])
 		{
 			treewiseDecisiveness = 0.0;
 			branchwiseDecisiveness = 0.0;
-			newMatrix = true;
+			// newMatrix = true;
 			completeDecisivenessDetermined = false;
 			revisedReferenceTaxonPresent = searchForReferenceTaxon(revisedData, revisedReferenceTaxa, revisedTaxonNames);
 			getCoverage(revisedData, revisedCoverage);
