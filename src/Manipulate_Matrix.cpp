@@ -27,25 +27,20 @@ void addTaxonGeneToMatrix (vector < vector <int> > & data, vector <string> const
 	vector <int> availableTaxonIndex; // need to map to data from reduced vector
 	vector <int> availableLocusIndex; // need to map to data from reduced vector
 	
-	for (int i = 0; i < int(taxonNames.size()); i ++)
-	{
-		if (taxonWeights[i] != 0)
-		{
+	for (int i = 0; i < int(taxonNames.size()); i ++) {
+		if (taxonWeights[i] != 0) {
 			availableTaxa.push_back(taxonNames[i]);
 			availableTaxonIndex.push_back(i);
 		}
 	}
-	for (int i = 0; i < int(locusNames.size()); i ++)
-	{
-		if (locusWeights[i] != 0)
-		{
+	for (int i = 0; i < int(locusNames.size()); i ++) {
+		if (locusWeights[i] != 0) {
 			availableLoci.push_back(locusNames[i]);
 			availableLocusIndex.push_back(i);
 		}
 	}
 	
-	while (!taxaDone)
-	{
+	while (!taxaDone) {
 		cout << endl << "Taxa available (those with non-zero weight):" << endl;
 		printVectorAsList(availableTaxa);
 		
@@ -57,65 +52,50 @@ void addTaxonGeneToMatrix (vector < vector <int> > & data, vector <string> const
 // Ability to read in multiple inputs
 		validIntEntry = false;
 		istringstream tempStream(tempString);
-		while (tempStream >> taxonSelection)
-		{
+		while (tempStream >> taxonSelection) {
 			validIntEntry = true;
 			userInput.push_back(taxonSelection);
 			numEntries++;
 		}
-		if (taxonSelection == 0)
-		{
+		if (taxonSelection == 0) {
 			taxaDone = true;
 			continue;
 		}
-		if (!validIntEntry)
-		{
+		if (!validIntEntry) {
 			cout << endl << "*** Invalid input. Integer must be between 0 and " << taxonNames.size() << " ***" << endl;
 			cin.clear();
 			userInput.clear();
 			continue;
 		}
-		if (validIntEntry)
-		{
-			if (cin.fail() || taxonSelection < 0 || taxonSelection > int(availableTaxa.size()))
-			{
+		if (validIntEntry) {
+			if (cin.fail() || taxonSelection < 0 || taxonSelection > int(availableTaxa.size())) {
 				cout << endl << "*** Invalid input. Integer must be between 0 and " << availableTaxa.size() << " ***" << endl;
 				cin.clear();
 				userInput.clear();
 				continue;
-			}
-			else
-			{
+			} else {
 				sort(userInput.begin(), userInput.end());
 // Order from 'largest' to 'smallest' index; otherwise need keep track of changing indices
 				reverse(userInput.begin(), userInput.end());
 				
-				while (!locusDone)
-				{
+				while (!locusDone) {
 					cout << endl << "Loci available (those with non-zero weight):" << endl;
 					printVectorAsList(availableLoci);
 					int newGene;
 					cout << endl << "Enter index of desired gene, or 0 to exit: ";
 					cin >> newGene;
 					
-					if (cin.fail() || newGene < 0 || newGene > int(availableLoci.size()))
-					{
+					if (cin.fail() || newGene < 0 || newGene > int(availableLoci.size())) {
 						cout << endl << "*** Invalid input. Integer must be between 0 and " << availableLoci.size() << " ***" << endl;
 						cin.clear();
 						continue;
-					}
-					else
-					{
-						if (newGene == 0) // user changed mind
-						{
+					} else {
+						if (newGene == 0) { // user changed mind
 							locusDone = true;
 							taxaDone = true;
 							continue;
-						}
-						else
-						{
-							for (int editIter = 0; editIter < numEntries; editIter++)
-							{
+						} else {
+							for (int editIter = 0; editIter < numEntries; editIter++) {
 // Need to fix this, using availableTaxa and availableLoci, availableTaxonIndex and availableLocusIndex
 								data[availableTaxonIndex[userInput[editIter] - 1]][availableLocusIndex[newGene - 1]] = 1;
 							}
@@ -142,8 +122,7 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 	int userSelection;
 	string locusName;
 
-	while (!done)
-	{
+	while (!done) {
 		userInput.clear();
 		bool validChoice = false;
 		
@@ -151,13 +130,10 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 		vector <int> numPartitionPresent;
 	
 	// get partition coverage
-		for (int i = 0; i < numPartitions; i++)
-		{
+		for (int i = 0; i < numPartitions; i++) {
 			double temp = 0.0;
-			for (int j = 0; j < numTaxa; j++)
-			{
-				if (data[j][i])
-				{
+			for (int j = 0; j < numTaxa; j++) {
+				if (data[j][i]) {
 					temp ++;
 				}
 			}
@@ -165,8 +141,7 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 			temp = temp / (double)numTaxa;
 			proportionPartitionDataPresent.push_back(temp);
 		}
-		while (!validChoice)
-		{
+		while (!validChoice) {
 			char userChoice;
 			numPartitions = (int)data[0].size();
 			getCoverage (data, revisedCoverage);
@@ -187,8 +162,7 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 			cin >> userChoice;
 			cin.ignore(200, '\n');
 			
-			if (checkCharValue(userChoice,'i')) // by index
-			{
+			if (checkCharValue(userChoice,'i')) { // by index
 				validChoice = true;
 				
 				cout << endl << "Partitions available:" << endl;
@@ -202,46 +176,37 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 		// Ability to read in multiple inputs
 				validIntEntry = false;
 				istringstream tempStream(tempString);
-				while (tempStream >> userSelection)
-				{
+				while (tempStream >> userSelection) {
 					validIntEntry = true;
 					userInput.push_back(userSelection);
 					numEntries++;
 				}
-				if (userSelection == 0)
-				{
+				if (userSelection == 0) {
 					done = true;
 					continue;
 				}
-				if (!validIntEntry)
-				{
+				if (!validIntEntry) {
 					cout << endl << "*** Invalid input. Integer must be between 0 and " << numPartitions << " ***" << endl;
 					cin.clear();
 					userInput.clear();
 					done = false;
 					continue;
 				}
-				if (validIntEntry)
-				{
-					if (cin.fail() || userSelection < 0 || userSelection > int(locusNames.size()))
-					{
+				if (validIntEntry) {
+					if (cin.fail() || userSelection < 0 || userSelection > int(locusNames.size())) {
 						cout << endl << "*** Invalid input. Integer must be between 0 and " << numPartitions << " ***" << endl;
 						cin.clear();
 						userInput.clear();
 						done = false;
 						continue;
-					}
-					else
-					{
+					} else {
 						sort(userInput.begin(), userInput.end());
 		// Order from 'largest' to 'smallest' index; otherwise need keep track of changing indices
 						reverse(userInput.begin(), userInput.end());
 						
-						for (int editIter = 0; editIter < numEntries; editIter++)
-						{
+						for (int editIter = 0; editIter < numEntries; editIter++) {
 							int currentPartitionID = userInput[editIter] - 1;
-							for (int i = 0; i < numTaxa; i++)
-							{
+							for (int i = 0; i < numTaxa; i++) {
 								data[i].erase(data[i].begin()+currentPartitionID);
 							}
 							locusNames.erase(locusNames.begin()+currentPartitionID);
@@ -250,9 +215,7 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 						userInput.clear();
 					}
 				}
-			}
-			else if (checkCharValue(userChoice,'n')) // by name
-			{
+			} else if (checkCharValue(userChoice,'n')) { // by name
 				validChoice = true;
 				
 				cout << endl << "Partitions available:" << endl;
@@ -265,48 +228,37 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 				
 		// Ability to read in multiple inputs
 				istringstream tempStream(tempString);
-				while (tempStream >> locusName)
-				{
+				while (tempStream >> locusName) {
 					tempVector.push_back(locusName);
 					numEntries++;
 				}
-				if (userSelection == 0)
-				{
+				if (userSelection == 0) {
 					done = true;
 					continue;
-				}
-				else
-				{
+				} else {
 					vector <int> matched;
-					for (int editIter = 0; editIter < numEntries; editIter++)
-					{
+					for (int editIter = 0; editIter < numEntries; editIter++) {
 						string toMatch = tempVector[0];
 						bool match = false;
-						for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++)
-						{
-							if (caseInsensitiveStringCompare(toMatch, locusNames[partitionIter]))
-							{
+						for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++) {
+							if (caseInsensitiveStringCompare(toMatch, locusNames[partitionIter])) {
 								match = true;
 								matched.push_back(partitionIter);
 								partitionIter = numPartitions;
 								continue;
 							}
 						}
-						if (!match)
-						{
+						if (!match) {
 							cout << endl << "OOPS!!! No match found for entry '" << toMatch << "'. Typo?" << endl;
 						}
 					}
-					if (matched.size() > 0)
-					{
+					if (matched.size() > 0) {
 						sort (matched.begin(), matched.end());
 						reverse(matched.begin(), matched.end());
 						
-						for (int editIter = 0; editIter < int(matched.size()); editIter++)
-						{
+						for (int editIter = 0; editIter < int(matched.size()); editIter++) {
 							int currentPartitionID = matched[editIter] - 1;
-							for (int i = 0; i < numTaxa; i++)
-							{
+							for (int i = 0; i < numTaxa; i++) {
 								data[i].erase(data[i].begin()+currentPartitionID);
 								
 							}
@@ -318,53 +270,37 @@ void deletePartitionsFromMatrix (vector < vector <int> > & data, vector <string>
 				}
 				
 				tempVector.clear();
-			}
-			else if (checkCharValue(userChoice,'b'))
-			{
+			} else if (checkCharValue(userChoice,'b')) {
 				validChoice = true;
 				done = true;
 				continue;
-			}
-			else if (checkCharValue(userChoice,'m')) // N or more missing
-			{
+			} else if (checkCharValue(userChoice,'m')) { // N or more missing
 				bool validRange = false;
 				int taxaMissing;
-				while (!validRange)
-				{
+				while (!validRange) {
 					taxaMissing = checkValidIntInput ("Enter minimum number of missing taxa to consider: ");
-					if (taxaMissing >= 1 && taxaMissing <= numTaxa)
-					{
+					if (taxaMissing >= 1 && taxaMissing <= numTaxa) {
 						validRange = true;
-					}
-					else
-					{
+					} else {
 						cout << "Invalid entry '" << taxaMissing << "'. Must be between 1 and "
 							<< numTaxa << ". Try again." << endl;
 					}
 				}
 				excludePartitionsMissingNTaxa (taxaMissing, data, locusNames, locusWeights);
-			}
-			else if (checkCharValue(userChoice,'f')) // possess N or fewer
-			{
+			} else if (checkCharValue(userChoice,'f')) { // possess N or fewer
 				bool validRange = false;
 				int taxaPossessed;
-				while (!validRange)
-				{
+				while (!validRange) {
 					taxaPossessed = checkValidIntInput ("Enter minimum number of possessed taxa to consider: ");
-					if (taxaPossessed >= 0 && taxaPossessed <= numTaxa - 1)
-					{
+					if (taxaPossessed >= 0 && taxaPossessed <= numTaxa - 1) {
 						validRange = true;
-					}
-					else
-					{
+					} else {
 						cout << "Invalid entry '" << taxaPossessed << "'. Must be between 0 and "
 							<< numTaxa - 1 << ". Try again." << endl;
 					}
 				}
 				excludePartitionsPossessingNTaxa (taxaPossessed, data, locusNames, locusWeights);
-			}
-			else // gah, fucked up
-			{
+			} else { // gah, fucked up
 				cout << "Invalid input option (" << userChoice << "). Try again." << endl;
 			}
 		}
@@ -379,21 +315,17 @@ void excludePartitionsMissingNTaxa (int const& partitionsMissing, vector < vecto
 	int numTaxa = (int)data.size();
 	int numPartitions = (int)data[0].size();
 	
-	for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++)
-	{
+	for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++) {
 		int sum = 0;
-		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++)
-		{
+		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++) {
 			sum += data[taxonIter][partitionIter];
 		}
-		if (sum <= (numTaxa - partitionsMissing))
-		{
+		if (sum <= (numTaxa - partitionsMissing)) {
 			excludedIndices.push_back(partitionIter);
 			excludedPartitions.push_back(locusNames[partitionIter]);
 		}
 	}
-	if (excludedIndices.size() != 0)
-	{
+	if (excludedIndices.size() != 0) {
 		int numExcluded = (int)excludedPartitions.size();
 		cout << endl << "Excluded partitions:" << endl;
 		printVectorAsList (excludedPartitions);
@@ -401,19 +333,15 @@ void excludePartitionsMissingNTaxa (int const& partitionsMissing, vector < vecto
 // reverse-sort vector
 		reverse(excludedIndices.begin(),excludedIndices.end());
 		
-		for (int editIter = 0; editIter < numExcluded; editIter++)
-		{
-			for (int i = 0; i < numTaxa; i++)
-			{
+		for (int editIter = 0; editIter < numExcluded; editIter++) {
+			for (int i = 0; i < numTaxa; i++) {
 				data[i].erase(data[i].begin()+excludedIndices[editIter]);
 				
 			}
 			locusNames.erase(locusNames.begin()+excludedIndices[editIter]);
 			locusWeights.erase(locusWeights.begin()+excludedIndices[editIter]);
 		}
-	}
-	else
-	{
+	} else {
 		cout << "No currently implemented partitions conform to condition. Your data are better than that. Yay!" << endl;
 	}
 }
@@ -426,22 +354,18 @@ void excludePartitionsPossessingNTaxa (int const& partitionsPossessed, vector < 
 	int numTaxa = (int)data.size();
 	int numPartitions = (int)data[0].size();
 	
-	for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++)
-	{
+	for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++) {
 		int sum = 0;
-		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++)
-		{
+		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++) {
 			sum += data[taxonIter][partitionIter];
 		}
-		if (sum <= partitionsPossessed)
-		{
+		if (sum <= partitionsPossessed) {
 			excludedIndices.push_back(partitionIter);
 			excludedPartitions.push_back(locusNames[partitionIter]);
 		}
 	}
 
-	if (excludedIndices.size() != 0)
-	{
+	if (excludedIndices.size() != 0) {
 		int numExcluded = (int)excludedPartitions.size();
 		cout << endl << "Excluded partitions:" << endl;
 		printVectorAsList (excludedPartitions);
@@ -449,19 +373,15 @@ void excludePartitionsPossessingNTaxa (int const& partitionsPossessed, vector < 
 // reverse-sort vector
 		reverse(excludedIndices.begin(),excludedIndices.end());
 		
-		for (int editIter = 0; editIter < numExcluded; editIter++)
-		{
-			for (int i = 0; i < numTaxa; i++)
-			{
+		for (int editIter = 0; editIter < numExcluded; editIter++) {
+			for (int i = 0; i < numTaxa; i++) {
 				data[i].erase(data[i].begin()+excludedIndices[editIter]);
 				
 			}
 			locusNames.erase(locusNames.begin()+excludedIndices[editIter]);
 			locusWeights.erase(locusWeights.begin()+excludedIndices[editIter]);
 		}
-	}
-	else
-	{
+	} else {
 		cout << "No currently implemented partition conform to condition. Your data are better than that. Yay!" << endl;
 	}
 }
@@ -478,12 +398,10 @@ void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, 
 	string taxonName;
 	vector <string> excludedTaxa;
 	
-	while (!done)
-	{
+	while (!done) {
 		userInput.clear();
 		bool validChoice = false;
-		while (!validChoice)
-		{
+		while (!validChoice) {
 			char userChoice;
 			int numTaxa = (int)taxonNames.size();
 			getCoverage (data, revisedCoverage);
@@ -506,8 +424,7 @@ void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, 
 			cin >> userChoice;
 			cin.ignore(200, '\n');
 			
-			if (checkCharValue(userChoice,'i')) // by index
-			{
+			if (checkCharValue(userChoice,'i')) { // by index
 				validChoice = true;
 				cout << endl << "Taxa available:" << endl;
 				printVectorAsList(taxonNames);
@@ -519,43 +436,35 @@ void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, 
 		// Ability to read in multiple inputs
 				validIntEntry = false;
 				istringstream tempStream(tempString);
-				while (tempStream >> userSelection)
-				{
+				while (tempStream >> userSelection) {
 					validIntEntry = true;
 					userInput.push_back(userSelection);
 					numEntries++;
 				}
-				if (userSelection == 0)
-				{
+				if (userSelection == 0) {
 					done = true;
 					continue;
 				}
-				if (!validIntEntry)
-				{
+				if (!validIntEntry) {
 					cout << endl << "*** Invalid input. Integer must be between 0 and " << taxonNames.size() << " ***" << endl;
 					cin.clear();
 					userInput.clear();
 					done = false;
 					continue;
 				}
-				if (validIntEntry)
-				{
-					if (cin.fail() || userSelection < 0 || userSelection > int(taxonNames.size()))
-					{
+				if (validIntEntry) {
+					if (cin.fail() || userSelection < 0 || userSelection > int(taxonNames.size())) {
 						cout << endl << "*** Invalid input. Integer must be between 0 and " << taxonNames.size() << " ***" << endl;
 						cin.clear();
 						userInput.clear();
 						done = false;
 						continue;
-					}
-					else
-					{
+					} else {
 						sort(userInput.begin(), userInput.end());
 		// Order from 'largest' to 'smallest' index; otherwise need keep track of changing indices
 						reverse(userInput.begin(), userInput.end());
 						
-						for (int editIter = 0; editIter < numEntries; editIter++)
-						{
+						for (int editIter = 0; editIter < numEntries; editIter++) {
 							int currentTaxonID = userInput[editIter] - 1;
 							data.erase(data.begin()+currentTaxonID);
 							taxonNames.erase(taxonNames.begin()+currentTaxonID);
@@ -564,9 +473,7 @@ void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, 
 						userInput.clear();
 					}
 				}
-			}
-			else if (checkCharValue(userChoice,'n')) // by name
-			{
+			} else if (checkCharValue(userChoice,'n')) { // by name
 				cout << endl << "Taxa available:" << endl;
 				printVectorAsList(taxonNames);
 				cout << endl << "Enter name(s) of taxa you would like to exclude (separated by spaces), or 0 to exit: ";
@@ -577,45 +484,35 @@ void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, 
 				
 		// Ability to read in multiple inputs
 				istringstream tempStream(tempString);
-				while (tempStream >> taxonName)
-				{
+				while (tempStream >> taxonName) {
 					tempVector.push_back(taxonName);
 					numEntries++;
 				}
-				if (userSelection == 0)
-				{
+				if (userSelection == 0) {
 					done = true;
 					continue;
-				}
-				else
-				{
+				} else {
 					vector <int> matched;
-					for (int editIter = 0; editIter < numEntries; editIter++)
-					{
+					for (int editIter = 0; editIter < numEntries; editIter++) {
 						string toMatch = tempVector[0];
 						bool match = false;
-						for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++)
-						{
-							if (caseInsensitiveStringCompare(toMatch, taxonNames[taxonIter]))
-							{
+						for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++) {
+							if (caseInsensitiveStringCompare(toMatch, taxonNames[taxonIter])) {
 								match = true;
 								matched.push_back(taxonIter);
 								taxonIter = numTaxa;
 								continue;
 							}
 						}
-						if (!match)
-						{
+						if (!match) {
 							cout << endl << "OOPS!!! No match found for entry '" << toMatch << "'. Typo?" << endl;
 						}
 					}
-					if (matched.size() > 0)
-					{
+					if (matched.size() > 0) {
 						sort (matched.begin(), matched.end());
 						reverse(matched.begin(), matched.end());
 						
-						for (int editIter = 0; editIter < int(matched.size()); editIter++)
-						{
+						for (int editIter = 0; editIter < int(matched.size()); editIter++) {
 							data.erase(data.begin()+editIter);
 							taxonNames.erase(taxonNames.begin()+editIter);
 							taxonWeights.erase(taxonWeights.begin()+editIter);
@@ -623,85 +520,59 @@ void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, 
 					}
 				}
 				tempVector.clear();
-			}
-			else if (checkCharValue(userChoice,'e')) // exactly N missing
-			{
+			} else if (checkCharValue(userChoice,'e')) { // exactly N missing
 				bool validRange = false;
 				int partitionsMissing;
-				while (!validRange)
-				{
+				while (!validRange) {
 					partitionsMissing = checkValidIntInput ("Enter minimum number of possessed partitions to consider: ");
-					if (partitionsMissing >= 1 && partitionsMissing <= numPartitions - 1)
-					{
+					if (partitionsMissing >= 1 && partitionsMissing <= numPartitions - 1) {
 						validRange = true;
-					}
-					else
-					{
+					} else {
 						cout << "Invalid entry '" << partitionsMissing << "'. Must be between 1 and "
 							<< numPartitions - 1 << ". Try again." << endl;
 					}
 				}
 				excludeTaxaMissingNGenes (partitionsMissing, data, taxonNames, taxonWeights, true);
-			}
-			else if (checkCharValue(userChoice,'m')) // N or more missing
-			{
+			} else if (checkCharValue(userChoice,'m')) { // N or more missing
 				bool validRange = false;
 				int partitionsMissing;
-				while (!validRange)
-				{
+				while (!validRange) {
 					partitionsMissing = checkValidIntInput ("Enter minimum number of missing partitions to consider: ");
-					if (partitionsMissing >= 1 && partitionsMissing <= numPartitions - 1)
-					{
+					if (partitionsMissing >= 1 && partitionsMissing <= numPartitions - 1) {
 						validRange = true;
-					}
-					else
-					{
+					} else {
 						cout << "Invalid entry '" << partitionsMissing << "'. Must be between 1 and "
 							<< numPartitions - 1 << ". Try again." << endl;
 					}
 				}
 				excludeTaxaMissingNGenes (partitionsMissing, data, taxonNames, taxonWeights, false);
-			}
-			else if (checkCharValue(userChoice,'o')) // possess only N
-			{
+			} else if (checkCharValue(userChoice,'o')) { // possess only N
 				bool validRange = false;
 				int partitionsPossessed;
-				while (!validRange)
-				{
+				while (!validRange) {
 					partitionsPossessed = checkValidIntInput ("Enter minimum number of possessed partitions to consider: ");
-					if (partitionsPossessed >= 1 && partitionsPossessed <= numPartitions - 1)
-					{
+					if (partitionsPossessed >= 1 && partitionsPossessed <= numPartitions - 1) {
 						validRange = true;
-					}
-					else
-					{
+					} else {
 						cout << "Invalid entry '" << partitionsPossessed << "'. Must be between 1 and "
 							<< numPartitions - 1 << ". Try again." << endl;
 					}
 				}
 				excludeTaxaPossessingNGenes (partitionsPossessed, data, taxonNames, taxonWeights, true);
-			}
-			else if (checkCharValue(userChoice,'f')) // possess N or fewer
-			{
+			} else if (checkCharValue(userChoice,'f')) { // possess N or fewer
 				bool validRange = false;
 				int partitionsPossessed;
-				while (!validRange)
-				{
+				while (!validRange) {
 					partitionsPossessed = checkValidIntInput ("Enter minimum number of possessed partitions to consider: ");
-					if (partitionsPossessed >= 1 && partitionsPossessed <= numPartitions - 1)
-					{
+					if (partitionsPossessed >= 1 && partitionsPossessed <= numPartitions - 1) {
 						validRange = true;
-					}
-					else
-					{
+					} else {
 						cout << "Invalid entry '" << partitionsPossessed << "'. Must be between 1 and "
 							<< numPartitions - 1 << ". Try again." << endl;
 					}
 				}
 				excludeTaxaPossessingNGenes (partitionsPossessed, data, taxonNames, taxonWeights, false);
-			}
-			else if (checkCharValue(userChoice,'s')) // only present for a specific partition
-			{
+			} else if (checkCharValue(userChoice,'s')) { // only present for a specific partition
 				validChoice = true;
 				
 				cout << endl << "Partitions available:" << endl;
@@ -715,76 +586,59 @@ void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, 
 		// Ability to read in multiple inputs
 				validIntEntry = false;
 				istringstream tempStream(tempString);
-				while (tempStream >> userSelection)
-				{
+				while (tempStream >> userSelection) {
 					validIntEntry = true;
 					userInput.push_back(userSelection);
 					numEntries++;
 				}
-				if (userSelection == 0)
-				{
+				if (userSelection == 0) {
 					done = true;
 					continue;
 				}
-				if (!validIntEntry)
-				{
+				if (!validIntEntry) {
 					cout << endl << "*** Invalid input. Integer must be between 0 and " << numPartitions << " ***" << endl;
 					cin.clear();
 					userInput.clear();
 					done = false;
 					continue;
 				}
-				if (validIntEntry)
-				{
-					if (cin.fail() || userSelection < 0 || userSelection > numPartitions)
-					{
+				if (validIntEntry) {
+					if (cin.fail() || userSelection < 0 || userSelection > numPartitions) {
 						cout << endl << "*** Invalid input. Integer must be between 0 and " << numPartitions << " ***" << endl;
 						cin.clear();
 						userInput.clear();
 						done = false;
 						continue;
-					}
-					else
-					{
+					} else {
 						vector <int> excludeTaxa;
 						int numTaxa = (int)taxonNames.size();
 						
-						for (int editIter = 0; editIter < numEntries; editIter++)
-						{
+						for (int editIter = 0; editIter < numEntries; editIter++) {
 							int curPart = userInput[editIter] - 1;
-							for (int taxIter = 0; taxIter < numTaxa; taxIter++)
-							{
+							for (int taxIter = 0; taxIter < numTaxa; taxIter++) {
 								int sum = 0;
-								if (data[taxIter][curPart] == 1)
-								{
-									for (int partIter = 0; partIter < numPartitions; partIter++)
-									{
-										if (data[taxIter][partIter] == 1)
-										{
+								if (data[taxIter][curPart] == 1) {
+									for (int partIter = 0; partIter < numPartitions; partIter++) {
+										if (data[taxIter][partIter] == 1) {
 											sum +=1;
 										}
 									}
 								}
-								if (sum == 1) // only present for focal gene
-								{
+								if (sum == 1) { // only present for focal gene
 									excludeTaxa.push_back(taxIter);
 									excludedTaxa.push_back(taxonNames[taxIter]);
 								}
 							}
 						}
-						if (excludeTaxa.size() != 0)
-						{
+						if (excludeTaxa.size() != 0) {
 							reverse(excludeTaxa.begin(), excludeTaxa.end());
-							for (int editIter = 0; editIter < int(excludeTaxa.size()); editIter++)
-							{
+							for (int editIter = 0; editIter < int(excludeTaxa.size()); editIter++) {
 								int currentTaxon = excludeTaxa[editIter];
 								data.erase(data.begin()+currentTaxon);
 								taxonNames.erase(taxonNames.begin()+currentTaxon);
 								taxonWeights.erase(taxonWeights.begin()+currentTaxon);
 							}
-						}
-						else
-						{
+						} else {
 							cout << "No currently implemented taxa conform to condition" << endl;
 						}
 						userInput.clear();
@@ -793,19 +647,13 @@ void excludeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, 
 				cout << endl << "Excluded taxa:" << endl;
 				printVectorAsList (excludedTaxa);
 				excludedTaxa.clear();
-			}
-			else if (checkCharValue(userChoice,'p'))
-			{
+			} else if (checkCharValue(userChoice,'p')) {
 				excludeTaxaMinimalOverlap (data, taxonNames, taxonWeights);
-			}
-			else if (checkCharValue(userChoice,'b'))
-			{
+			} else if (checkCharValue(userChoice,'b')) {
 				validChoice = true;
 				done = true;
 				continue;
-			}
-			else
-			{
+			} else {
 				cout << "Invalid input option (" << userChoice << "). Try again." << endl;
 			}
 		}
@@ -820,55 +668,42 @@ void excludeTaxaMissingNGenes (int const& partitionsMissing, vector < vector <in
 	int numTaxa = (int)data.size();
 	int numPartitions = (int)data[0].size();
 	
-	if (missingExact)
-	{
-		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++)
-		{
+	if (missingExact) {
+		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++) {
 			int sum = 0;
-			for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++)
-			{
+			for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++) {
 				sum += data[taxonIter][partitionIter];
 			}
-			if (sum == (numPartitions - partitionsMissing))
-			{
+			if (sum == (numPartitions - partitionsMissing)) {
+				excludedIndices.push_back(taxonIter);
+				excludedTaxa.push_back(taxonNames[taxonIter]);
+			}
+		}
+	} else { // minimum bound
+		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++) {
+			int sum = 0;
+			for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++) {
+				sum += data[taxonIter][partitionIter];
+			}
+			if (sum <= (numPartitions - partitionsMissing)) {
 				excludedIndices.push_back(taxonIter);
 				excludedTaxa.push_back(taxonNames[taxonIter]);
 			}
 		}
 	}
-	else // minimum bound
-	{
-		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++)
-		{
-			int sum = 0;
-			for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++)
-			{
-				sum += data[taxonIter][partitionIter];
-			}
-			if (sum <= (numPartitions - partitionsMissing))
-			{
-				excludedIndices.push_back(taxonIter);
-				excludedTaxa.push_back(taxonNames[taxonIter]);
-			}
-		}
-	}
-	if (excludedIndices.size() != 0)
-	{
+	if (excludedIndices.size() != 0) {
 		int numExcluded = (int)excludedTaxa.size();
 		cout << endl << "Excluded taxa:" << endl;
 		printVectorAsList (excludedTaxa);
 		
 // reverse-sort excludedTaxa vector
 		reverse(excludedIndices.begin(),excludedIndices.end());
-		for (int i = 0; i < numExcluded; i++)
-		{
+		for (int i = 0; i < numExcluded; i++) {
 			data.erase(data.begin()+excludedIndices[i]);
 			taxonNames.erase(taxonNames.begin()+excludedIndices[i]);
 			taxonWeights.erase(taxonWeights.begin()+excludedIndices[i]);
 		}
-	}
-	else
-	{
+	} else {
 		cout << "No currently implemented taxa conform to condition. Your data are better than that. Yay!" << endl;
 	}
 }
@@ -881,55 +716,42 @@ void excludeTaxaPossessingNGenes (int const& partitionsPossessed, vector < vecto
 	int numTaxa = (int)data.size();
 	int numPartitions = (int)data[0].size();
 	
-	if (possessingExact)
-	{
-		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++)
-		{
+	if (possessingExact) {
+		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++) {
 			int sum = 0;
-			for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++)
-			{
+			for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++) {
 				sum += data[taxonIter][partitionIter];
 			}
-			if (sum == partitionsPossessed)
-			{
+			if (sum == partitionsPossessed) {
+				excludedIndices.push_back(taxonIter);
+				excludedTaxa.push_back(taxonNames[taxonIter]);
+			}
+		}
+	} else { // minimum bound
+		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++) {
+			int sum = 0;
+			for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++) {
+				sum += data[taxonIter][partitionIter];
+			}
+			if (sum <= partitionsPossessed) {
 				excludedIndices.push_back(taxonIter);
 				excludedTaxa.push_back(taxonNames[taxonIter]);
 			}
 		}
 	}
-	else // minimum bound
-	{
-		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++)
-		{
-			int sum = 0;
-			for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++)
-			{
-				sum += data[taxonIter][partitionIter];
-			}
-			if (sum <= partitionsPossessed)
-			{
-				excludedIndices.push_back(taxonIter);
-				excludedTaxa.push_back(taxonNames[taxonIter]);
-			}
-		}
-	}
-	if (excludedIndices.size() != 0)
-	{
+	if (excludedIndices.size() != 0) {
 		int numExcluded = (int)excludedTaxa.size();
 		cout << endl << "Excluded taxa:" << endl;
 		printVectorAsList (excludedTaxa);
 		
 // reverse-sort excludedTaxa vector
 		reverse(excludedIndices.begin(),excludedIndices.end());
-		for (int i = 0; i < numExcluded; i++)
-		{
+		for (int i = 0; i < numExcluded; i++) {
 			data.erase(data.begin()+excludedIndices[i]);
 			taxonNames.erase(taxonNames.begin()+excludedIndices[i]);
 			taxonWeights.erase(taxonWeights.begin()+excludedIndices[i]);
 		}
-	}
-	else
-	{
+	} else {
 		cout << "No currently implemented taxa conform to condition. Your data are better than that. Yay!" << endl;
 	}
 }
@@ -951,8 +773,7 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 	cout << "Exclude [M]inimally overlapping taxa (i.e. just the worst) or implement [T]hreshold: ";
 	cin >> userChoice;
 	
-	if (checkCharValue(userChoice,'t'))
-	{
+	if (checkCharValue(userChoice,'t')) {
 		invokeThreshold = true;
 		cout << "Enter threshold value (minimum proportion of taxonomic overlap): ";
 		cin >> thresholdValue;
@@ -963,19 +784,14 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 	}
 	
 // Count
-	for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++)
-	{
+	for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++) {
 		int sum = 0;
 		vector <int> temp (numTaxa, 0);
 		
-		for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++)
-		{
-			if (data[taxonIter][partitionIter] == 1)
-			{
-				for (int taxIter = 0; taxIter < numTaxa; taxIter++)
-				{
-					if (data[taxIter][partitionIter] == 1)
-					{
+		for (int partitionIter = 0; partitionIter < numPartitions; partitionIter++) {
+			if (data[taxonIter][partitionIter] == 1) {
+				for (int taxIter = 0; taxIter < numTaxa; taxIter++) {
+					if (data[taxIter][partitionIter] == 1) {
 						temp[taxIter] = 1;
 					}
 				}
@@ -987,8 +803,7 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 		if (debuggering) {cout << "Overlap count for taxon '" << taxonNames[taxonIter] << "' is: " << sum << endl;}
 		
 		counts.push_back(sum);
-		if (sum < minCount)
-		{
+		if (sum < minCount) {
 			minCount = sum;
 		}
 	}
@@ -997,16 +812,12 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 	
 	minOverlap = double(minCount) / double(numTaxa);
 	
-	if (minCount < numTaxa)
-	{
-		if (!invokeThreshold) // just take the lowest motherfuckers
-		{
+	if (minCount < numTaxa) {
+		if (!invokeThreshold) { // just take the lowest motherfuckers
 			cout << endl << "Minimum taxon overlap is: " << minOverlap << endl;
-			for (int taxonIter = numTaxa-1; taxonIter >= 0; taxonIter--)
-			{
+			for (int taxonIter = numTaxa-1; taxonIter >= 0; taxonIter--) {
 				if (debuggering) {cout << "taxon '" << taxonNames[taxonIter] << "' has count: " << counts[taxonIter] << endl;}
-				if (counts[taxonIter] == minCount)
-				{
+				if (counts[taxonIter] == minCount) {
 					excludedTaxa.push_back(taxonNames[taxonIter]);
 					if (debuggering) {cout << "DELETE! taxonIter = " << taxonIter << "; taxon = " << taxonNames[taxonIter] << endl;}
 					data.erase(data.begin()+taxonIter);
@@ -1016,15 +827,11 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 			}
 			cout << endl << "Excluded taxa:" << endl;
 			printVectorAsList (excludedTaxa);
-		}
-		else
-		{
+		} else {
 			cout << endl << "Threshold taxon overlap is: " << thresholdValue << endl;
-			for (int taxonIter = numTaxa-1; taxonIter >= 0; taxonIter--)
-			{
+			for (int taxonIter = numTaxa-1; taxonIter >= 0; taxonIter--) {
 				if (debuggering) {cout << "taxon '" << taxonNames[taxonIter] << "' has count: " << counts[taxonIter] << endl;}
-				if (counts[taxonIter] <= thresholdCount)
-				{
+				if (counts[taxonIter] <= thresholdCount) {
 					excludedTaxa.push_back(taxonNames[taxonIter]);
 					if (debuggering) {cout << "DELETE! taxonIter = " << taxonIter << "; taxon = " << taxonNames[taxonIter] << endl;}
 					data.erase(data.begin()+taxonIter);
@@ -1032,19 +839,14 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 					taxonWeights.erase(taxonWeights.begin()+taxonIter);
 				}
 			}
-			if (!excludedTaxa.empty())
-			{
+			if (!excludedTaxa.empty()) {
 				cout << endl << "Excluded taxa:" << endl;
 				printVectorAsList (excludedTaxa);
-			}
-			else
-			{
+			} else {
 				cout << endl << "No taxon meets threshold criterion. Your data are better than that. Yay!" << endl;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		cout << endl << "Taxon overlap is complete; no taxa to delete. Matrix is completely decisive, dude." << endl;
 	}
 }
@@ -1058,8 +860,7 @@ void mergeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, ve
 	int numEntries = 0;
 	int taxonSelection;
 	
-	while (!done)
-	{
+	while (!done) {
 		cout << endl << "Taxa available:" << endl;
 		printVectorAsList(taxonNames);
 		
@@ -1071,45 +872,36 @@ void mergeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, ve
 // Ability to read in multiple inputs
 		validIntEntry = false;
 		istringstream tempStream(tempString);
-		while (tempStream >> taxonSelection)
-		{
+		while (tempStream >> taxonSelection) {
 			validIntEntry = true;
 			userInput.push_back(taxonSelection);
 			numEntries++;
 		}
-		if (taxonSelection == 0)
-		{
+		if (taxonSelection == 0) {
 			done = true;
 			continue;
 		}
-		if (!validIntEntry)
-		{
+		if (!validIntEntry) {
 			cout << endl << "*** Invalid input. Integer must be between 0 and " << taxonNames.size() << " ***" << endl;
 			cin.clear();
 			userInput.clear();
 			done = false;
 			continue;
 		}
-		if (validIntEntry)
-		{
-			if (cin.fail() || taxonSelection < 0 || taxonSelection > int(taxonNames.size()))
-			{
+		if (validIntEntry) {
+			if (cin.fail() || taxonSelection < 0 || taxonSelection > int(taxonNames.size())) {
 				cout << endl << "*** Invalid input. Integer must be between 0 and " << taxonNames.size() << " ***" << endl;
 				cin.clear();
 				userInput.clear();
 				done = false;
 				continue;
-			}
-			else if (numEntries < 2)
-			{
+			} else if (numEntries < 2) {
 				cout << endl << "Must reference at least 2 taxa. Try again." << endl;
 				cin.clear();
 				userInput.clear();
 				done = false;
 				continue;
-			}
-			else
-			{
+			} else {
 				sort(userInput.begin(), userInput.end());
 // Order from 'largest' to 'smallest' index; otherwise need keep track of changing indices
 				reverse(userInput.begin(), userInput.end());
@@ -1117,15 +909,11 @@ void mergeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, ve
 				string mergedTaxonName;
 				vector < vector <int> > tempIntVector;
 				vector <double> tempWeightVector;
-				for (int editIter = 0; editIter < numEntries; editIter++)
-				{
+				for (int editIter = 0; editIter < numEntries; editIter++) {
 					int currentTaxonID = userInput[editIter] - 1;
-					if (editIter == 0)
-					{
+					if (editIter == 0) {
 						mergedTaxonName = taxonNames[currentTaxonID];
-					}
-					else
-					{
+					} else {
 						mergedTaxonName = mergedTaxonName + "_+_" + taxonNames[currentTaxonID];
 					}
 					tempIntVector.push_back(data[currentTaxonID]);
@@ -1139,8 +927,7 @@ void mergeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, ve
 				string query = "Default name for chimeric taxon is '" + mergedTaxonName + "'. " + 
 					"Enter (0) to keep this name, or (1) to provide a new name: ";
 				renameMergedTaxon = checkValidBoolInput(query);
-				if (renameMergedTaxon)
-				{
+				if (renameMergedTaxon) {
 					cout << "Enter name for chimeric taxon: ";
 					cin >> mergedTaxonName;
 				}
@@ -1149,12 +936,9 @@ void mergeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, ve
 				
 				int numLoci = (int)tempIntVector[0].size();
 				vector <int> mergedData (numLoci, 0);
-				for (int i = 0; i < numLoci; i++) // Merge data
-				{
-					for (int j = 0; j < int(tempIntVector.size()); j++)
-					{
-						if (tempIntVector[j][i] == 1)
-						{
+				for (int i = 0; i < numLoci; i++) { // Merge data
+					for (int j = 0; j < int(tempIntVector.size()); j++) {
+						if (tempIntVector[j][i] == 1) {
 							mergedData[i] = 1;
 							j = int(tempIntVector.size()); // Match found; exit
 						}
