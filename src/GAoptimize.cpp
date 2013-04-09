@@ -51,16 +51,14 @@ double calcFit (bool const& referenceTaxonPresent, int & numTrees,
 	fit = calculatePartialDecisiveness(referenceTaxonPresent, numTrees, data, 0, numProcs, verbose);
 	
 	
-	if (includeDiversity) // should distribution of decisiveness across loci be taken into account?
-	{
+	if (includeDiversity) { // should distribution of decisiveness across loci be taken into account?
 		double weightedFit = 0.0;
 		double harmonicMean = 0.0;
 		double inverse_sum = 0.0;
 		double weightOverall = 0.5;
 		double arithmeticMean = 0.0;
 		
-		for (int i = 0; i < (int)data[0].size(); i++)
-		{
+		for (int i = 0; i < (int)data[0].size(); i++) {
 			double tempFit = calculatePartialDecisivenessSinglePartition(referenceTaxonPresent,
 				numTrees, data, 0, i, verbose, numProcs); // set verbose to false
 			inverse_sum += (1/tempFit);
@@ -141,26 +139,19 @@ int optimizeDecisivnessGA (vector < vector <int> > & data,
 // This should be changed to allow genes to be removed.
 	cout << endl << "SETTING UP INITIAL POPULATION" << endl << endl;
 	cout << "Population consists of " << populationSize << " individuals." << endl;
-	if (numAdd < 0) // subtract genes; not sure when this will be used...
-	{
+	if (numAdd < 0) { // subtract genes; not sure when this will be used...
 		cout << numAdd << " populated cells will be removed." << endl;
-		for (int i = 0; i < populationSize; i++)
-		{ 
+		for (int i = 0; i < populationSize; i++) {
 			population[i] = data;
-			for (int j = numAdd; j < 0; j++)
-			{
+			for (int j = numAdd; j < 0; j++) {
 				mutate(population[i], legal, 0, 1);
 			}
 		}
-	}
-	else // add genes
-	{
+	} else { // add genes
 		cout << numAdd << " additional random taxon-character cells will be populated for each individual..." << endl;
-		for (int i = 0; i < populationSize; i++)
-		{ 
+		for (int i = 0; i < populationSize; i++) {
 			population[i] = data;
-			for (int j = 0; j < numAdd; j++) // Randomly add numAdd genes in legal positions
-			{
+			for (int j = 0; j < numAdd; j++) { // Randomly add numAdd genes in legal positions
 				mutate(population[i], legal, 1, 0); // last 2 arguments are add, remove (boolean)
 			}
 		}
@@ -172,12 +163,10 @@ int optimizeDecisivnessGA (vector < vector <int> > & data,
 // Calculate initial fitness. For each matrix, crunch through 1000 trees
 	cout << "Calculating initial fitnesses for all individuals..." << endl;
 	
-	for (int i = 0; i < populationSize; i++)
-	{
+	for (int i = 0; i < populationSize; i++) {
 		fitness[i] = calcFit(referenceTaxonPresent, numTrees, population[i], numProcs);
 	//	cout << "Fitness for individual " << i << " is: " << fitness[i] << "." << endl;
-		if (fitness[i] > bestSolution)
-		{
+		if (fitness[i] > bestSolution) {
 			bestSolution = fitness[i];
 			bestConfiguration = population[i];
 	//		cout << "Best solution from initial population = " << bestSolution << "." << endl;
@@ -191,13 +180,11 @@ int optimizeDecisivnessGA (vector < vector <int> > & data,
 	int gen = 0; 		// counter for number of generations
 
 // Check for out of bounds parameter values
-	if (populationSize < 3)
-	{ 
+	if (populationSize < 3) {
 		cout << "Population size must be greater than 2" << endl;
 		return(1);
 	}
-	if (tournamentSize < 2)
-	{
+	if (tournamentSize < 2) {
 		cout << "Tournament group size must be greater than 1" << endl;
 		return(1);
 	}
@@ -206,8 +193,7 @@ int optimizeDecisivnessGA (vector < vector <int> > & data,
 	cout << endl << "STARTING EVOLUTION" << endl << endl;
 	cout << "Running for a total of " << maxgen << " generations." << endl << endl;
 	// cout << "Progress:" << endl;
-	while (!done)
-	{
+	while (!done) {
 		gen = gen + 1;
 		cout << "Generation " << gen;
 // Choose tournament group
@@ -220,16 +206,13 @@ int optimizeDecisivnessGA (vector < vector <int> > & data,
 		
 // selection step
 		//for (int i = 1; i < tournamentSize; i++)
-		for (int i = 0; i < tournamentSize; i++)
-		{
+		for (int i = 0; i < tournamentSize; i++) {
 			random = (int)(rand() % populationSize);
-			if (fitness[random] > bestFit)
-			{
+			if (fitness[random] > bestFit) {
 				bestFit = fitness[random];
 				best = random;
 			}
-			if (fitness[random] < worstFit)
-			{
+			if (fitness[random] < worstFit) {
 				worstFit = fitness[random];
 				worst = random;
 			}
@@ -237,8 +220,7 @@ int optimizeDecisivnessGA (vector < vector <int> > & data,
 		
 // make sure best and worst are not the same
 // if they are the same, choose new best randomly from population
-		while (best == worst)
-		{
+		while (best == worst) {
 			best = (int)(rand() % (populationSize));
 		}
 
@@ -247,25 +229,20 @@ int optimizeDecisivnessGA (vector < vector <int> > & data,
 		
 		
 // enter stepwise function. too demanding.
-// 		if (gen % 1000 == 0)
-// 		{
+// 		if (gen % 1000 == 0) {
 // 			cout << ": Entering stepwise phase." << endl;
 // 			stepReplace (population[worst], legal, maxGenes, referenceTaxonPresent, numProcs);
 // 		}
 // 		else {
 // Mutate with some probability, otherwise xover
 			double randmu = (double) rand() / RAND_MAX;
-			if (randmu < mutationProbability)
-			{
+			if (randmu < mutationProbability) {
 // mutate; change one cell.
 				mutate(population[worst], legal, 1, 1);
-			}
-			else
-			{
+			} else {
 // xover with random individual in population
 				int randx = (int)(rand() % populationSize);
-				while (randx == worst)
-				{
+				while (randx == worst) {
 					randx = (int)(rand() % populationSize);
 				}
 				xover(population[worst], population[randx], legal, maxGenes);
@@ -274,21 +251,17 @@ int optimizeDecisivnessGA (vector < vector <int> > & data,
 // Calculate fitness of new individual
 		fitness[worst] = calcFit(referenceTaxonPresent, numTrees, population[worst], numProcs);
 		
-		if (fitness[worst] > bestSolution)
-		{
+		if (fitness[worst] > bestSolution) {
 			bestSolution = fitness[worst];
 			bestConfiguration = population[worst];
 			genStalled = 0;
-		}
-		else
-		{
+		} else {
 			genStalled += 1;
 		}
 		
 // Check to see if max number of generations has been reached
 		cout << ": best solution thus far = " << bestSolution << "." << endl;
-		if (gen == maxgen || genStalled == maxGenStalled)
-		{
+		if (gen == maxgen || genStalled == maxGenStalled) {
 			done = 1;
 		}
 	} 
@@ -344,8 +317,7 @@ int countLociPresent (vector < vector <int> > const& data)
 	//cout << "count = " << count;
 	
 // faster option:
-	for (int i = 0; i < numTaxa; i++)
-	{
+	for (int i = 0; i < numTaxa; i++) {
 		count += accumulate(data[i].begin(), data[i].end(), 0);
 	}
 
@@ -367,18 +339,12 @@ void mutate (vector < vector <int> > & data, vector < vector <int> > const& lega
 
 // count number of legal positions
 // probably a faster way to do this
-	for (int i = 0; i < numTaxa; i++)
-	{ 
-		for (int j = 0; j < numLoci; j++)
-		{ 
-			if (legal[i][j])
-			{
-				if (data[i][j])
-				{
+	for (int i = 0; i < numTaxa; i++) {
+		for (int j = 0; j < numLoci; j++) {
+			if (legal[i][j]) {
+				if (data[i][j]) {
 					count1++;
-				}
-				else
-				{
+				} else {
 					count0++;
 				}
 			}
@@ -387,30 +353,22 @@ void mutate (vector < vector <int> > & data, vector < vector <int> > const& lega
 	
 // select random currently absent gene to add
 	int radd = 0;
-	if (add)
-	{
-		if (!count0)
-		{
+	if (add) {
+		if (!count0) {
 			cout << "All legal loci full, cannot add." << endl;
 			return;
-		}
-		else
-		{
+		} else {
 			radd = rand() % count0;
 			if (debuggering) {cout << "Randomly adding taxon-gene to cell " << radd << "." << endl;}
 		}
 	}
 // select random currently present gene to remove
 	int rremove = 0;
-	if (remove)
-	{
-		if (!count1)
-		{
+	if (remove) {
+		if (!count1) {
 			cout << "All legal loci empty, cannot remove." << endl;
 			return;
-		}
-		else
-		{
+		} else {
 			rremove = rand() % count1;
 			if (debuggering) {cout << "Randomly removing taxon-gene from cell " << rremove << "." << endl;}
 		}
@@ -420,34 +378,25 @@ void mutate (vector < vector <int> > & data, vector < vector <int> > const& lega
 	count0 = -1;
 	count1 = -1;
 
-	for (int i = 0; i < numTaxa; i++)
-	{ 
-		for (int j = 0; j < numLoci; j++)
-		{ 
-			if (legal[i][j])
-			{
-				if (data[i][j])
-				{
+	for (int i = 0; i < numTaxa; i++) {
+		for (int j = 0; j < numLoci; j++) {
+			if (legal[i][j]) {
+				if (data[i][j]) {
 					count1++;
 				}
-				if (!data[i][j])
-				{
+				if (!data[i][j]) {
 					count0++;
 				}
 
 // after finding correct position, change value
-				if (remove)
-				{
-					if (count1 == rremove)
-					{
+				if (remove) {
+					if (count1 == rremove) {
 						data[i][j] = 0;
 						rremove = -1;
 					}
 				}
-				if (add)
-				{
-					if (count0 == radd)
-					{
+				if (add) {
+					if (count0 == radd) {
 						data[i][j] = 1;
 						radd = -1;
 					}
@@ -467,26 +416,20 @@ void xover ( vector < vector <int> > & recipient, vector < vector <int> > const&
 
 	int lower = rand()%(numLoci);
 	int upper = lower + rand() % (numLoci-lower);
-	for (int i = 0; i < numTaxa; i++)
-	{ 
-		for (int j = lower; j <= upper; j++)
-		{ 
+	for (int i = 0; i < numTaxa; i++) {
+		for (int j = lower; j <= upper; j++) {
 			recipient[i][j] = donor[i][j];
 		}
 	}
 // randomly add or remove genes if too many or too few
 	int numAdd = maxGenes - countLociPresent(recipient);	
-	if (numAdd > 0)
-	{
-		for (int i = 0; i < numAdd; i++)
-		{
+	if (numAdd > 0) {
+		for (int i = 0; i < numAdd; i++) {
 			mutate(recipient, legal, 1, 0);
 		}
 	}
-	if (numAdd < 0)
-	{
-		for (int i=numAdd; i<0; i++)
-		{
+	if (numAdd < 0) {
+		for (int i=numAdd; i<0; i++) {
 			mutate(recipient, legal, 0, 1);
 		}
 	}
@@ -565,19 +508,14 @@ int stepReplace (vector < vector < int > > & data, vector < vector < int > > con
 	// fill matrix randomly 
 	int numAdd = maxGenes - numInitialLoci; // number of genes to add
 
-	if (numAdd < 0) // subtract genes
-	{
+	if (numAdd < 0) { // subtract genes
 		cout << "Genes will be removed" << endl;
-		for (int j = numAdd; j < 0; j++)
-		{
+		for (int j = numAdd; j < 0; j++) {
 			mutate(data, legal, 0, 1);
 		}
 
-	}
-	else // add genes
-	{
-		for (int j = 0; j < numAdd; j++)
-		{
+	} else { // add genes
+		for (int j = 0; j < numAdd; j++) {
 			mutate(data, legal, 1, 0);
 		}
 	}
@@ -587,30 +525,24 @@ int stepReplace (vector < vector < int > > & data, vector < vector < int > > con
 	
 // probably better if taxa and loci selected randomly.
 	
-	while (!done)
-	{
+	while (!done) {
 		loops++;
 		int moves = 0;
 		cout << "Step #" << loops << endl;
 		vector <int> temp (numTaxa);
-		for (int i = 0; i < numTaxa; i++)
-		{
+		for (int i = 0; i < numTaxa; i++) {
 			temp[i] = i;
 		}
 		
 		vector <int> taxaOrder (numTaxa);
-		for (int i = 0; i < numTaxa; i++)
-		{
+		for (int i = 0; i < numTaxa; i++) {
 			taxaOrder[i] = (int)(rand() % (int)temp.size());
 		}
 		
-		for (int k = 0; k < numTaxa; k++)
-		{
+		for (int k = 0; k < numTaxa; k++) {
 			int taxa = taxaOrder[k];
-			for (int loci = 0; loci < numLoci; loci++)
-			{
-				if (data[taxa][loci] & legal[taxa][loci]) // if loci present and movable
-				{
+			for (int loci = 0; loci < numLoci; loci++) {
+				if (data[taxa][loci] & legal[taxa][loci]) { // if loci present and movable
 					data[taxa][loci] = 0;	// remove datum
 
 // use -1 to solve uninitializing problems
@@ -622,18 +554,14 @@ int stepReplace (vector < vector < int > > & data, vector < vector < int > > con
 					double bestDecisive = calcFit(referenceTaxonPresent, numTrees, data, numProcs);
 					
 					// test all possible positions
-					for (int i = 0; i < numTaxa; i++)
-					{ 
-						for (int j = 0; j < numLoci; j++)
-						{ 
-							if (legal[i][j] & !data[i][j])
-							{
+					for (int i = 0; i < numTaxa; i++) {
+						for (int j = 0; j < numLoci; j++) {
+							if (legal[i][j] & !data[i][j]) {
 								vector < vector < int > > temp = data;
 								temp[i][j] = 1;
 								//double tempDecisive = calcFit(temp);
 								double tempDecisive = calcFit(referenceTaxonPresent, numTrees, temp, numProcs);
-								if (tempDecisive >= bestDecisive)
-								{
+								if (tempDecisive >= bestDecisive) {
 									bestDecisive = tempDecisive;
 									bestTax = i;
 									bestLoci = j;
@@ -641,13 +569,11 @@ int stepReplace (vector < vector < int > > & data, vector < vector < int > > con
 							}
 						}
 					}
-					if (bestTax != -1 && bestLoci != -1)
-					{
+					if (bestTax != -1 && bestLoci != -1) {
 						data[bestTax][bestLoci] = 1;
 					}
 					data[bestTax][bestLoci] = 1; // add loci to best position
-					if ((bestTax != taxa) || (bestLoci != loci))
-					{
+					if ((bestTax != taxa) || (bestLoci != loci)) {
 						moves++;
 					}
 				}
@@ -656,8 +582,7 @@ int stepReplace (vector < vector < int > > & data, vector < vector < int > > con
 // done when no moves made
 		if (moves < 1) done = 1; 
 // check for maximum number of iterations
-		if (loops >= maxLoops)
-		{
+		if (loops >= maxLoops) {
 			cout << "Max loops reached" << endl;
 			done = 1;
 		}
@@ -675,10 +600,8 @@ vector < vector <int> > getLegalMatrix (vector < vector <int> > const& data)
 	
 //	cout << "First:" << endl;
 //	printData(legal);
-	for (int i = 0; i < numTaxa; i++)
-	{
-		for (int j = 0; j < numLoci; j++)
-		{
+	for (int i = 0; i < numTaxa; i++) {
+		for (int j = 0; j < numLoci; j++) {
 			legal[i][j] =! data[i][j]; // clever
 		}
 	}
@@ -690,10 +613,8 @@ vector < vector <int> > getLegalMatrix (vector < vector <int> > const& data)
 // troubleshooting function
 void printData (vector < vector <int> > const& data)
 {
-	for (int i = 0; i < (int)data.size(); i++)
-	{
-		for (int j = 0; j < (int)data[0].size(); j++)
-		{
+	for (int i = 0; i < (int)data.size(); i++) {
+		for (int j = 0; j < (int)data[0].size(); j++) {
 			cout << data[i][j] << " ";
 		}
 		cout << endl;
@@ -718,37 +639,30 @@ void printGADataToFile (vector < vector <int> > const& data, vector <string> con
 	string maxString;
 	int longestName = 0;
 	
-	for (int i = 0; i < numTaxa; i++)
-	{		
+	for (int i = 0; i < numTaxa; i++) {
 		string currentString = taxonNames[i];
-		if (currentString.size() > maxString.size())
-		{
+		if (currentString.size() > maxString.size()) {
 			maxString = currentString;
 		}
 	}
 // Determine length of longest name
-	for (string::const_iterator iterCharacters = maxString.begin(); iterCharacters < maxString.end(); ++iterCharacters)
-	{
+	for (string::const_iterator iterCharacters = maxString.begin(); iterCharacters < maxString.end(); ++iterCharacters) {
 		longestName++;
 	}
 	
-	for (int i = 0; i < numTaxa; i++)
-	{		
+	for (int i = 0; i < numTaxa; i++) {
 		log << " " ;
 // Print out leading spaces
 		string tempName = taxonNames[i];
-		if (tempName.size() < maxString.size())
-		{
+		if (tempName.size() < maxString.size()) {
 			string::size_type tempDiffSize;
 			tempDiffSize = maxString.size() - tempName.size();
-			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
-			{
+			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++) {
 				log << " ";
 			}
 		}
 		log << tempName << " ";
-		for (int j = 0; j < numLoci; j++)
-		{
+		for (int j = 0; j < numLoci; j++) {
 			log << data[i][j];
 		}
 	log << endl;
