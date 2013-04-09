@@ -173,8 +173,7 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 									cout << "Data are not in interleaved format." << endl;
 									continue;
 								}
-							} else // format: interleave= yes
-							{
+							} else { // format: interleave= yes
 								stringPosition++;
 								tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
 								if (checkStringValue(tempString, "yes", 0)) {
@@ -187,8 +186,7 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 									continue;
 								}
 							}
-						} else // format: interleave = yes or interleave
-						{
+						} else { // format: interleave = yes or interleave
 							stringPosition++;
 							tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
 							if (checkStringValue(tempString, "yes", 0)) {
@@ -207,33 +205,24 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 							}
 						}
 					} else if (checkStringValue(tempString, "datatype", 0)) {
-						if (equalSignEncountered) // format: datatype=dna or datatype= dna
-						{
+						if (equalSignEncountered) { // format: datatype=dna or datatype= dna
 							tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
-							if (!tempString.empty()) // format: datatype=8
-							{
+							if (!tempString.empty()) { // format: datatype=8
 								tempString = removeStringSuffix(tempString, ';', numTaxaEncountered); // possibly last
 								dataType = tempString;
-							}
-							else // format: datatype= dna
-							{
+							} else { // format: datatype= dna
 								stringPosition++;
 								tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', numTaxaEncountered); // possibly last
 								dataType = tempString;
 							}
-						}
-						else // format: datatype = dna or datatype =dna
-						{
+						} else { // format: datatype = dna or datatype =dna
 							stringPosition++;
 							tempString = extractStringElement(line,stringPosition);
-							if (tempString == "=") // format: datatype = dna
-							{
+							if (tempString == "=") { // format: datatype = dna
 								stringPosition++;
 								tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', numTaxaEncountered);
 								dataType = tempString;
-							}
-							else// format: datatype =dna
-							{
+							} else { // format: datatype =dna
 								tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
 								tempString = removeStringSuffix(tempString, ';', numTaxaEncountered);
 								dataType = tempString;
@@ -439,8 +428,7 @@ void printCollectedCharsets (vector <string> const& collectedCharsets, vector < 
 		if (counter < 9) {
 			cout << " ";
 		}
-		if (includedLocusRanges[counter][0] == 0)	// Code for simple ranges
-		{
+		if (includedLocusRanges[counter][0] == 0) {	// Code for simple ranges
 			int tempLength = includedLocusRanges[counter][2] - includedLocusRanges[counter][1] + 1;
 			
 			cout << "(" << counter + 1 << "): " << *charsetIter << ", positions " << includedLocusRanges[counter][1] << "-" << includedLocusRanges[counter][2] <<
@@ -451,9 +439,7 @@ void printCollectedCharsets (vector <string> const& collectedCharsets, vector < 
 				cout << " characters)" << endl;
 			}
 			sum += tempLength;
-		}
-		else if (includedLocusRanges[counter][0] == 1)	// Code for interval ranges
-		{
+		} else if (includedLocusRanges[counter][0] == 1) {	// Code for interval ranges
 			int tempLength = getIntervalPartitionLength(counter, includedLocusRanges);
 			
 			cout << "(" << counter + 1 << "): " << *charsetIter << ", positions " << includedLocusRanges[counter][1] << "-" << includedLocusRanges[counter][2] << ", every " << includedLocusRanges[counter][3]

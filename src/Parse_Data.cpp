@@ -18,12 +18,10 @@ vector < vector <int> > storeData (vector <string> & inputData, int const& numLo
 	vector <int> tempIntVector;
 	int numTaxa = (int)inputData.size() - 1;
 	
-	for (int i = 1; i <= numTaxa; i++)
-	{
+	for (int i = 1; i <= numTaxa; i++) {
 		tempStringVector = storeStringVector(inputData[i]);
 		tempStringVector.erase(tempStringVector.begin());
-		for (int j = 0; j < numLoci; j++)
-		{
+		for (int j = 0; j < numLoci; j++) {
 			tempIntVector.push_back(convertStringtoInt(tempStringVector[j]));
 		}
 		data.push_back(tempIntVector);
@@ -39,17 +37,13 @@ void getWeights (string const& weightFileName, vector <double> & weights, vector
 	int numElements = (int)names.size();
 	weights = vector <double> (numElements, 1.0); // By default, apply weight of 1.0 to all
 	
-	if (!weightFileName.empty())
-	{
+	if (!weightFileName.empty()) {
 		tempVector = collectData(weightFileName);
 		int numReweight = (int)tempVector.size();
 		
-		for (int i = 1; i < numReweight; i++) // skip header line
-		{
-			for (int j = 0; j < numElements; j++)
-			{
-				if (extractStringElement(tempVector[i],0) == names[j])
-				{
+		for (int i = 1; i < numReweight; i++) { // skip header line
+			for (int j = 0; j < numElements; j++) {
+				if (extractStringElement(tempVector[i],0) == names[j]) {
 					weights[j] = convertStringtoDouble(extractStringElement(tempVector[i],1));
 				}
 			}
@@ -62,8 +56,7 @@ vector <string> getTaxonNames(vector <string> & inputData)
 	vector <string> names;
 	int numTaxa = (int)inputData.size() - 1;
 	
-	for (int i = 1; i <= numTaxa; i++)
-	{
+	for (int i = 1; i <= numTaxa; i++) {
 		names.push_back(extractStringElement(inputData[i], 0));
 	}
 	
