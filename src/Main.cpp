@@ -279,11 +279,9 @@ int main(int argc, char *argv[]) {
 			mergeTaxa(revisedData, revisedTaxonNames, revisedTaxonWeights);
 		} else if (deleteGenes) { // Um, not useful...
 			deletePartitionsFromMatrix(revisedData, revisedLocusNames, revisedLocusWeights, revisedCoverage);
-		}
-		else if (exclude) { // get rid of shitty taxa to improve matrix decisiveness
+		} else if (exclude) { // get rid of shitty taxa to improve matrix decisiveness
 			excludeTaxa(revisedData, revisedTaxonNames, revisedTaxonWeights, revisedCoverage, revisedLocusNames);
-		}
-		else if (addGenes) { // virtual genes i.e. for targetted sequencing
+		} else if (addGenes) { // virtual genes i.e. for targetted sequencing
 			addTaxonGeneToMatrix(revisedData, revisedTaxonNames, revisedLocusNames, revisedLocusWeights, revisedTaxonWeights);
 		} else if (partialTreewise || partialBranchwise || partialIndividualPartition) {
 			if (partialTreewise) {
