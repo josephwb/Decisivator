@@ -483,7 +483,7 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 	
 // Running mean: ((((count - 1)/count) * runningMean) + (currentResult/count)); // prevent overflow
 	
-	#pragma omp parallel
+	#pragma omp parallel num_threads(numProcs)
 	{
 		vector < vector <bool> > tree;
 		vector < vector <int> > sibNodes;
@@ -591,7 +591,7 @@ double calculatePartialDecisivenessSinglePartition (bool const& referenceTaxonPr
 		cout << endl << "Simulating " << numTrees << " trees and testing for satisfaction of internal edges..." << endl;
 	}
 	
-	#pragma omp parallel
+	#pragma omp parallel num_threads(numProcs)
 	{
 		vector < vector <bool> > tree;
 		vector < vector <int> > sibNodes;

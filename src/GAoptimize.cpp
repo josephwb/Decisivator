@@ -45,7 +45,7 @@ double calcFit (bool const& referenceTaxonPresent, int & numTrees,
 {
 	double fit = 0.0;
 	bool verbose = false;
-	bool includeDiversity = true;
+	bool includeDiversity = false;
 	
 // 0 is for !findAll
 	fit = calculatePartialDecisiveness(referenceTaxonPresent, numTrees, data, 0, numProcs, verbose);

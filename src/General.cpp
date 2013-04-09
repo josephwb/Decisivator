@@ -12,38 +12,29 @@ using namespace std;
 extern bool debuggering;
 
 // Perform case-insenstive char match test
-bool checkCharValue (char const& charInput, char const& charToMatch)
-{
-	if (toupper(charInput) == toupper(charToMatch))
-	{
-		return true;;
-	}
-	else
-	{
+bool checkCharValue (char const& charInput, char const& charToMatch) {
+	if (toupper(charInput) == toupper(charToMatch)) {
+		return true;
+	} else {
 		return false;
 	}
 }
 
-string getFileName ()
-{
+string getFileName () {
 	string fileName;
 	bool validFileName = false;
 	string tempFileName;
 	cout << endl << "What is the name of the input file?" << endl;
 	
-	while (!validFileName)
-	{
+	while (!validFileName) {
 		cin >> tempFileName;
 		validFileName = checkValidFile(tempFileName);
-		if (cin.fail())
-		{
+		if (cin.fail()) {
 			cin.clear(); 
 			cin.ignore(200, '\n');
 			cout << "Invalid input! Try again." << endl << endl;
 			cout << "What is the name of the input file?" << endl;
-		}
-		else
-		{
+		} else {
 			fileName = tempFileName;
 			cin.clear();
 			cin.ignore(200, '\n');
@@ -52,14 +43,12 @@ string getFileName ()
 	return fileName;
 }
 
-bool checkValidFile (string fileName)
-{
+bool checkValidFile (string fileName) {
 	ifstream inFile;
 	bool validFile = true;
 	
 	inFile.open(fileName.c_str());
-	if (inFile.fail())
-	{
+	if (inFile.fail()) {
 		ofstream errorReport("Error.Decisivator.txt");
 		errorReport << "Decisivator analysis failed." << endl << "Error: unable to open file '";
 		errorReport << fileName << "'" << endl;
@@ -68,9 +57,7 @@ bool checkValidFile (string fileName)
 		cerr << endl << "Decisivator analysis failed." << endl << "Error: unable to open file '";
 		cerr << fileName << "'" <<  endl;
 		exit(1);
-	}
-	else
-	{
+	} else {
 		cout << "Successfully opened file '" << fileName << "'." <<  endl;
 		inFile.close();
 		inFile.clear();
@@ -78,34 +65,26 @@ bool checkValidFile (string fileName)
 	return(validFile);
 }
 
-bool checkValidOutputFile (string & outputFileName)
-{
+bool checkValidOutputFile (string & outputFileName) {
 	bool testOutBool = true;
 	bool fileNameAcceptable = false;
 	bool keepFileName = false;
 	
 // First, check if file already exists, so overwriting can be prevented
 	fstream testIn;
-	while (!fileNameAcceptable)
-	{
+	while (!fileNameAcceptable) {
 		testIn.open(outputFileName.c_str());
-		if (!testIn)
-		{
+		if (!testIn) {
 			testIn.close();
 			fileNameAcceptable = true;
-		}
-		else
-		{
+		} else {
 			testIn.close();
 			cout << endl << "File '" << outputFileName << "' exists!  Change name (0) or overwrite (1)? ";
 			cin >> keepFileName;
-			if (!keepFileName)
-			{
+			if (!keepFileName) {
 				cout << "Enter new output file name: ";
 				cin >> outputFileName;
-			}
-			else
-			{
+			} else {
 				cout << "Overwriting existing file '" << outputFileName << "'." << endl;
 				fileNameAcceptable = true;
 			}
@@ -115,8 +94,7 @@ bool checkValidOutputFile (string & outputFileName)
 	ofstream outFile;
 	outFile.open(outputFileName.c_str());
 	
-	if (outFile.fail())
-	{
+	if (outFile.fail()) {
 		ofstream errorReport("Error.BEASTifier.txt");
 		errorReport << "BEASTifier analysis failed." << endl << "Error: unable to open file '";
 		errorReport << outputFileName << "'" << endl;
@@ -126,33 +104,26 @@ bool checkValidOutputFile (string & outputFileName)
 		cerr << outputFileName << "'" <<  endl;
 		testOutBool = false;
 		exit(1);
-	}
-	else
-	{
+	} else {
 		outFile.close();
 		outFile.clear();
 	}
 	return testOutBool;
 }
 
-int checkValidIntInput (string queryString)
-{
+int checkValidIntInput (string queryString) {
 	int userInput = 0;
 	bool validInput = false;
 	cout << endl << queryString;
 	validInput = false;
-	while (!validInput)
-	{
+	while (!validInput) {
 		cin >> userInput;
-		if (cin.fail())
-		{
+		if (cin.fail()) {
 			cin.clear(); 
 			cin.ignore(200, '\n');
 			cout << endl << "Invalid input! Must be an integer. Try again." << endl;
 			cout << queryString;
-		}
-		else
-		{
+		} else {
 			validInput = true;
 			cin.clear(); 			// Get rid of any extra characters accidentally entered
 			cin.ignore(200, '\n');
@@ -161,31 +132,24 @@ int checkValidIntInput (string queryString)
 	return userInput;
 }
 
-bool checkValidBoolInput (string queryString)
-{
+bool checkValidBoolInput (string queryString) {
 	int userInput = 0;
 	bool validInput = false;
 	cout << queryString;
 	validInput = false;
-	while (!validInput)
-	{
+	while (!validInput) {
 		cin >> userInput;
-		if (cin.fail())
-		{
+		if (cin.fail()) {
 			cin.clear(); 
 			cin.ignore(200, '\n');
 			cout << endl << "Invalid input! Must be an integer. Try again." << endl;
 			cout << queryString;
-		}
-		else if (userInput < 0 || userInput > 1)
-		{
+		} else if (userInput < 0 || userInput > 1) {
 			cin.clear(); 
 			cin.ignore(200, '\n');
 			cout << endl << "Invalid input! Boolean value - must be 0 or 1. Try again." << endl;
 			cout << queryString;
-		}
-		else
-		{
+		} else {
 			validInput = true;
 			cin.clear(); 			// Get rid of any extra characters accidentally entered
 			cin.ignore(200, '\n');
@@ -194,41 +158,32 @@ bool checkValidBoolInput (string queryString)
 	return userInput;
 }
 
-bool checkStringValue (string stringToParse, string stringToMatch, int stringPosition)
-{
+bool checkStringValue (string stringToParse, string stringToMatch, int stringPosition) {
 // Performs case-insenstive string match test
 	string testString = extractStringElement(stringToParse, stringPosition);
-	if (testString.size() != stringToMatch.size())
-	{
+	if (testString.size() != stringToMatch.size()) {
 		return false;
 	}
-	if (testString == stringToMatch)
-	{
+	if (testString == stringToMatch) {
 		return true;
 	}
 	
-	for (size_t i = 0; i < testString.size(); ++i)
-	{
-		if (testString[i] == stringToMatch[i] || testString[i]+32 == stringToMatch[i] || testString[i] == stringToMatch[i]+32)
-		{
+	for (size_t i = 0; i < testString.size(); ++i) {
+		if (testString[i] == stringToMatch[i] || testString[i]+32 == stringToMatch[i] || testString[i] == stringToMatch[i]+32) {
 			continue;
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
 	return true;
 }
 
-unsigned long choose (int const& n, int const& r)
-{
+unsigned long choose (int const& n, int const& r) {
 	unsigned long result = 0;
 	if (r == 0) {return (1);}
 	
 	unsigned long numerator = n;
-	for (int i = n - 1; i > n - r; i --)
-	{
+	for (int i = n - 1; i > n - r; i --) {
 		numerator *= i;
 	}
 	unsigned long denominator = factorial(r);
@@ -236,23 +191,20 @@ unsigned long choose (int const& n, int const& r)
 	return (result);
 }
 
-unsigned long factorial (int const& num)
-{
+unsigned long factorial (int const& num) {
 	if (num <= 1) return (1);
 	return factorial(num - 1) * num; // recursive call
 }
 
 // Given some existing string, extract (copy) the ith element and store as new string
-string extractStringElement (string & stringToParse, int const& position)
-{
+string extractStringElement (string & stringToParse, int const& position) {
 	vector <string> tempVector = storeStringVector(stringToParse);
 	string returnString = tempVector[position];
 	
 	return returnString;
 }
 
-int convertStringtoInt (string stringToConvert)
-{
+int convertStringtoInt (string stringToConvert) {
 	int tempInt = 0;
 	istringstream tempStream(stringToConvert);
 	tempStream >> tempInt;
@@ -260,8 +212,7 @@ int convertStringtoInt (string stringToConvert)
 	return tempInt;
 }
 
-string convertIntToString (int & intToConvert)
-{
+string convertIntToString (int & intToConvert) {
 	string tempString;
 	stringstream tempStream;
 	tempStream << intToConvert;
@@ -270,8 +221,7 @@ string convertIntToString (int & intToConvert)
 	return tempString;
 }
 
-double convertStringtoDouble (string stringToConvert)
-{
+double convertStringtoDouble (string stringToConvert) {
 	double tempDouble = 0;
 	istringstream tempStream(stringToConvert);
 	tempStream >> tempDouble;
@@ -280,15 +230,12 @@ double convertStringtoDouble (string stringToConvert)
 }
 
 // Store elements of a string in a vector
-vector <string> storeStringVector (string & stringToParse)
-{
+vector <string> storeStringVector (string & stringToParse) {
 	vector <string> tempVector;
 	istringstream tempStream(stringToParse);
 	string tempString;
-	string returnString;
 	
-	while (tempStream >> tempString)
-	{
+	while (tempStream >> tempString) {
 		tempVector.push_back(tempString);
 	}
 	
@@ -296,49 +243,38 @@ vector <string> storeStringVector (string & stringToParse)
 }
 
 // Print purdy lists, aligning element names
-void printVectorAsList (vector <string> const& vectorToPrint)
-{
+void printVectorAsList (vector <string> const& vectorToPrint) {
 	string tempString = vectorToPrint[0];
 	int numElements = (int)vectorToPrint.size();
 	string maxString;
 	int longestName = 0;
 	
-	for (int i = 0; i < numElements; i++)
-	{		
+	for (int i = 0; i < numElements; i++) {		
 		string currentString = vectorToPrint[i];
-		if (currentString.size() > maxString.size())
-		{
+		if (currentString.size() > maxString.size()) {
 			maxString = currentString;
 		}
 	}
 	longestName = (int)maxString.size();
-	for (int i = 0; i < numElements; i++)
-	{		
+	for (int i = 0; i < numElements; i++) {
 		cout << "  ";
-		if (numElements >= 1000)
-		{
+		if (numElements >= 1000) {
 			if (i + 1 < 10) {cout << "   ";}
 			else if (i + 1 < 100) {cout << "  ";}
 			else if (i + 1 < 1000) {cout << " ";}
-		}
-		else if (numElements >= 100)
-		{
+		} else if (numElements >= 100) {
 			if (i + 1 < 10) {cout << "  ";}
 			else if (i + 1 < 100) {cout << " ";}
-		}
-		else if (numElements >= 10)
-		{
+		} else if (numElements >= 10) {
 			if (i + 1 < 10) {cout << " ";}
 		}
 		cout << i + 1 << ". ";
 // Print out leading spaces
 		string tempName = vectorToPrint[i];
-		if ((int)tempName.size() < longestName)
-		{
+		if ((int)tempName.size() < longestName) {
 			string::size_type tempDiffSize;
 			tempDiffSize = longestName - tempName.size();
-			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
-			{
+			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++) {
 				cout << " ";
 			}
 		}
@@ -358,56 +294,42 @@ void printVectorAsList (vector <string> const& vectorOneToPrint, vector <int> co
 	string maxString;
 	int longestName = 0;
 	
-	for (int i = 0; i < numElements; i++)
-	{		
+	for (int i = 0; i < numElements; i++) {
 		string currentString = vectorOneToPrint[i];
-		if (currentString.size() > maxString.size())
-		{
+		if (currentString.size() > maxString.size()) {
 			maxString = currentString;
 		}
 	}
 	longestName = (int)maxString.size();
-	for (int i = -1; i < numElements; i++)
-	{		
-		if (i >= 0)
-		{
+	for (int i = -1; i < numElements; i++) {
+		if (i >= 0) {
 			cout << "  ";
-			if (numElements >= 1000)
-			{
+			if (numElements >= 1000) {
 				if (i + 1 < 10) {cout << "   ";}
 				else if (i + 1 < 100) {cout << "  ";}
 				else if (i + 1 < 1000) {cout << " ";}
-			}
-			else if (numElements >= 100)
-			{
+			} else if (numElements >= 100) {
 				if (i + 1 < 10) {cout << "  ";}
 				else if (i + 1 < 100) {cout << " ";}
-			}
-			else if (numElements >= 10)
-			{
+			} else if (numElements >= 10) {
 				if (i + 1 < 10) {cout << " ";}
 			}
 			cout << i + 1 << ". ";
 	// Print out leading spaces
 			string tempName = vectorOneToPrint[i];
-			if ((int)tempName.size() < longestName)
-			{
+			if ((int)tempName.size() < longestName) {
 				string::size_type tempDiffSize;
 				tempDiffSize = longestName - tempName.size();
-				for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
-				{
+				for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++) {
 					cout << " ";
 				}
 			}
 			cout << tempName << "   " << vectorTwoToPrint[i] << "   " << vectorThreeToPrint[i] << endl;
-		}
-		else
-		{
+		} else {
 			cout << " " << columnOneName;
 			string::size_type tempDiffSize;
 			tempDiffSize = longestName - columnTwoName.size();
-			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
-			{
+			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++) {
 				cout << " ";
 			}
 			cout << columnTwoName << "   " << columnThreeName << "  " << columnFourName << endl;
@@ -415,25 +337,18 @@ void printVectorAsList (vector <string> const& vectorOneToPrint, vector <int> co
 	}
 }
 
-void printVectorAsList (vector <int> const& vectorToPrint) // overloading for debugging
-{
+void printVectorAsList (vector <int> const& vectorToPrint) { // overloading for debugging
 	int numElements = (int)vectorToPrint.size();
-	for (int i = 0; i < numElements; i++)
-	{		
+	for (int i = 0; i < numElements; i++) {
 		cout << "  ";
-		if (numElements >= 1000)
-		{
+		if (numElements >= 1000) {
 			if (i + 1 < 10) {cout << "   ";}
 			else if (i + 1 < 100) {cout << "  ";}
 			else if (i + 1 < 1000) {cout << " ";}
-		}
-		else if (numElements >= 100)
-		{
+		} else if (numElements >= 100) {
 			if (i + 1 < 10) {cout << "  ";}
 			else if (i + 1 < 100) {cout << " ";}
-		}
-		else if (numElements >= 10)
-		{
+		} else if (numElements >= 10) {
 			if (i + 1 < 10) {cout << " ";}
 		}
 		cout << i + 1 << ". ";
@@ -443,25 +358,18 @@ void printVectorAsList (vector <int> const& vectorToPrint) // overloading for de
 	cout << endl;
 }
 
-void printVectorAsList (vector <double> const& vectorToPrint) // overloading for debugging
-{
+void printVectorAsList (vector <double> const& vectorToPrint) { // overloading for debugging
 	int numElements = (int)vectorToPrint.size();
-	for (int i = 0; i < numElements; i++)
-	{		
+	for (int i = 0; i < numElements; i++) {
 		cout << "  ";
-		if (numElements >= 1000)
-		{
+		if (numElements >= 1000) {
 			if (i + 1 < 10) {cout << "   ";}
 			else if (i + 1 < 100) {cout << "  ";}
 			else if (i + 1 < 1000) {cout << " ";}
-		}
-		else if (numElements >= 100)
-		{
+		} else if (numElements >= 100) {
 			if (i + 1 < 10) {cout << "  ";}
 			else if (i + 1 < 100) {cout << " ";}
-		}
-		else if (numElements >= 10)
-		{
+		} else if (numElements >= 10) {
 			if (i + 1 < 10) {cout << " ";}
 		}
 		cout << i + 1 << ". ";
@@ -473,70 +381,49 @@ void printVectorAsList (vector <double> const& vectorToPrint) // overloading for
 
 void printVectorAsList (vector <double> const& vectorOneToPrint,
 	vector <double> const& vectorTwoToPrint, string const& columnOneName,
-	string const& columnTwoName, string const& columnThreeName) // overloading for debugging
-{
+	string const& columnTwoName, string const& columnThreeName) { // overloading for debugging
 	int numElements = (int)vectorOneToPrint.size();
-	for (int i = -1; i < numElements; i++)
-	{		
-		if (i >= 0)
-		{
+	for (int i = -1; i < numElements; i++) {
+		if (i >= 0) {
 			cout << "  ";
-			if (numElements >= 1000)
-			{
+			if (numElements >= 1000) {
 				if (i + 1 < 10) {cout << "   ";}
 				else if (i + 1 < 100) {cout << "  ";}
 				else if (i + 1 < 1000) {cout << " ";}
-			}
-			else if (numElements >= 100)
-			{
+			} else if (numElements >= 100) {
 				if (i + 1 < 10) {cout << "  ";}
 				else if (i + 1 < 100) {cout << " ";}
-			}
-			else if (numElements >= 10)
-			{
+			} else if (numElements >= 10) {
 				if (i + 1 < 10) {cout << " ";}
 			}
 			cout << i + 1 << ".  ";
 			cout << vectorOneToPrint[i] << "  " << vectorTwoToPrint[i] << endl;
-		}
-		else
-		{
-			if (numElements >= 1000)
-			{
+		} else {
+			if (numElements >= 1000) {
 				if (i + 1 < 10) {cout << "  ";}
 				else if (i + 1 < 100) {cout << " ";}
-			}
-			else if (numElements >= 100)
-			{
+			} else if (numElements >= 100) {
 				if (i + 1 < 10) {cout << " ";}
 			}
-			if (numElements > 10)
-			{
+			if (numElements > 10) {
 				cout << columnOneName << "  " << columnTwoName << "  " << columnThreeName << endl;
-			}
-			else
-			{
+			} else {
 				cout << columnOneName << " " << columnTwoName << "  " << columnThreeName << endl;
 			}
 		}
 	}
 }
 
-vector <string> collectData (string const& fileName)
-{
+vector <string> collectData (string const& fileName) {
 	vector <string> inputData;
 	ifstream inFile;
 	string line;
 	inFile.open(fileName.c_str());
 	
-	while (getline(inFile, line))
-	{		
-		if (line.empty())
-		{
+	while (getline(inFile, line)) {
+		if (line.empty()) {
 			continue;
-		}
-		else
-		{
+		} else {
 			inputData.push_back(line);
 		}
 		line.clear();
@@ -547,25 +434,18 @@ vector <string> collectData (string const& fileName)
 	return inputData;
 }
 
-void printProgress (string const& elementType, unsigned long const& current, unsigned long const& upper)
-{
+void printProgress (string const& elementType, unsigned long const& current, unsigned long const& upper) {
 	cout << "  " << elementType << ": " << current << " of " << upper << "\r" << flush;
 }
 
-bool caseInsensitiveStringCompare (string const& str1, string const& str2)
-{
+bool caseInsensitiveStringCompare (string const& str1, string const& str2) {
 	bool match = true;
-	if (str1.size() != str2.size())
-	{
+	if (str1.size() != str2.size()) {
 		match = false;
-	}
-	else if (str1.size() == str2.size())
-	{
-		for (string::const_iterator c1 = str1.begin(), c2 = str2.begin(); c1 != str1.end(); ++c1, ++c2)
-		{
+	} else if (str1.size() == str2.size()) {
+		for (string::const_iterator c1 = str1.begin(), c2 = str2.begin(); c1 != str1.end(); ++c1, ++c2) {
 //			cout << "Comparing " << *c1 << " and " << *c2 << endl;
-			if (tolower(*c1) != tolower(*c2))
-			{
+			if (tolower(*c1) != tolower(*c2)) {
 				 match = false;
 			}
 		}
@@ -573,27 +453,22 @@ bool caseInsensitiveStringCompare (string const& str1, string const& str2)
 	return match;
 }
 
-bool checkWhiteSpaceOnly (string stringToParse)
-{
+bool checkWhiteSpaceOnly (string stringToParse) {
 	bool whiteSpaceOnly = true;
 	vector<string> tempVector;
 	istringstream tempStream(stringToParse);
 	string tempString;
-	while (tempStream >> tempString)
-	{
-		if (tempString != "	" && tempString != " ")
-		{
+	while (tempStream >> tempString) {
+		if (tempString != "	" && tempString != " ") {
 			whiteSpaceOnly = false;
 		}
 	}
 	return whiteSpaceOnly;
 }
 
-double sum (vector <double> const& x)
-{
+double sum (vector <double> const& x) {
 	double total = 0.0;  // the sum is accumulated here
-	for (int i = 0; i < (int)x.size(); i++)
-	{
+	for (int i = 0; i < (int)x.size(); i++) {
 		total = total + x[i];  
     }
     return total;

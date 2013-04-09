@@ -37,4 +37,5 @@ vector <string> collectData (string const& fileName);
 void printProgress (string const& elementType, unsigned long const& current, unsigned long const& upper);
 bool caseInsensitiveStringCompare (string const& str1, string const& str2);
 double sum (vector <double> const& x);
+
 #endif /* _GENERAL_H_ */

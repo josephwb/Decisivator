@@ -107,8 +107,7 @@ int year = 2012;
 
 bool debuggering = false;
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     srand ((unsigned int)time(NULL) );     // initialize random seed
 	string matrixFileName;
 	string locusWeightFileName;
@@ -153,28 +152,22 @@ int main(int argc, char *argv[])
 	
 	printProgramInfo();
 	
+	processCommandLineArguments(argc, argv, matrixFileName, nexusFileName, locusWeightFileName,
+		taxonWeightFileName, treeFileName, burnin, thinning, numProcs);
+	
 	cout << numProcs << " processors available for analyisis." << endl << endl;
 	
-	processCommandLineArguments(argc, argv, matrixFileName, nexusFileName, locusWeightFileName,
-		taxonWeightFileName, treeFileName, burnin, thinning);
-
 // Read in data, store
-	if (!nexusFileName.empty())
-	{
+	if (!nexusFileName.empty()) {
 		parseNexus(nexusFileName, data, taxonNames, locusNames, numChar, taxaAlignment,
 			includedLocusRanges, dataType);
-	}
-	else if (!matrixFileName.empty())
-	{
+	} else if (!matrixFileName.empty()) {
 		parseInputMatrix(matrixFileName, locusNames, taxonNames, data);
-	}
-	else
-	{
+	} else {
 		cout << "Ergh. Something fucked up... Shit." << endl;
 		exit(1);
 	}
-	if (!matrixFileName.empty())
-	{
+	if (!matrixFileName.empty()) {
 		nexusFileName = matrixFileName;
 	}
 
@@ -182,13 +175,11 @@ int main(int argc, char *argv[])
 //     Will allow faster satisfaction (but not rejection) of internal edges.
 	referenceTaxonPresent = searchForReferenceTaxon(data, referenceTaxa, taxonNames);
 	
-	if (!treeFileName.empty())
-	{
+	if (!treeFileName.empty()) {
 		getUserTrees (treeFileName, rawTrees, userTrees, taxonNames, translationTable, burnin,
 			thinning, treeTaxonOrdering);
 		numUserTrees = (int)userTrees.size();
-		if (debuggering)
-		{
+		if (debuggering) {
 			cout << "userTrees has size " << numUserTrees << "; treeTaxonOrdering has size "
 				<< treeTaxonOrdering.size() << endl;
 			cout << "Collected user trees:" << endl;
@@ -218,9 +209,7 @@ int main(int argc, char *argv[])
 	vector <double> partitionDecisiveness(numPartitions, 0.0);
 	int numRandomTrees = 0;
 	
-	
 	bool verbose = true;
-	
 	
 // this is a placeholder; currently cannot prune taxa from a tree
 	vector < vector < vector <bool> > > revisedUserTrees = userTrees; // i.e. if taxa are deleted
@@ -235,8 +224,7 @@ int main(int argc, char *argv[])
 	bool revisedMatrixDecisive = matrixDecisive;
 	
 // Where user interfaces
-	while (!doneEditing)
-	{
+	while (!doneEditing) {
 		bool addGenes = false;
 		bool merge = false;
 		bool exclude = false;
@@ -262,8 +250,7 @@ int main(int argc, char *argv[])
 			reweightTaxa, partialTreewise, partialBranchwise, summarize, testCompleteDeciveness,
 			writeCurrentMatrix, testUserTree, partialIndividualPartition, printRefTaxa, useGA);
 		
-		if (revert)	// User wants to start over manipulating original taxon-gene matrix
-		{
+		if (revert) {	// User wants to start over manipulating original taxon-gene matrix
 			revisedLocusNames = locusNames;
 			revisedTaxonNames = taxonNames;
 			revisedData = data;
@@ -288,39 +275,26 @@ int main(int argc, char *argv[])
 				revisedCoverage, revisedReferenceTaxa, revisedMatrixDecisive,
 				treewiseDecisiveness, branchwiseDecisiveness, completeDecisivenessDetermined,
 				nexusFileName, numRandomTrees, numUserTrees, numProcs);
-		}
-		else if (merge)
-		{
+		} else if (merge) {
 			mergeTaxa(revisedData, revisedTaxonNames, revisedTaxonWeights);
-		}
-		else if (deleteGenes) // Um, not useful...
-		{
+		} else if (deleteGenes) { // Um, not useful...
 			deletePartitionsFromMatrix(revisedData, revisedLocusNames, revisedLocusWeights, revisedCoverage);
 		}
-		else if (exclude) // get rid of shitty taxa to improve matrix decisiveness
-		{
+		else if (exclude) { // get rid of shitty taxa to improve matrix decisiveness
 			excludeTaxa(revisedData, revisedTaxonNames, revisedTaxonWeights, revisedCoverage, revisedLocusNames);
 		}
-		else if (addGenes) // virtual genes i.e. for targetted sequencing
-		{
+		else if (addGenes) { // virtual genes i.e. for targetted sequencing
 			addTaxonGeneToMatrix(revisedData, revisedTaxonNames, revisedLocusNames, revisedLocusWeights, revisedTaxonWeights);
-		}
-		else if (partialTreewise || partialBranchwise || partialIndividualPartition)
-		{
-			if (partialTreewise)
-			{
+		} else if (partialTreewise || partialBranchwise || partialIndividualPartition) {
+			if (partialTreewise) {
 				findAll = false;
 				treewiseDecisiveness = calculatePartialDecisiveness(revisedReferenceTaxonPresent,
 					numRandomTrees, revisedData, findAll, numProcs, verbose);
-			}
-			else if (partialBranchwise)
-			{
+			} else if (partialBranchwise) {
 				findAll = true;
 				branchwiseDecisiveness = calculatePartialDecisiveness(revisedReferenceTaxonPresent,
 					numRandomTrees, revisedData, findAll, numProcs, verbose);
-			}
-			else if (partialIndividualPartition)
-			{
+			} else if (partialIndividualPartition) {
 				findAll = true;
 				int partitionID = selectPartition (revisedData, revisedLocusNames);
 				partitionDecisiveness[partitionID] = calculatePartialDecisivenessSinglePartition(revisedReferenceTaxonPresent,
@@ -328,46 +302,30 @@ int main(int argc, char *argv[])
 				cout << "Partial decisiveness for partition '" << locusNames[partitionID]
 					<< "' is: " << partitionDecisiveness[partitionID] << endl;
 			}
-		}
-		else if (testCompleteDeciveness)
-		{
-			if (completeDecisivenessDetermined) // Nothing has changed; report recorded values
-			{
+		} else if (testCompleteDeciveness) {
+			if (completeDecisivenessDetermined) { // Nothing has changed; report recorded values
 				cout << endl << "*** No changes have been made to the matrix since last test ***";
-			}
-			else // some change to matrix has been made; recalculate complete deciveness
-			{
+			} else { // some change to matrix has been made; recalculate complete deciveness
 				revisedMatrixDecisive = testCompleteDecisivness(revisedData, revisedReferenceTaxonPresent, revisedReferenceTaxa, revisedTaxonNames, revisedMissingQuartets, revisedTriplets, revisedTripletLocations, revisedMissingTriplets);
 				// newMatrix = false;
 				completeDecisivenessDetermined = true;
 			}
-		}
-		else if (useGA)
-		{
+		} else if (useGA) {
 			cout << endl;
 			numAddGA = checkValidIntInput("Enter how many virtual taxon-character(s) to add to matrix: ");
 			
 			revisedData = GAHandler(numAddGA, revisedData, GADecisiveness, revisedReferenceTaxonPresent, numProcs);
 			printGADataToFile(revisedData, taxonNames, nexusFileName, numAddGA);
 			
-		}
-		else if (print)
-		{
+		} else if (print) {
 			printMatrix(revisedData, revisedTaxonNames, revisedLocusWeights, revisedTaxonWeights);
-		}
-		else if (printRefTaxa)
-		{
+		} else if (printRefTaxa) {
 			printReferenceTaxa (revisedReferenceTaxa, revisedTaxonNames);
-		}
-		else if (writeCurrentMatrix) // output matrix in nexus or phylip format
-		{
+		} else if (writeCurrentMatrix) { // output matrix in nexus or phylip format
 			writeMatrix (revisedTaxonNames, numChar, taxaAlignment, includedLocusRanges, revisedLocusNames);
-		}
-		else if (testUserTree) // determine decisiveness on passed-in user tree
-		{
+		} else if (testUserTree) { // determine decisiveness on passed-in user tree
 // if doesn't yet exist, get filename from user
-			if (treeFileName.size() == 0)
-			{
+			if (treeFileName.size() == 0) {
 				treeFileName = getFileName ();
 				getUserTrees (treeFileName, rawTrees, userTrees, taxonNames, translationTable, burnin,
 					thinning, treeTaxonOrdering);
@@ -376,14 +334,11 @@ int main(int argc, char *argv[])
 				treeTaxonOrdering, revisedTaxonNames, revisedLocusWeights, revisedTaxonWeights);
 			
 			writeAnnotatedTrees(rawTrees, translationTable, userTreeDecisiveness, revisedTaxonNames);
-		}
-		else if (quit)
-		{
+		} else if (quit) {
 			doneEditing = true;
 		}
 // If matrix has changed in any way, reset
-		if (merge || deleteGenes || exclude || addGenes)
-		{
+		if (merge || deleteGenes || exclude || addGenes) {
 			treewiseDecisiveness = 0.0;
 			branchwiseDecisiveness = 0.0;
 			// newMatrix = true;
@@ -391,8 +346,7 @@ int main(int argc, char *argv[])
 			revisedReferenceTaxonPresent = searchForReferenceTaxon(revisedData, revisedReferenceTaxa, revisedTaxonNames);
 			getCoverage(revisedData, revisedCoverage);
 		}
-		if (partialTreewise || partialBranchwise || testCompleteDeciveness || summarize || merge || deleteGenes || exclude || addGenes)
-		{
+		if (partialTreewise || partialBranchwise || testCompleteDeciveness || summarize || merge || deleteGenes || exclude || addGenes) {
 			printSummaryInformation(revisedLocusNames, revisedTaxonNames, revisedData,
 				revisedCoverage, revisedReferenceTaxa, revisedMatrixDecisive,
 				treewiseDecisiveness, branchwiseDecisiveness, completeDecisivenessDetermined,

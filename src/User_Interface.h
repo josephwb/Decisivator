@@ -18,7 +18,7 @@ void printSummaryInformation (vector <string> const& locusNames, vector <string>
 void printReferenceTaxa (vector <int> const& referenceTaxa, vector <string> const& taxonNames);
 void processCommandLineArguments(int argc, char *argv[], string & matrixFileName,
 	string & nexusFileName, string & locusWeightFileName, string & taxonWeightFileName,
-	string & treeFileName, int & burnin, int & thinning);
+	string & treeFileName, int & burnin, int & thinning, int & numProcs);
 void writeMatrix (vector <string> const& taxonNames, int const& numChar, 
 	vector < vector <string> > const& taxaAlignment, vector < vector <int> > const& includedLocusRanges,
 	vector <string> const& locusNames);

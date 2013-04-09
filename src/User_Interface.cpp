@@ -17,8 +17,7 @@ extern double version;
 extern string month;
 extern int year;
 
-void printProgramInfo()
-{
+void printProgramInfo() {
 	cout << endl << 
 	"************************************************" << endl <<
 	"            Decisivator version " << version <<      endl <<
@@ -184,84 +183,64 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
 
 void processCommandLineArguments(int argc, char *argv[], string & matrixFileName,
 	string & nexusFileName, string & locusWeightFileName, string & taxonWeightFileName,
-	string & treeFileName, int & burnin, int & thinning)
+	string & treeFileName, int & burnin, int & thinning, int & numProcs)
 {
 	if (argc == 1) // Assume that it will be Nexus
 	{
 		nexusFileName = getFileName();
-	}
-	else
-	{
-		for (int i = 1; i < argc; i++)
-		{
+	} else {
+		for (int i = 1; i < argc; i++) {
 			string temp = argv[i];
 			
-			if (temp == "-h" || temp == "-help")
-			{
+			if (temp == "-h" || temp == "-help") {
 				printHelp();
 				exit(0);  
-			}
-			else if (temp == "-m")
-			{
+			} else if (temp == "-m") {
 				i++;
 				matrixFileName = argv[i];
 				checkValidFile(matrixFileName);
 				continue;
-			}
-			else if (temp == "-d")
-			{
+			} else if (temp == "-d") {
 				i++;
 				nexusFileName = argv[i];
 				checkValidFile(nexusFileName);
 				continue;
-			}
-			else if (temp == "-l")
-			{
+			} else if (temp == "-l") {
 				i++;
 				locusWeightFileName = argv[i];
 				checkValidFile(locusWeightFileName);
 				continue;
-			}
-			else if (temp == "-w")
-			{
+			} else if (temp == "-w") {
 				i++;
 				taxonWeightFileName = argv[i];
 				checkValidFile(taxonWeightFileName);
 				continue;
-			}
-			else if (temp == "-t")
-			{
+			} else if (temp == "-t") {
 				i++;
 				treeFileName = argv[i];
 				checkValidFile(treeFileName);
 				continue;
-			}
-			else if (temp == "-b")
-			{
+			} else if (temp == "-b") {
 				i++;
 				burnin = convertStringtoInt(argv[i]);
 				continue;
-			}
-			else if (temp == "-n")
-			{
+			} else if (temp == "-n") {
 				i++;
 				thinning = convertStringtoInt(argv[i]);
 				continue;
-			}
-			else if (temp == "-debug")
-			{
+			} else if (temp == "-np") {
+				i++;
+				numProcs = convertStringtoInt(argv[i]);
+				continue;
+			} else if (temp == "-debug") {
 				debuggering = true;
 				cout << endl << "Printing additional information to screen for debugging purposes." << endl << endl;
 				continue;
-			}
-			else
-			{
+			} else {
 				cout
 				<< "Unknown command-line argument '" << argv[i] << "' encountered." << endl
-				<< endl
-				<< "Usage:" << endl
-				<< "./Decisivator [-d data_file] [-m taxon-gene_matrix] [-t tree_file] [-b burnin] [-n thinning]" << endl
-				<< "   [-w taxon_weights] [-l locus_weights]" << endl << endl;
+				<< endl;
+				printHelp();
 				exit(0);
 			}
 			cout << endl;
@@ -278,10 +257,10 @@ void printHelp ()
 	<< endl
 	<< "make" << endl
 	<< endl
-	<< "To run, type:" << endl
+	<< "Usage:" << endl
 	<< endl
 	<< "./Decisivator [-d data_file] [-m taxon-gene_matrix] [-t tree_file] [-b burnin] [-n thinning]" << endl
-	<< "   [-w taxon_weights] [-l locus_weights]" << endl
+	<< "   [-w taxon_weights] [-l locus_weights] [-np num_proc]" << endl
 	<< endl
 	<< "where:" << endl
 	<< endl
@@ -306,6 +285,8 @@ void printHelp ()
 	<< "  based on some arbitrary accessibility criterion." << endl
 	<< endl
 	<< "'locus_weights' is the analogous two-column (locus, weight; with headers) file for locus weights." << endl
+	<< endl
+	<< "'num_proc' is the number of processors to use (default is all available). Only with OPENMP version." << endl
 	<< endl
 	<< "NOTE: The taxon and locus weight files need not be complete. All weights are 1.0 by default." << endl
 	<< "  Enter only weights which should be changed from the default. Or do this shit within the program itself." << endl
@@ -481,7 +462,7 @@ void printMatrix (vector < vector <int> > const& data, vector <string> const& ta
 			maxString = currentString;
 		}
 	}
-// Determine length of longest name
+// Determine length of longest name. um, seems like I can just use size here...
 	for (string::const_iterator iterCharacters = maxString.begin(); iterCharacters < maxString.end(); ++iterCharacters)
 	{
 		longestName++;

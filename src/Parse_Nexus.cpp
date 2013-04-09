@@ -20,8 +20,7 @@ extern bool debuggering;
 
 void parseNexus (string const& nexusFileName, vector < vector <int> > & data, vector <string> & taxonNames,
 	vector <string> & locusNames, int & numChar, vector < vector <string> > & taxaAlignment,
-	vector < vector <int> > & includedLocusRanges, string & dataType)
-{
+	vector < vector <int> > & includedLocusRanges, string & dataType) {
 //	vector < vector <int> > includedLocusRanges;
 	
 	bool interleavedData = false;
@@ -39,8 +38,7 @@ void parseNexus (string const& nexusFileName, vector < vector <int> > & data, ve
 
 // Problems parsing when spaces surround '='
 void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interleavedData,
-	string & dataType)
-{
+	string & dataType) {
 	ifstream inputUserFile;
 	bool commentLine = false;
 	bool whiteSpaceOnly = false;
@@ -65,73 +63,53 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 // some optional entries 'Format datatype=dna [gap=-] [missing=?] {[interleave=yes] or [interleave] [interleave=no]};'
 // 	- no spaces allowed next to equal sign (for now)
 	
-	while (getline(inputUserFile,line) && !done)
-	{
+	while (getline(inputUserFile,line) && !done) {
 		if (debuggering) {cout << "Current line: " << line << endl;}
 		int stringPosition = 0;
 		commentLine = checkCommentLine(line);
 		whiteSpaceOnly = checkWhiteSpaceOnly(line);
-		if (line.empty() || commentLine || whiteSpaceOnly)
-		{
+		if (line.empty() || commentLine || whiteSpaceOnly) {
 			continue;
-		}
-		else
-		{
-			if (checkStringValue(line, "matrix", stringPosition))	// Done - won't find the information further down; really only used for 'interleave'
-			{
+		} else {
+			if (checkStringValue(line, "matrix", stringPosition)) { // Done - won't find the information further down; really only used for 'interleave'
 				done = true;
 				if (debuggering) {cout << "Encountered 'matrix'" << endl;}
 				continue;
-			}
-			else if (checkStringValue(line, "dimensions", stringPosition))
-			{
+			} else if (checkStringValue(line, "dimensions", stringPosition)) {
 				if (debuggering) {cout << "Encountered 'dimensions'" << endl;}
 				stringPosition = 0;
-				while (!numTaxaEncountered || !numCharEncountered)
-				{
+				while (!numTaxaEncountered || !numCharEncountered) {
 					stringPosition++;
 					string tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered); // check for end of line
-					if (tempString == ";")
-					{
-						if (!dataTypeEncountered) // not specified; is this even allowed?
-						{
+					if (tempString == ";") {
+						if (!dataTypeEncountered) { // not specified; is this even allowed?
 							dataType = "standard";
 							cout << "No datatype specified. Treating as standard." << endl;
 							dataTypeEncountered = true;
 							continue;
 						}
 					}
-					tempString = removeStringSuffix(extractStringElement(line,stringPosition), '=', equalSignEncountered);
-					if (checkStringValue(tempString, "ntax", 0))
-					{
-						if (equalSignEncountered) // format: ntax=8 or ntax= 8
-						{
-							tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
-							if (!tempString.empty()) // format: ntax=8
-							{
+					tempString = removeStringSuffix(extractStringElement(line, stringPosition), '=', equalSignEncountered);
+					if (checkStringValue(tempString, "ntax", 0)) {
+						if (equalSignEncountered) { // format: ntax=8 or ntax= 8
+							tempString = removeStringPrefix(extractStringElement(line, stringPosition), '=');
+							if (!tempString.empty()) { // format: ntax=8
 								tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
 								numTaxa = convertStringtoInt(tempString);
-							}
-							else // format: ntax= 8
-							{
+							} else { // format: ntax= 8
 								stringPosition++;
-								tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered); // possibly last
+								tempString = removeStringSuffix(extractStringElement(line, stringPosition), ';', semicolonEncountered); // possibly last
 								numTaxa = convertStringtoInt(tempString);
 							}
-						}
-						else // format: ntax = 8 or ntax =8
-						{
+						} else { // format: ntax = 8 or ntax =8
 							stringPosition++;
 							tempString = extractStringElement(line,stringPosition);
-							if (tempString == "=") // format: ntax = 8
-							{
+							if (tempString == "=") { // format: ntax = 8
 								stringPosition++;
-								tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered);
+								tempString = removeStringSuffix(extractStringElement(line, stringPosition), ';', semicolonEncountered);
 								numTaxa = convertStringtoInt(tempString);
-							}
-							else// format: ntax =8
-							{
-								tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
+							} else { // format: ntax =8
+								tempString = removeStringPrefix(extractStringElement(line, stringPosition), '=');
 								tempString = removeStringSuffix(tempString, ';', semicolonEncountered);
 								numTaxa = convertStringtoInt(tempString);
 							}
@@ -139,36 +117,26 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 						if (debuggering) {cout << "NTax = " << numTaxa << endl;}
 						numTaxaEncountered = true;
 					}
-					if (checkStringValue(tempString, "nchar", 0))
-					{
-						if (equalSignEncountered) // format: nchar=8 or nchar= 8
-						{
-							tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
-							if (!tempString.empty()) // format: nchar=8
-							{
+					if (checkStringValue(tempString, "nchar", 0)) {
+						if (equalSignEncountered) { // format: nchar=8 or nchar= 8
+							tempString = removeStringPrefix(extractStringElement(line, stringPosition), '=');
+							if (!tempString.empty()) { // format: nchar=8
 								tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
 								numChar = convertStringtoInt(tempString);
-							}
-							else // format: nchar= 8
-							{
+							} else { // format: nchar= 8
 								stringPosition++;
-								tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered); // possibly last
+								tempString = removeStringSuffix(extractStringElement(line, stringPosition), ';', semicolonEncountered); // possibly last
 								numChar = convertStringtoInt(tempString);
 							}
-						}
-						else // format: nchar = 8 or nchar =8
-						{
+						} else { // format: nchar = 8 or nchar =8
 							stringPosition++;
-							tempString = extractStringElement(line,stringPosition);
-							if (tempString == "=") // format: nchar = 8
-							{
+							tempString = extractStringElement(line, stringPosition);
+							if (tempString == "=") { // format: nchar = 8
 								stringPosition++;
-								tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered);
+								tempString = removeStringSuffix(extractStringElement(line, stringPosition), ';', semicolonEncountered);
 								numChar = convertStringtoInt(tempString);
-							}
-							else// format: nchar =8
-							{
-								tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
+							} else { // format: nchar =8
+								tempString = removeStringPrefix(extractStringElement(line, stringPosition), '=');
 								tempString = removeStringSuffix(tempString, ';', semicolonEncountered);
 								numChar = convertStringtoInt(tempString);
 							}
@@ -177,18 +145,13 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 						numCharEncountered = true;
 					}
 				}
-			}
-			else if (checkStringValue(line, "format", stringPosition)) // check to see if interleaved, datatype
-			{
+			} else if (checkStringValue(line, "format", stringPosition)) { // check to see if interleaved, datatype
 				stringPosition = 0;
-				while (!semicolonEncountered || !dataTypeEncountered)
-				{
+				while (!semicolonEncountered || !dataTypeEncountered) {
 					stringPosition++;
 					string tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered); // check for end of line
-					if (tempString == ";")
-					{
-						if (!dataTypeEncountered) // not specified; is this even allowed?
-						{
+					if (tempString == ";") {
+						if (!dataTypeEncountered) { // not specified; is this even allowed?
 							dataType = "standard";
 							cout << "No datatype specified. Treating as standard." << endl;
 							dataTypeEncountered = true;
@@ -196,72 +159,54 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 						}
 					}
 					tempString = removeStringSuffix(extractStringElement(line,stringPosition), '=', equalSignEncountered); // where '=' is used i.e. 'interleave=yes;'
-					if (checkStringValue(tempString, "interleave", 0)) // format: interleave=yes or interleave= yes or interleave = yes or interleave
-					{
-						if (equalSignEncountered) // format: interleave=yes or interleave= yes
-						{
+					if (checkStringValue(tempString, "interleave", 0)) { // format: interleave=yes or interleave= yes or interleave = yes or interleave
+						if (equalSignEncountered) { // format: interleave=yes or interleave= yes
 							tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
-							if (!tempString.empty()) // format: interleave=yes
-							{
+							if (!tempString.empty()) { // format: interleave=yes
 								tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
-								if (checkStringValue(tempString, "yes", 0))
-								{
+								if (checkStringValue(tempString, "yes", 0)) {
 									interleavedData = true;
 									cout << "Data are in interleaved format." << endl;
 									continue;
-								}
-								else if (checkStringValue(tempString, "no", 0))
-								{
+								} else if (checkStringValue(tempString, "no", 0)) {
 									interleavedData = false;
 									cout << "Data are not in interleaved format." << endl;
 									continue;
 								}
-							}
-							else // format: interleave= yes
+							} else // format: interleave= yes
 							{
 								stringPosition++;
 								tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
-								if (checkStringValue(tempString, "yes", 0))
-								{
+								if (checkStringValue(tempString, "yes", 0)) {
 									interleavedData = true;
 									cout << "Data are in interleaved format." << endl;
 									continue;
-								}
-								else if (checkStringValue(tempString, "no", 0))
-								{
+								} else if (checkStringValue(tempString, "no", 0)) {
 									interleavedData = false;
 									cout << "Data are not in interleaved format." << endl;
 									continue;
 								}
 							}
-						}
-						else // format: interleave = yes or interleave
+						} else // format: interleave = yes or interleave
 						{
 							stringPosition++;
 							tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
-							if (checkStringValue(tempString, "yes", 0))
-							{
+							if (checkStringValue(tempString, "yes", 0)) {
 								interleavedData = true;
 								cout << "Data are in interleaved format." << endl;
 								continue;
-							}
-							else if (checkStringValue(tempString, "no", 0))
-							{
+							} else if (checkStringValue(tempString, "no", 0)) {
 								interleavedData = false;
 								cout << "Data are not in interleaved format." << endl;
 								continue;
-							}
-							else
-							{
+							} else {
 								interleavedData = false;
 								cout << "Data are not in interleaved format." << endl;
 								stringPosition--;
 								continue;
 							}
 						}
-					}
-					else if (checkStringValue(tempString, "datatype", 0))
-					{
+					} else if (checkStringValue(tempString, "datatype", 0)) {
 						if (equalSignEncountered) // format: datatype=dna or datatype= dna
 						{
 							tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
@@ -307,8 +252,7 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 }
 
 vector <string> collectCharsets (string charsetFileName, vector <string> inputCharsets,
-	vector < vector <int> > & includedLocusRanges, int const& numChar)
-{
+	vector < vector <int> > & includedLocusRanges, int const& numChar) {
 	ifstream declaredCharsets;
 	vector <string> collectedCharsets;
 	vector <string> tempStringVector;
@@ -320,16 +264,12 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 	string line;
 	
 // Read in every non-empty (or non-whitespace), non-commented-out line
-	while (getline(declaredCharsets,line))
-	{
+	while (getline(declaredCharsets, line)) {
 		commentLine = checkCommentLine(line);
 		whiteSpaceOnly = checkWhiteSpaceOnly(line);
-		if (line.empty() || commentLine || whiteSpaceOnly)
-		{
+		if (line.empty() || commentLine || whiteSpaceOnly) {
 			continue;
-		}
-		else
-		{
+		} else {
 			tempStringVector.push_back(line);
 		}
 		line.clear();
@@ -339,17 +279,15 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 // COLLECT CHARSET RANGES - START WITH SIMPLE X-Y DECLARATIONS
 // will take the form of: 'CHARSET ALD = 1-566;'
 	
-	for (vector <string>::iterator lineIter = tempStringVector.begin(); lineIter < tempStringVector.end(); lineIter++)
-	{
+	for (vector <string>::iterator lineIter = tempStringVector.begin(); lineIter < tempStringVector.end(); lineIter++) {
 		string charsetName;
 		string temp;
 		int stringPosition = 0;
 		bool semiColonEncountered = false;	// Check that charset declaration is complete
 		string tempString;
 		
-		if (checkStringValue(*lineIter, "charset", stringPosition))
-		{
-			cout << "CHARSET line: " << *lineIter << endl;
+		if (checkStringValue(*lineIter, "charset", stringPosition)) {
+			if (debuggering) cout << "CHARSET line: " << *lineIter << endl;
 			
 			charsetsEncountered = true;
 			bool equalSignEncountered = false;
@@ -358,14 +296,12 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 			charsetName = extractStringElement(*lineIter, stringPosition);
 			stringPosition++;
 			
-			while (!equalSignEncountered)
-			{
+			while (!equalSignEncountered) {
 				equalSignEncountered = checkStringValue(*lineIter, "=", stringPosition);
 				stringPosition++;
 			}
 // Parse and collect start/stop information
-			while (!semiColonEncountered)
-			{
+			while (!semiColonEncountered) {
 				string charsetDeclaration = removeStringSuffix(extractStringElement(*lineIter,stringPosition), ';', semiColonEncountered);
 				int start = 0;
 				int stop = 0;
@@ -373,20 +309,17 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 // Need to check format i.e. '1-566;' vs '1-566\3;'
 				bool separatorEncountered = false;
 				tempString = removeStringSuffix(*lineIter, '\\', separatorEncountered);
-				if (separatorEncountered)
-				{
+				if (separatorEncountered) {
 					if (debuggering) {cout << "Interval CHARSET encountered: '" << *lineIter << "." << endl;}
-					cout << "Interval CHARSET encountered: '" << *lineIter << "." << endl;
+					//cout << "Interval CHARSET encountered: '" << *lineIter << "." << endl;
 					extractIntervalRange(charsetDeclaration, start, stop, interval);
 					tempIntVector.push_back(1);		// Code for interval range
 					tempIntVector.push_back(start);
 					tempIntVector.push_back(stop);
 					tempIntVector.push_back(interval);
 					continue;
-				}
-				else
-				{
-					cout << "Simple CHARSET encountered: '" << *lineIter << "." << endl;
+				} else {
+					//cout << "Simple CHARSET encountered: '" << *lineIter << "." << endl;
 					extractSimpleCharsetRanges(charsetDeclaration, start, stop);
 					tempIntVector.push_back(0);		// Code for simple range
 					tempIntVector.push_back(start);
@@ -395,15 +328,12 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 			}
 // Need to test for duplicates e.g. if CHARSETS are declared in both PAUP* and MrBayes blocks
 			bool matchFound = false;
-			for (vector <string>::const_iterator matchIter = collectedCharsets.begin(); matchIter < collectedCharsets.end(); matchIter++)
-			{
-				if (charsetName == *matchIter)
-				{
+			for (vector <string>::const_iterator matchIter = collectedCharsets.begin(); matchIter < collectedCharsets.end(); matchIter++) {
+				if (charsetName == *matchIter) {
 					matchFound = true;
 				}
 			}
-			if (!matchFound)
-			{
+			if (!matchFound) {
 				collectedCharsets.push_back(charsetName);
 				includedLocusRanges.push_back(tempIntVector);
 			}
@@ -411,8 +341,7 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 		}
 	}
 // If no charsets detected, construct a single partition
-	if (!charsetsEncountered)
-	{
+	if (!charsetsEncountered) {
 		collectedCharsets.push_back("All");
 		tempIntVector.push_back(0);		// Code for simple range
 		tempIntVector.push_back(1);
@@ -423,8 +352,7 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 	return collectedCharsets;
 }
 
-void extractIntervalRange (string charsetDeclaration, int & start, int & stop, int & interval)
-{
+void extractIntervalRange (string charsetDeclaration, int & start, int & stop, int & interval) {
 // This simple function assumes a very strict format: e.g. '1-566\3'
 // - need to remove middle '-', separator '\', store interval
 	string temp;
@@ -433,45 +361,38 @@ void extractIntervalRange (string charsetDeclaration, int & start, int & stop, i
 	int dashPosition = 0;
 	int separatorPosition = 0;
 	
-	for (string::iterator charIter = charsetDeclaration.begin(); charIter < charsetDeclaration.end(); charIter++ )
-	{
+	for (string::iterator charIter = charsetDeclaration.begin(); charIter < charsetDeclaration.end(); charIter++ ) {
 		tempVector.push_back(*charIter);
-		if (*charIter == '-')
-		{
+		if (*charIter == '-') {
 			dashPosition = charCounter;
 		}
-		if (*charIter == '\\')
-		{
+		if (*charIter == '\\') {
 			separatorPosition = charCounter;
 		}
 		charCounter++;
 	}
 // Start position
-	for (int charIter = 0; charIter < dashPosition; charIter++)
-	{
+	for (int charIter = 0; charIter < dashPosition; charIter++) {
 		temp += tempVector[charIter];
 	}
 	start = convertStringtoInt(temp);
 	temp.clear();
 	
 // Stop position
-	for (int charIter = dashPosition + 1; charIter < charCounter; charIter++)
-	{
+	for (int charIter = dashPosition + 1; charIter < charCounter; charIter++) {
 		temp += tempVector[charIter];
 	}
 	stop = convertStringtoInt(temp);
 	temp.clear();
 	
 // Interval position
-	for (int charIter = separatorPosition + 1; charIter < charCounter; charIter++)
-	{
+	for (int charIter = separatorPosition + 1; charIter < charCounter; charIter++) {
 		temp += tempVector[charIter];
 	}
 	interval = convertStringtoInt(temp);
 }
 
-void extractSimpleCharsetRanges (string charsetDeclaration, int & start, int & stop)
-{
+void extractSimpleCharsetRanges (string charsetDeclaration, int & start, int & stop) {
 // This simple function assumes a very strict format: e.g. '1-566'
 // - need to remove middle '-'
 	string temp;
@@ -479,52 +400,43 @@ void extractSimpleCharsetRanges (string charsetDeclaration, int & start, int & s
 	int charCounter = 0;
 	int dashPosition = 0;
 	
-	for (string::iterator charIter = charsetDeclaration.begin(); charIter < charsetDeclaration.end(); charIter++ )
-	{
+	for (string::iterator charIter = charsetDeclaration.begin(); charIter < charsetDeclaration.end(); charIter++ ) {
 		tempVector.push_back(*charIter);
-		if (*charIter == '-')
-		{
+		if (*charIter == '-') {
 			dashPosition = charCounter;
 		}
 		charCounter++;
 	}
 // Start position
-	for (int charIter = 0; charIter < dashPosition; charIter++)
-	{
+	for (int charIter = 0; charIter < dashPosition; charIter++) {
 		temp += tempVector[charIter];
 	}
 	start = convertStringtoInt(temp);
 	temp.clear();
 // Stop position
-	for (int charIter = dashPosition + 1; charIter < charCounter; charIter++)
-	{
+	for (int charIter = dashPosition + 1; charIter < charCounter; charIter++) {
 		temp += tempVector[charIter];
 	}
 	stop = convertStringtoInt(temp);
 }
 
-int getIntervalPartitionLength (int const& partitionID, vector < vector <int> > const& includedLocusRanges)
-{
+int getIntervalPartitionLength (int const& partitionID, vector < vector <int> > const& includedLocusRanges) {
 	int partitionLength = 0;
 	int start = includedLocusRanges[partitionID][1];
 	int stop = includedLocusRanges[partitionID][2];
 	int interval = includedLocusRanges[partitionID][3];
-	for (int iter = start; iter <= stop; iter += interval)
-	{
+	for (int iter = start; iter <= stop; iter += interval) {
 		partitionLength++;
 	}
 	return partitionLength;
 }
 
-void printCollectedCharsets (vector <string> const& collectedCharsets, vector < vector <int> > const& includedLocusRanges)
-{
+void printCollectedCharsets (vector <string> const& collectedCharsets, vector < vector <int> > const& includedLocusRanges) {
 	int counter = 0;
 	int sum = 0;
 	cout << "READING IN CHARSETS..." << endl << endl;
-	for (vector <string>::const_iterator charsetIter = collectedCharsets.begin(); charsetIter < collectedCharsets.end(); charsetIter++)
-	{
-		if (counter < 9)
-		{
+	for (vector <string>::const_iterator charsetIter = collectedCharsets.begin(); charsetIter < collectedCharsets.end(); charsetIter++) {
+		if (counter < 9) {
 			cout << " ";
 		}
 		if (includedLocusRanges[counter][0] == 0)	// Code for simple ranges
@@ -533,12 +445,9 @@ void printCollectedCharsets (vector <string> const& collectedCharsets, vector < 
 			
 			cout << "(" << counter + 1 << "): " << *charsetIter << ", positions " << includedLocusRanges[counter][1] << "-" << includedLocusRanges[counter][2] <<
 			" (" << tempLength;
-			if (tempLength == 1)
-			{
+			if (tempLength == 1) {
 				cout << " character)" << endl;
-			}
-			else
-			{
+			} else {
 				cout << " characters)" << endl;
 			}
 			sum += tempLength;
@@ -549,12 +458,9 @@ void printCollectedCharsets (vector <string> const& collectedCharsets, vector < 
 			
 			cout << "(" << counter + 1 << "): " << *charsetIter << ", positions " << includedLocusRanges[counter][1] << "-" << includedLocusRanges[counter][2] << ", every " << includedLocusRanges[counter][3]
 			<< " sites (" << tempLength;
-			if (tempLength == 1)
-			{
+			if (tempLength == 1) {
 				cout << " character)" << endl;
-			}
-			else
-			{
+			} else {
 				cout << " characters)" << endl;
 			}
 			sum += tempLength;
@@ -564,85 +470,70 @@ void printCollectedCharsets (vector <string> const& collectedCharsets, vector < 
 	cout << "Total number of partitions is: " << sum << endl << endl;
 }
 
-bool checkCommentLine (string stringToParse)
-{
+bool checkCommentLine (string stringToParse) {
 	bool commentLine = false;
 	char firstCharacter = stringToParse[0];
-	if (firstCharacter == '[')
-	{
+	if (firstCharacter == '[') {
 //		cout << "Dude, you've got yourself a comment there. Ignoring entire line, assuming comment does not extend across multiple lines." << endl;
 		commentLine = true;
 	}
 	return commentLine;
 }
 
-string removeStringSuffix (string stringToParse, char suffixToRemove, bool & suffixEncountered)
-{
+string removeStringSuffix (string stringToParse, char suffixToRemove, bool & suffixEncountered) {
 	string temp;
 	vector<char> tempVector;
 	int charCounter = 0;
 	int suffixStart = 0;
 	suffixEncountered = false;
 	
-	for (string::iterator charIter = stringToParse.begin(); charIter < stringToParse.end(); charIter++ )
-	{
+	for (string::iterator charIter = stringToParse.begin(); charIter < stringToParse.end(); charIter++ ) {
 		tempVector.push_back(*charIter);
-		if (*charIter == suffixToRemove)
-		{
+		if (*charIter == suffixToRemove) {
 			suffixStart = charCounter;
 			suffixEncountered = true;
 		}
 		charCounter++;
 	}
-	if (suffixEncountered)
-	{
-		for (int charIter = 0; charIter < suffixStart; charIter++)
-		{
+	if (suffixEncountered) {
+		for (int charIter = 0; charIter < suffixStart; charIter++) {
 			temp += tempVector[charIter];
 		}
 	}
-	if (!suffixEncountered)
-	{
+	if (!suffixEncountered) {
 		temp = stringToParse;
 	}
 	return temp;
 }
 
-string removeStringPrefix(string stringToParse, char characterToRemove)
-{
+string removeStringPrefix(string stringToParse, char characterToRemove) {
 	string tempString;
 	vector<char> tempVector;
 	int charCounter = 0;
 	int characterPosition = 0;
 	bool characterEncountered = false;
 	
-	for (string::iterator charIter = stringToParse.begin(); charIter < stringToParse.end(); charIter++ )
-	{
+	for (string::iterator charIter = stringToParse.begin(); charIter < stringToParse.end(); charIter++ ) {
 		tempVector.push_back(*charIter);
-		if (*charIter == characterToRemove)
-		{
+		if (*charIter == characterToRemove) {
 			characterPosition = charCounter;
 			characterEncountered = true;
 		}
 		charCounter++;
 	}
-	if (characterEncountered)
-	{
-		for (int charIter = characterPosition + 1; charIter < charCounter; charIter++)
-		{
+	if (characterEncountered) {
+		for (int charIter = characterPosition + 1; charIter < charCounter; charIter++) {
 			tempString += tempVector[charIter];
 		}
 	}
-	if (!characterEncountered)
-	{
+	if (!characterEncountered) {
 		tempString = stringToParse;
 	}
 	return tempString;
 }
 
 vector < vector <string> > collectTaxaAlignment (string fileName, int const& numTaxa, int const& numChar,
-	bool const& interleavedData, vector <string> & taxonNames)
-{
+	bool const& interleavedData, vector <string> & taxonNames) {
 // PLEASE NOTE: search strategy below uses very strict format assumptions - that which is exported by PAUP*
 // 	- do not be surprised if this fucks up - it is probably a simple rearrangement of terms
 	vector < vector <string> > taxaAlignment;
@@ -657,44 +548,33 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 	inputAlignment.open(fileName.c_str());
 	string line;
 	
-	if (!interleavedData)
-	{
+	if (!interleavedData) {
 		cout << endl << endl << "READING IN NON-INTERLEAVED DATA..." << endl;
 // Ignore lines until 'matrix' is encountered
-		while (!matrixEncountered)
-		{
+		while (!matrixEncountered) {
 			getline(inputAlignment,line);
 			commentLine = checkCommentLine(line);
 			whiteSpaceOnly = checkWhiteSpaceOnly(line);
 			
-			if (line.empty() || commentLine || whiteSpaceOnly)
-			{
+			if (line.empty() || commentLine || whiteSpaceOnly) {
 				continue;
-			}
-			else if (checkStringValue(line, "matrix", 0))
-			{
+			} else if (checkStringValue(line, "matrix", 0)) {
 				matrixEncountered = true;
-			}
-			else
-			{
+			} else {
 				continue;
 			}
 		}
 		numCharRead = 0;
 // Read in every non-empty (or non-whitespace), non-commented-out line
-		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++)
-		{
+		for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++) {
 			getline(inputAlignment,line);
 			commentLine = checkCommentLine(line);
 			whiteSpaceOnly = checkWhiteSpaceOnly(line);
 			
-			if (line.empty() || commentLine || whiteSpaceOnly)
-			{
+			if (line.empty() || commentLine || whiteSpaceOnly) {
 				taxonIter--;
 				continue;
-			}
-			else
-			{
+			} else {
 // First string is taxon name, second is sequence
 				if (debuggering) {cout << "Reading in taxon '" << extractStringElement(line, 0) << "'..." << endl;}
 				tempStringVector.push_back(extractStringElement(line, 0));
@@ -705,88 +585,69 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 				tempStringVector.clear();
 				
 // Count sites encountered - for error-checking; only checking first sequence (for now)
-				if (taxonIter == 0)
-				{
+				if (taxonIter == 0) {
 					int charCounter = (int)extractStringElement(line, 1).size();
 					numCharRead += charCounter;
 				}
-				if (numCharRead != numChar)
-				{
+				if (numCharRead != numChar) {
 					cout << "numCharRead (" << numCharRead << ") does not equal numChar (" << numChar << ") declared in Nexus file. Likely a formatting issue (my bad)."
 					<< endl << "Exiting." << endl;
 					exit(1);
 				}
 			}
 		}
-		if (numCharRead == numChar)
-		{
+		if (numCharRead == numChar) {
 			allCharacterRead = true;
 			if (debuggering) {cout << "numCharRead (" << numCharRead << ") == numChar (" << numChar << ") declared in Nexus file. Woo-hoo!" << endl;}
 		}
 	}
-	else if (interleavedData)
-	{
+	else if (interleavedData) {
 // Ignore lines until 'matrix' is encountered
 		cout << endl << endl << "READING IN INTERLEAVED DATA..." << endl;
-		while (!matrixEncountered)
-		{
+		while (!matrixEncountered) {
 			getline(inputAlignment,line);
 			commentLine = checkCommentLine(line);
 			whiteSpaceOnly = checkWhiteSpaceOnly(line);
 			
-			if (line.empty() || commentLine || whiteSpaceOnly)
-			{
+			if (line.empty() || commentLine || whiteSpaceOnly) {
 				continue;
-			}
-			else if (checkStringValue(line, "matrix", 0))
-			{
+			} else if (checkStringValue(line, "matrix", 0)) {
 				matrixEncountered = true;
-			}
-			else
-			{
+			} else {
 				continue;
 			}
 		}
 		bool firstPass = true;
 		numCharRead = 0;
-		while (!allCharacterRead)
-		{
+		while (!allCharacterRead) {
 // Read in every non-empty (or non-whitespace), non-commented-out line
-			for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++)
-			{
+			for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++) {
 				getline(inputAlignment,line);
 				commentLine = checkCommentLine(line);
 				whiteSpaceOnly = checkWhiteSpaceOnly(line);
 				
-				if (line.empty() || commentLine || whiteSpaceOnly)
-				{
+				if (line.empty() || commentLine || whiteSpaceOnly) {
 					taxonIter--;
 					continue;
-				}
-				else
-				{
+				} else {
 // First string is taxon name, second is sequence
 					string taxonName = (extractStringElement(line, 0));
 					string taxonSequence = (extractStringElement(line, 1));
 					
-					if (firstPass)
-					{
+					if (firstPass) {
 						if (debuggering) {cout << "Reading in (interleaved) taxon '" << extractStringElement(line, 0) << "'..." << endl;}
 						taxonNames.push_back(taxonName);
 						tempStringVector.push_back(taxonName);		// Taxon name
 						tempStringVector.push_back(taxonSequence);	// sequence
 						taxaAlignment.push_back(tempStringVector);
 					}
-					if (!firstPass)
-					{
+					if (!firstPass) {
 						taxaAlignment[taxonIter][1] += taxonSequence;
 					}
 // Count sites encountered - for error-checking; only checking first sequence (for now)
-					if (taxonIter == 0)
-					{
+					if (taxonIter == 0) {
 						int charCounter = 0;
-						for (string::size_type iterCharacters = 0; iterCharacters < taxonSequence.size(); iterCharacters++)
-						{
+						for (string::size_type iterCharacters = 0; iterCharacters < taxonSequence.size(); iterCharacters++) {
 							charCounter++;
 						}
 						numCharRead += charCounter;
@@ -795,8 +656,7 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 				}
 			}
 			firstPass = false;
-			if (numCharRead == numChar)
-			{
+			if (numCharRead == numChar) {
 				allCharacterRead = true;
 				if (debuggering) {cout << "numCharRead (" << numCharRead << ") == numChar (" << numChar << ") declared in Nexus file. Woo-hoo!" << endl;}
 			}
@@ -809,35 +669,28 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 }
 
 void constructMatrix (vector < vector <string> > const& taxaAlignment, vector < vector <int> > const& includedLocusRanges,
-	vector < vector <int> > & data, vector <string> const& locusNames)
-{
+	vector < vector <int> > & data, vector <string> const& locusNames) {
 	int numMissing = 0;
-	for (int i = 0; i < int(taxaAlignment.size()); i++)
-	{
+	for (int i = 0; i < int(taxaAlignment.size()); i++) {
 		vector <int> temp;
-		for (int j = 0; j < int(includedLocusRanges.size()); j++)
-		{
+		for (int j = 0; j < int(includedLocusRanges.size()); j++) {
 			bool sequencePresent = false;
 			int begin = includedLocusRanges[j][1];
 			int end = includedLocusRanges[j][2];
 			int interval = 1;
-			if (includedLocusRanges[j][0] == 1) // Code for interval range
-			{
+			if (includedLocusRanges[j][0] == 1) { // Code for interval range
 				interval = includedLocusRanges[j][3];
 			}
-			for (int k = begin - 1; k <= end - 1; k += interval)
-			{
+			for (int k = begin - 1; k <= end - 1; k += interval) {
 //				if (taxaAlignment[i][1][k] == 'A' || taxaAlignment[i][1][k] == 'C' || taxaAlignment[i][1][k] == 'G' || taxaAlignment[i][1][k] == 'T')
-				if (validCharacterEncountered(taxaAlignment[i][1][k]))
-				{
+				if (validCharacterEncountered(taxaAlignment[i][1][k])) {
 					sequencePresent = true;
 					k = end;	// leave; data are present
 					temp.push_back(1);
 					continue;
 				}
 			}
-			if (!sequencePresent)
-			{
+			if (!sequencePresent) {
 				temp.push_back(0);
 				if (debuggering) {cout << "No sequence for taxon " << taxaAlignment[i][0] << " for locus " << locusNames[j] << "." << endl;}
 				numMissing++;
@@ -851,15 +704,11 @@ void constructMatrix (vector < vector <string> > const& taxaAlignment, vector < 
 }
 
 // Made more general; can now handle any kind of data
-bool validCharacterEncountered (char const& character)
-{
+bool validCharacterEncountered (char const& character) {
 	bool match = false;
-	if (character != '?' && character != '-' && character != 'N')
-	{
+	if (character != '?' && character != '-' && character != 'N') {
 		match = true;
-	}
-	else
-	{
+	} else {
 		if(debuggering) {cout << "Character '" << character << "' is invalid." << endl;}
 	}
 	return match;
