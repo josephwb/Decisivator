@@ -45,6 +45,8 @@
 16. allow input of phylip-formatted data (and separate partition file) e.g. ala RAxML
 17. allow user to specify that all characters are independent (e.g. morphological) instead of providing a huge number of CHARSET declarations
 18. check whether partitions contain constant data
+19. use getopt for parsing commandline arguments
+20. more efficient handling of CHARSETs ala pxboot
 
 Fix:
 1. tree-wise and branch-wise partial decisiveness is currently the same thing.

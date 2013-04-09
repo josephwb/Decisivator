@@ -181,12 +181,12 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
 	}
 }
 
+// use getopt here instead
 void processCommandLineArguments(int argc, char *argv[], string & matrixFileName,
 	string & nexusFileName, string & locusWeightFileName, string & taxonWeightFileName,
 	string & treeFileName, int & burnin, int & thinning, int & numProcs)
 {
-	if (argc == 1) // Assume that it will be Nexus
-	{
+	if (argc == 1) { // Assume that it will be Nexus
 		nexusFileName = getFileName();
 	} else {
 		for (int i = 1; i < argc; i++) {
@@ -304,35 +304,25 @@ void printSummaryInformation (vector <string> const& locusNames, vector <string>
 	<< "*** SUMMARY OF CURRENT DATA ***" << endl
 	<< "*******************************" << endl;
 	
-	if (numProcs == 1)
-	{
+	if (numProcs == 1) {
 		cout << endl << "1 processor available for analyisis." << endl;
-	}
-	else
-	{
+	} else {
 		cout << endl << numProcs << " processors available for analyisis." << endl;
 	}
 	
 	cout << "Input file: '" << nexusFileName << "'." << endl;
 	cout << "A total of " << locusNames.size() << " partitions read for " << taxonNames.size() << " taxa." << endl;
 	
-	if (!referenceTaxa.empty())
-	{
-		if (referenceTaxa.size() == 1)
-		{
+	if (!referenceTaxa.empty()) {
+		if (referenceTaxa.size() == 1) {
 			cout << "Taxon '" << taxonNames[referenceTaxa[0]] << "' serves as a reference taxon (i.e. has data for all partitions)." << endl;
-		}
-		else
-		{
+		} else {
 			cout << referenceTaxa.size() << " reference taxa found (i.e. have data for all partitions)." << endl;
 		}
-	}
-	else
-	{
+	} else {
 		cout << endl << "No reference taxa found (i.e. have data for all partitions)." << endl;
 	}
-	if (debuggering)
-	{
+	if (debuggering) {
 		cout << "A total of " << locusNames.size() << " partitions read:" << endl << endl;
 		printVectorAsList(locusNames);
 		cout << endl << "A total of " << taxonNames.size() << " taxa read:" << endl << endl;
@@ -340,53 +330,35 @@ void printSummaryInformation (vector <string> const& locusNames, vector <string>
 		cout << endl;
 	}
 	
-	if (numUserTrees != 0)
-	{
-		if (numUserTrees == 1)
-		{
+	if (numUserTrees != 0) {
+		if (numUserTrees == 1) {
 			cout << numUserTrees << " user tree in memory." << endl;
-		}
-		else
-		{
+		} else {
 			cout << numUserTrees << " user trees in memory." << endl;
 		}
-	}
-	else
-	{
+	} else {
 		cout << "No user trees are in memory." << endl;
 	}
 	cout << "Matrix coverage is currently at: " << taxonCoverage << endl;
-	if (!completeDecisivenessDetermined)
-	{
+	if (!completeDecisivenessDetermined) {
 		cout << "Complete decisiveness has not yet been determined for this taxon-character matrix." << endl;
-	}
-	else
-	{
-		if (matrixDecisive)
-		{
+	} else {
+		if (matrixDecisive) {
 			cout << "Taxon-character matrix is decisive for all possible trees!" << endl;
-		}
-		else
-		{
+		} else {
 			cout << "Taxon-character matrix is NOT currently decisive for all possible trees." << endl;
 		}
 	}
-	if (treewiseDecisiveness != 0)
-	{
+	if (treewiseDecisiveness != 0) {
 		cout << "Partial tree-wise decisiveness for taxon-character matrix is currently: " << treewiseDecisiveness
 		<< " (determined from " << numRandomTrees << " random trees)." << endl;
-	}
-	else
-	{
+	} else {
 		cout << "Partial tree-wise decisiveness has not yet been determined for this taxon-character matrix." << endl;
 	}
-	if (branchwiseDecisiveness != 0)
-	{
+	if (branchwiseDecisiveness != 0) {
 		cout << "Partial branch-wise decisiveness for taxon-character matrix is currently: " << branchwiseDecisiveness
 		<< " (determined from " << numRandomTrees << " random trees)." << endl;
-	}
-	else
-	{
+	} else {
 		cout << "Partial branch-wise decisiveness has not yet been determined for this taxon-character matrix." << endl;
 	}
 	checkForMissingTaxa (data, taxonNames);
@@ -394,16 +366,12 @@ void printSummaryInformation (vector <string> const& locusNames, vector <string>
 
 void printReferenceTaxa (vector <int> const& referenceTaxa, vector <string> const& taxonNames)
 {
-	if (referenceTaxa.size() != 0)
-	{
+	if (referenceTaxa.size() != 0) {
 		cout << endl << referenceTaxa.size() << " reference taxa found (i.e. have data for all partitions):" << endl;
-		for (int i = 0; i < (int)referenceTaxa.size(); i++)
-		{
+		for (int i = 0; i < (int)referenceTaxa.size(); i++) {
 			cout << " " << i + 1 << ". " << taxonNames[referenceTaxa[i]] << endl;
 		}
-	}
-	else
-	{
+	} else {
 		cout << endl << "No reference taxa found (i.e. have data for all partitions)." << endl;
 	}
 	cout << endl;
@@ -426,13 +394,10 @@ void printMatrix (vector < vector <int> > const& data, vector <string> const& ta
 	int longestName = 0;
 	
 // get proportion of data present for taxa
-	for (int i = 0; i < numTaxa; i++)
-	{
+	for (int i = 0; i < numTaxa; i++) {
 		double temp = 0.0;
-		for (int j = 0; j < numLoci; j++)
-		{
-			if (data[i][j])
-			{
+		for (int j = 0; j < numLoci; j++) {
+			if (data[i][j]) {
 				temp ++;
 			}
 		}
@@ -440,13 +405,10 @@ void printMatrix (vector < vector <int> > const& data, vector <string> const& ta
 		proportionTaxonDataPresent.push_back(temp);
 	}
 // now for loci
-	for (int i = 0; i < numLoci; i++)
-	{
+	for (int i = 0; i < numLoci; i++) {
 		double temp = 0.0;
-		for (int j = 0; j < numTaxa; j++)
-		{
-			if (data[j][i])
-			{
+		for (int j = 0; j < numTaxa; j++) {
+			if (data[j][i]) {
 				temp ++;
 			}
 		}
@@ -454,43 +416,35 @@ void printMatrix (vector < vector <int> > const& data, vector <string> const& ta
 		proportionPartitionDataPresent.push_back(temp);
 	}
 	
-	for (int i = 0; i < numTaxa; i++)
-	{		
+	for (int i = 0; i < numTaxa; i++) {
 		string currentString = taxonNames[i];
-		if (currentString.size() > maxString.size())
-		{
+		if (currentString.size() > maxString.size()) {
 			maxString = currentString;
 		}
 	}
 // Determine length of longest name. um, seems like I can just use size here...
-	for (string::const_iterator iterCharacters = maxString.begin(); iterCharacters < maxString.end(); ++iterCharacters)
-	{
+	for (string::const_iterator iterCharacters = maxString.begin(); iterCharacters < maxString.end(); ++iterCharacters) {
 		longestName++;
 	}
 	cout << endl << "Current matrix:" << endl;
-	for (int i = 0; i < (longestName + numLoci +2); i++)
-	{
+	for (int i = 0; i < (longestName + numLoci +2); i++) {
 		cout << " ";
 	}
 	cout << "   Prop.";
 	cout << "   Weight" << endl;
-	for (int i = 0; i < numTaxa; i++)
-	{		
+	for (int i = 0; i < numTaxa; i++) {
 		cout << " " ;
 // Print out leading spaces
 		string tempName = taxonNames[i];
-		if (tempName.size() < maxString.size())
-		{
+		if (tempName.size() < maxString.size()) {
 			string::size_type tempDiffSize;
 			tempDiffSize = maxString.size() - tempName.size();
-			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
-			{
+			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++) {
 				cout << " ";
 			}
 		}
 		cout << tempName << " ";
-		for (int j = 0; j < numLoci; j++)
-		{
+		for (int j = 0; j < numLoci; j++) {
 			cout << data[i][j];
 		}
 		cout << "   " << proportionTaxonDataPresent[i];
@@ -519,54 +473,44 @@ void printMatrixToFile (vector < vector <int> > const& data, vector <string> con
 	string maxString;
 	int longestName = 0;
 	
-	for (int i = 0; i < numTaxa; i++)
-	{		
+	for (int i = 0; i < numTaxa; i++) {
 		string currentString = taxonNames[i];
-		if (currentString.size() > maxString.size())
-		{
+		if (currentString.size() > maxString.size()) {
 			maxString = currentString;
 		}
 	}
 // Determine length of longest name
-	for (string::const_iterator iterCharacters = maxString.begin(); iterCharacters < maxString.end(); ++iterCharacters)
-	{
+	for (string::const_iterator iterCharacters = maxString.begin(); iterCharacters < maxString.end(); ++iterCharacters) {
 		longestName++;
 	}
 	log << endl << "Currently active matrix:" << endl;
-	for (int i = 0; i < (longestName + numLoci +3); i++)
-	{
+	for (int i = 0; i < (longestName + numLoci +3); i++) {
 		log << " ";
 	}
 	log << "Weight" << endl;
-	for (int i = 0; i < numTaxa; i++)
-	{		
+	for (int i = 0; i < numTaxa; i++) {
 		log << " " ;
 // Print out leading spaces
 		string tempName = taxonNames[i];
-		if (tempName.size() < maxString.size())
-		{
+		if (tempName.size() < maxString.size()) {
 			string::size_type tempDiffSize;
 			tempDiffSize = maxString.size() - tempName.size();
-			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
-			{
+			for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++) {
 				log << " ";
 			}
 		}
 		log << tempName << " ";
-		for (int j = 0; j < numLoci; j++)
-		{
+		for (int j = 0; j < numLoci; j++) {
 			log << data[i][j];
 		}
 		log << "   " << taxonWeights[i] << endl;
 	}
 	log << endl;
-	for (int i = 0; i < longestName - 6; i++)
-	{
+	for (int i = 0; i < longestName - 6; i++) {
 		log << " ";
 	}
 	log << "Weight: ";
-	for (int i = 0; i < numLoci; i++)
-	{
+	for (int i = 0; i < numLoci; i++) {
 		log << locusWeights[i];
 	}
 	log << endl;
@@ -584,8 +528,7 @@ void writeMatrix (vector <string> const& taxonNames, int const& numChar,
 	bool done = false;
 	string fileName;
 	
-	while (!done)
-	{
+	while (!done) {
 		char userChoice;
 		cout << endl << endl << "WRITE CURRENT MATRIX" << endl << endl
 		<< "Write:" << endl
@@ -599,8 +542,7 @@ void writeMatrix (vector <string> const& taxonNames, int const& numChar,
 		cin >> userChoice;
 		cin.ignore(200, '\n');
 		
-		if (checkCharValue(userChoice,'n') || checkCharValue(userChoice,'b'))
-		{
+		if (checkCharValue(userChoice,'n') || checkCharValue(userChoice,'b')) {
 			cout << "Enter name for Nexus-formatted data: ";
 			cin >> fileName;
 			cin.ignore(200, '\n');
@@ -608,21 +550,16 @@ void writeMatrix (vector <string> const& taxonNames, int const& numChar,
 			writeNexus(numTaxa, numChar, taxonNames, fileName, taxaAlignment, includedLocusRanges, locusNames);
 			done = true;
 		}
-		if (checkCharValue(userChoice,'p') || checkCharValue(userChoice,'b'))
-		{
+		if (checkCharValue(userChoice,'p') || checkCharValue(userChoice,'b')) {
 			cout << "Enter name for PHYLIP-formatted data: ";
 			cin >> fileName;
 			cin.ignore(200, '\n');
 			checkValidOutputFile(fileName);
 			writePhylip(numTaxa, numChar, taxonNames, fileName, taxaAlignment);
 			done = true;
-		}
-		else if (checkCharValue(userChoice,'r'))
-		{
+		} else if (checkCharValue(userChoice,'r')) {
 			done = true;
-		}
-		else if (!checkCharValue(userChoice,'p') && !checkCharValue(userChoice,'b') && !checkCharValue(userChoice,'n') && !checkCharValue(userChoice,'r'))
-		{
+		} else if (!checkCharValue(userChoice,'p') && !checkCharValue(userChoice,'b') && !checkCharValue(userChoice,'n') && !checkCharValue(userChoice,'r')) {
 			cout << "Invalid input option (" << userChoice << "). Try again." << endl;
 		}
 	}
@@ -638,11 +575,9 @@ void writeNexus (int const& numTaxa, int const& numChar, vector <string> const& 
 	string maxString;
 	// int longestName = 0;
 	
-	for (int i = 0; i < numTaxa; i++)
-	{		
+	for (int i = 0; i < numTaxa; i++) {
 		string currentString = taxonNames[i];
-		if (currentString.size() > maxString.size())
-		{
+		if (currentString.size() > maxString.size()) {
 			maxString = currentString;
 		}
 	}
@@ -656,23 +591,18 @@ void writeNexus (int const& numTaxa, int const& numChar, vector <string> const& 
 	<< "	Format datatype=dna missing=? interleave=yes;" << endl
 	<< "	Matrix" << endl << endl;
 	
-	for (int i = 0; i < numTaxa; i++)
-	{
+	for (int i = 0; i < numTaxa; i++) {
 		bool match = false;
 		int j = 0;
-		while (!match)
-		{
- 			if (taxaAlignment[j][0] == taxonNames[i])
- 			{
+		while (!match) {
+ 			if (taxaAlignment[j][0] == taxonNames[i]) {
  				outFile << taxonNames[i];
 // Print out trailing spaces
 				string tempName = taxonNames[i];
-				if (tempName.size() < maxString.size())
-				{
+				if (tempName.size() < maxString.size()) {
 					string::size_type tempDiffSize;
 					tempDiffSize = maxString.size() - tempName.size();
-					for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
-					{
+					for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++) {
 						outFile << " ";
 					}
 				}
@@ -687,15 +617,11 @@ void writeNexus (int const& numTaxa, int const& numChar, vector <string> const& 
 	
 // write CHARSET information
 	outFile << endl << "BEGIN ASSUMPTIONS;" << endl << endl;
-	for (int partIter = 0; partIter < numLoci; partIter++)
-	{
-		if (includedLocusRanges[partIter][0] == 0) // simple range e.g. '1-566'
-		{
+	for (int partIter = 0; partIter < numLoci; partIter++) {
+		if (includedLocusRanges[partIter][0] == 0) { // simple range e.g. '1-566'
 			outFile << "CHARSET " << locusNames[partIter] << " = " << includedLocusRanges[partIter][1]
 				<< "-" << includedLocusRanges[partIter][2] << ";" << endl;
-		}
-		else if (includedLocusRanges[partIter][0] == 1) // interval range e.g. '1-566\3'
-		{
+		} else if (includedLocusRanges[partIter][0] == 1) { // interval range e.g. '1-566\3'
 			outFile << "CHARSET " << locusNames[partIter] << " = " << includedLocusRanges[partIter][1]
 				<< "-" << includedLocusRanges[partIter][2] << "\\" << includedLocusRanges[partIter][2]
 				<< ";" << endl;
@@ -714,11 +640,9 @@ void writePhylip (int const& numTaxa, int const& numChar, vector <string> const&
 	string maxString;
 	// int longestName = 0;
 	
-	for (int i = 0; i < numTaxa; i++)
-	{		
+	for (int i = 0; i < numTaxa; i++) {
 		string currentString = taxonNames[i];
-		if (currentString.size() > maxString.size())
-		{
+		if (currentString.size() > maxString.size()) {
 			maxString = currentString;
 		}
 	}
@@ -726,22 +650,17 @@ void writePhylip (int const& numTaxa, int const& numChar, vector <string> const&
 	
 	outFile << numTaxa << " " << numChar << endl;
 	
-	for (int i = 0; i < numTaxa; i++)
-	{
+	for (int i = 0; i < numTaxa; i++) {
 		bool match = false;
 		int j = 0;
-		while (!match)
-		{
- 			if (taxaAlignment[j][0] == taxonNames[i])
- 			{
+		while (!match) {
+ 			if (taxaAlignment[j][0] == taxonNames[i]) {
  				outFile << taxonNames[i];
  				string tempName = taxonNames[i];
-				if (tempName.size() < maxString.size())
-				{
+				if (tempName.size() < maxString.size()) {
 					string::size_type tempDiffSize;
 					tempDiffSize = maxString.size() - tempName.size();
-					for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++)
-					{
+					for (string::size_type iterSpaces = 0; iterSpaces < tempDiffSize; iterSpaces++) {
 						outFile << " ";
 					}
 				}
@@ -760,17 +679,13 @@ int selectPartition (vector < vector <int> > const& data, vector <string> const&
 	int partitionID;
 	int numLoci = data[0].size();
 	bool done = false;
-	while (!done)
-	{
+	while (!done) {
 		cout << "Partitions available:" << endl << endl;
 		printVectorAsList(locusNames);
 		partitionID = checkValidIntInput("Select partition to query: ");
-		if (partitionID < 1 || partitionID > numLoci)
-		{
+		if (partitionID < 1 || partitionID > numLoci) {
 			cout << "Invalid choice. Must be between 1 and " << numLoci << ". Try again." << endl;
-		}
-		else
-		{
+		} else {
 			partitionID--;
 			done = true;
 		}

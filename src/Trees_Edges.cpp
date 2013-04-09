@@ -18,12 +18,9 @@ vector < vector <bool> > fastBinaryTree (int const& numTaxa, vector < vector <in
 	vector <int> dec;
 	
 	int simTaxa = 0;
-	if (revisedReferenceTaxonPresent) // if reference taxon present, simulate tree of size numTaxa - 1, add outgroup after
-	{
+	if (revisedReferenceTaxonPresent) { // if reference taxon present, simulate tree of size numTaxa - 1, add outgroup after
 		simTaxa = numTaxa - 1;
-	}
-	else
-	{
+	} else {
 		simTaxa = numTaxa;
 	}
 	
@@ -33,37 +30,31 @@ vector < vector <bool> > fastBinaryTree (int const& numTaxa, vector < vector <in
 	vector <int> toCoalesce;  // randomly sampled lineages to coalesce
 	int randomNum = 0;
 	
-	for (int i = 0; i < simTaxa; i++) // identify tips == lineages to initially sample
-	{
+	for (int i = 0; i < simTaxa; i++) { // identify tips == lineages to initially sample
 		tree[i][i] = true;
 		alive.push_back(i);
 	}
 	
 	if (debuggering) {cout << endl;}
-	for (int i = simTaxa; i < (2 * simTaxa - 1); i++) // there will be T-2 internal nodes (unrooted tree)
-	{
+	for (int i = simTaxa; i < (2 * simTaxa - 1); i++) { // there will be T-2 internal nodes (unrooted tree)
 		vector <bool> newClade;
 		if (debuggering) {cout << "Sampled lineages (node " << i << "):";}
-		for (int j = 0; j < 2; j++) // select two available lineages to coalesce
-		{
+		for (int j = 0; j < 2; j++) { // select two available lineages to coalesce
 			randomNum = rand() % (int)alive.size();
 			
 			if (debuggering) {cout << "randomNum = " << randomNum << endl;}
 			
 			toCoalesce.push_back(alive[randomNum]);
 			
-			
 			dec.push_back(alive[randomNum]);
 			anc.push_back(i);
-			
 			
 			if (debuggering) {cout << " " << alive[randomNum];}
 			alive.erase(alive.begin()+randomNum);
 		}
 		if (debuggering) {cout << endl;}
 		sibNodes.push_back(toCoalesce);
-		for (int k = 0; k < simTaxa; k++) // coalesce
-		{
+		for (int k = 0; k < simTaxa; k++) { // coalesce
 			newClade.push_back(tree[toCoalesce[0]][k] + tree[toCoalesce[1]][k]); // just add the boolean values from clades toCoalesce[0] and toCoalesce[1]
 		}
 		alive.push_back(i); // new lineage (clade) available
@@ -71,33 +62,27 @@ vector < vector <bool> > fastBinaryTree (int const& numTaxa, vector < vector <in
 		newClade.clear();
 		toCoalesce.clear();
 	}
-	if (revisedReferenceTaxonPresent) // reference taxon present; add to tree
-	{
+	if (revisedReferenceTaxonPresent) { // reference taxon present; add to tree
 		vector <bool> root (numTaxa, true); // add reference taxon as root
-		for (int i = 0; i < int(tree[1].size()); i++)
-		{
+		for (int i = 0; i < int(tree[1].size()); i++) {
 			tree[i].push_back(false);
 		}
 		tree.push_back(root);
 	}
 	
-	if (debuggering)
-	{
+	if (debuggering) {
 		printTree(tree);
 		
 		cout << "Sibnodes:" << endl;
-		for (int i = 0; i < (int)sibNodes.size(); i++)
-		{
+		for (int i = 0; i < (int)sibNodes.size(); i++) {
 			printClade(sibNodes[i]);
 		}
 		cout << endl;
 	}
 	
-	if (debuggering)
-	{
+	if (debuggering) {
 		cout << "anc	dec" << endl;
-		for (int i = 0; i < (int)anc.size(); i++)
-		{
+		for (int i = 0; i < (int)anc.size(); i++) {
 			cout << anc[i] << "	" << dec[i] << endl;
 		}
 	}
@@ -150,8 +135,7 @@ vector < vector <int> > convertTreeToApeFormat (vector < vector <bool> > const& 
 
 void printClade (vector <int> const& clade)
 {
-	for (int i = 0; i < int(clade.size()); i++)
-	{
+	for (int i = 0; i < int(clade.size()); i++) {
 		cout << " " << clade[i];
 	}
 	cout << ";" << endl;
@@ -159,8 +143,7 @@ void printClade (vector <int> const& clade)
 
 void printClade (vector <bool> const& clade) // overloaded for debugging
 {
-	for (int i = 0; i < int(clade.size()); i++)
-	{
+	for (int i = 0; i < int(clade.size()); i++) {
 		cout << " " << clade[i];
 	}
 }
@@ -169,11 +152,9 @@ void printClade (vector <bool> const& clade) // overloaded for debugging
 void printTree (vector < vector <bool> > const& tree)
 {
 	cout << endl << "Clades:" << endl;
-	for (int i = 0; i < int(tree.size()); ++i)
-	{
+	for (int i = 0; i < int(tree.size()); ++i) {
 		cout << i << "	";
-		for (int j = 0; j < int(tree[1].size()); j++)
-		{
+		for (int j = 0; j < int(tree[1].size()); j++) {
 			cout << tree[i][j] << " ";
 		}
 		cout << endl;
@@ -183,10 +164,8 @@ void printTree (vector < vector <bool> > const& tree)
 
 vector <int> gatherTips (vector <int> & includedTips, vector <bool> const& clade)
 {
-	for (int i = 0; i < int(clade.size()); i++)
-	{
-		if (clade[i])
-		{
+	for (int i = 0; i < int(clade.size()); i++) {
+		if (clade[i]) {
 			includedTips.push_back(i);
 		}
 	}
@@ -197,18 +176,14 @@ vector <int> getRemainingTaxa (vector <int> & includedTips, int const& numTaxa)
 {
 	vector <int> remainingTaxa;
 	sort(includedTips.begin(), includedTips.end());
-	for (int i = 0; i < numTaxa; i++)
-	{
+	for (int i = 0; i < numTaxa; i++) {
 		bool match = false;
-		for (int j = 0; j < int(includedTips.size()); j++)
-		{
-			if (includedTips[j] == i)
-			{
+		for (int j = 0; j < int(includedTips.size()); j++) {
+			if (includedTips[j] == i) {
 				match = true;
 			}
 		}
-		if (!match)
-		{
+		if (!match) {
 			remainingTaxa.push_back(i);
 		}
 	}
@@ -223,12 +198,9 @@ void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < v
 	int simTaxa = 0;
 	vector <int> includedTips;
 	
-	if (revisedReferenceTaxonPresent) // reference taxon will root the tree
-	{
+	if (revisedReferenceTaxonPresent) { // reference taxon will root the tree
 		simTaxa = numTaxa - 1;
-	}
-	else
-	{
+	} else {
 		simTaxa = numTaxa;
 	}
 	
@@ -243,17 +215,13 @@ void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < v
 	right = gatherTips(right, tree[sibNodes[edge][1]]);
 	
 //	cout << "Ancestral node: (";
-	for (int j = edge + 1; j < int(sibNodes.size()); j++)
-	{
-		if (sibNodes[j][0] == node)
-		{
+	for (int j = edge + 1; j < int(sibNodes.size()); j++) {
+		if (sibNodes[j][0] == node) {
 //			cout << simTaxa + j << ");" << endl;	// ancestral node
 			sibID = sibNodes[j][1];
 			sib = gatherTips(sib, tree[sibNodes[j][1]]);
 			includedTips = gatherTips(includedTips, tree[sibNodes[j][1]]);
-		}
-		else if (sibNodes[j][1] == node)
-		{
+		} else if (sibNodes[j][1] == node) {
 //			cout << simTaxa + j << ");" << endl;	// ancestral node
 			sibID = sibNodes[j][0];
 			sib = gatherTips(sib, tree[sibNodes[j][0]]);
@@ -263,10 +231,8 @@ void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < v
 	
 	upper = getRemainingTaxa(includedTips, numTaxa);
 	
-	if (debuggering)
-	{
-		if (upper.empty())
-		{
+	if (debuggering) {
+		if (upper.empty()) {
 			cout << "*** UPPER IS EMPTY!!! ***" << endl;
 			cout << "Left:";  printClade(left);
 			cout << "Right:"; printClade(right);
@@ -276,8 +242,7 @@ void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < v
 		}
 	}
 	
-	if (upper.size() == 0) // only occurs for 'unrooted' trees
-	{
+	if (upper.size() == 0) { // only occurs for 'unrooted' trees
 		splitEdge(sib, upper, sibNodes, sibID - numTaxa, tree);
 	}
 	includedTips.clear();
@@ -285,8 +250,7 @@ void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < v
 // reverse the 'upper' vector, as reference taxon (if present) will be the last taxon
 	reverse(upper.begin(), upper.end());
 	
-	if (debuggering)
-	{
+	if (debuggering) {
 		cout << "Left:";  printClade(left);
 		cout << "Right:"; printClade(right);
 		cout << "Sib:";   printClade(sib);
@@ -311,29 +275,23 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree)
 	vector <int> alive;       // index for available lineages
 	vector <int> temp;
 	
-	for (int i = 0; i < numTaxa; i++)
-	{
+	for (int i = 0; i < numTaxa; i++) {
 		alive.push_back(i);
 	}
 	
 	if (debuggering) {cout << "Tree before sib search:" << endl; printTree(tree);}
 	
 // loop over nodes
-	for (int i = numTaxa; i < (int)tree.size(); i++)
-	{
+	for (int i = numTaxa; i < (int)tree.size(); i++) {
 		vector <bool> testClade;
 		if (debuggering) {cout << "Looking for descendant of node: " << i << endl;}
 		
-		for (int j = 0; j < (int)alive.size(); j++)
-		{
-			for (int k = 0; k < (int)alive.size(); k++)
-			{
-				for (int l = 0; l < numTaxa; l++)
-				{
+		for (int j = 0; j < (int)alive.size(); j++) {
+			for (int k = 0; k < (int)alive.size(); k++) {
+				for (int l = 0; l < numTaxa; l++) {
 					testClade.push_back(tree[alive[j]][l] + tree[alive[k]][l]);
 				}
-				if (testClade == tree[i])
-				{
+				if (testClade == tree[i]) {
 					if (debuggering) {cout << "Holy shit. It worked?!? Descendant nodes are: "
 						<< alive[j] << " & " << alive[k] << "." << endl;}
 					temp.push_back(alive[j]);
@@ -342,8 +300,7 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree)
 					
 					alive.erase(alive.begin()+k);
 					alive.erase(alive.begin()+j);
-					if (i != ((int)tree.size() - 1))
-					{
+					if (i != ((int)tree.size() - 1)) {
 						alive.push_back(i);
 						if (debuggering) {cout << "Adding node " << i << " to alive set." << endl;}
 					}
@@ -354,14 +311,12 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree)
 			}
 		}
 		
-		if (i == ((int)tree.size() - 1) && !alive.empty()) // i.e. dealing with an unrooted tree
-		{
+		if (i == ((int)tree.size() - 1) && !alive.empty()) { // i.e. dealing with an unrooted tree
 			int numNodes = (int)tree.size() - 1;
 			temp.push_back(alive[0]); // take first two; 3rd in the last clade identified
 			temp.push_back(alive[1]);
 			
-			if (debuggering)
-			{
+			if (debuggering) {
 				cout << "alive of of size: " << alive.size() << endl;
 				cout << "alive of of size: " << alive.size() << endl;
 				printVectorAsList(alive);
@@ -372,8 +327,7 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree)
 			sibNodes.push_back(temp);
 			temp.clear();
 			
-			for (int l = 0; l < numTaxa; l++)
-			{
+			for (int l = 0; l < numTaxa; l++) {
 				testClade.push_back(tree[alive[0]][l] + tree[alive[1]][l]);
 			}
 			
