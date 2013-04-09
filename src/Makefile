@@ -38,4 +38,4 @@ GAoptimize.o: GAoptimize.cpp GAoptimize.h
 	$(CC) $(CFLAGS) GAoptimize.cpp
 
 clean:
-	rm -rf *.o Decisivator_serial
+	rm -rf *.o Decisivator*
