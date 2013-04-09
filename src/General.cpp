@@ -483,8 +483,7 @@ unsigned long Stirling2ndKind (int const& n, int const& k)
 	unsigned long S2K = 0;
 	
 	if (n == k) {return (1);}
-	for (int i = 0; i < n; i++)
-	{
+	for (int i = 0; i < n; i++) {
 		S2K += pow(-1,i) * choose(k,i) * pow(k-i,n);
 	}
 	S2K = S2K / factorial(k);
