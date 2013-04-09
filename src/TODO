@@ -43,3 +43,8 @@
    5. need to tweak GA parameters: population size, tournament size, mutation
    6. have irregular hill-climbing steps (code there, just not used/optimized)
 16. allow input of phylip-formatted data (and separate partition file) e.g. ala RAxML
+17. allow user to specify that all characters are independent (e.g. morphological) instead of providing a huge number of CHARSET declarations
+18. check whether partitions contain constant data
+
+Fix:
+1. tree-wise and branch-wise partial decisiveness is currently the same thing.
