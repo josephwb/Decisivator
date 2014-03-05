@@ -4,8 +4,14 @@ DEBUG = -g
 CFLAGS = -Wall -c -m64 -O3 -funroll-loops $(DEBUG)
 LFLAGS = -Wall -m64 $(DEBUG)
 
+mt ?= T
+ifeq ($(mt), T)
+	CFLAGS+=-fopenmp
+	LFLAGS+=-fopenmp
+endif
+
 Decisivator: $(OBJS)
-	$(CC) $(LFLAGS) $(OBJS) -o Decisivator_serial
+	$(CC) $(LFLAGS) $(OBJS) -o Decisivator
 	
 Main.o: Main.cpp
 	$(CC) $(CFLAGS) Main.cpp

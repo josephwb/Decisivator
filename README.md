@@ -4,9 +4,11 @@ To compile, type the following in a unix prompt:
 
 	make
 
-To compile with multi-threading, type:
+By default, this compiles using OPENMP to enable multithreaded execution for batch analyses.
+If (for some reason) you wish to turn off multithreading, recompile as:
 
-	make -f MakefileMT
+	make clean
+	make mt=F
 
 To run, type:
 

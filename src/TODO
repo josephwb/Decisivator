@@ -15,6 +15,7 @@
 	- with edge lengths - DONE!
 	- with edge lengths and existing annotations (i.e. BEAST-style) - DONE!
 3. make parallel ***
+	- works with mattix decisiveness, but not implemented for a user-tree
 4. make for general data (not just nucleotides) - DONE!
 5. exclude taxa: - DONE!
    1. by index - DONE!

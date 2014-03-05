@@ -2,6 +2,7 @@
 *.slo
 *.lo
 *.o
+Decisivator
 
 # Compiled Dynamic libraries
 *.so

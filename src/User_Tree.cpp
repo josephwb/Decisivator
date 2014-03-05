@@ -114,7 +114,11 @@ void getUserTrees (string const& treeFileName, vector <string> & rawTrees,
 		cout << "Read in " << treeCounter << " user trees; retained " << userTrees.size() << " of them (discarded first "
 		<< burnin << " trees, retained every " << thinning << " tree thereafter)." << endl << endl;
 	} else {
-		cout << "Read in " << userTrees.size() << " user trees." << endl;
+		if (userTrees.size() > 1) {
+			cout << "Read in " << userTrees.size() << " user trees." << endl;
+		} else if (userTrees.size() == 1) {
+			cout << "Read in " << userTrees.size() << " user tree." << endl;
+		}
 	}
 }
 
