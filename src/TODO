@@ -48,6 +48,14 @@
 18. check whether partitions contain constant data
 19. use getopt for parsing commandline arguments
 20. more efficient handling of CHARSETs ala pxboot
+21. user-tree analysis: currently checks all relevant gene-quartets. add option to count number of genes which speak to an edge (not # quartets). considerably less computation.
+
 
 Fix:
 1. tree-wise and branch-wise partial decisiveness is currently the same thing.
+2. where possible, initialize vectors instead of using push. should enable better multithreading indexing
+3. getSibNodes is a huge bottleneck.
+
+Enhancements
+1. recode all with 1) bit strings and 2) set operations. this is a complete re-write.
+2. use autoconf and configure
