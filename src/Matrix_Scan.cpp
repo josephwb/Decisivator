@@ -4,6 +4,8 @@
 #include <fstream>
 #include <numeric>
 
+#include <time.h> 
+
 #ifdef _OPENMP
     #include <omp.h>
 #else
@@ -133,7 +135,7 @@ void searchForAllTriplets (vector < vector <int> > const& data, vector < vector 
 				
 				bool tripletFound = false;
 				for (int l = 0; l < numLoci; l++) {	// Loop over loci
-					if(data[i][l] == 1 && data[j][l] == 1 && data[k][l] == 1) {
+					if (data[i][l] == 1 && data[j][l] == 1 && data[k][l] == 1) {
 						tripletFound = true;
 						locations.push_back(l);
 					}
@@ -191,7 +193,7 @@ void searchForAllQuartets (vector < vector <int> > const& data, vector < vector 
 					
 					bool quartetFound = false;
 					for (int m = 0; m < numLoci; m++) {	// Loop over loci
-						if(data[i][m] == 1 && data[j][m] == 1 && data[k][m] == 1 && data[l][m] == 1) {
+						if (data[i][m] == 1 && data[j][m] == 1 && data[k][m] == 1 && data[l][m] == 1) {
 							quartetFound = true;
 							continue;
 						}
@@ -380,16 +382,13 @@ void getCoverage (vector < vector <int> > const& data, double & taxonCoverage)
 	taxonCoverage = float(taxonGeneCount)/(float(numTaxa) * float(numLoci));
 }
 
-
-
-
 // Eventually pass in more stuff e.g. keep track of missing clades, etc.
 // multithreading implemented via openmp
 double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & numTrees,
 	vector < vector <int> > const& data, bool const& findAll, int const& numProcs, bool const& verbose)
 {
 	double partialDecisiveness = 0.0; // keep track with running mean to avoid possible overflow
-	double numInternalEdges = data.size() - 3;
+	int numInternalEdges = data.size() - 3;
 	int numTaxa = data.size();
 	
 	double foo = 0.0;
@@ -453,7 +452,7 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 // empty vectors for next tree
 			tree.clear();
 			sibNodes.clear();
-			currentDecisiveness = numEdgesSatisfied/numInternalEdges;
+			currentDecisiveness = numEdgesSatisfied / (double)numInternalEdges;
 //			privateDecisiveness = ((((privateTreeCount - 1)/privateTreeCount) * privateDecisiveness)
 //				+ (currentDecisiveness/privateTreeCount));
 			
@@ -486,7 +485,7 @@ double calculatePartialDecisivenessSinglePartition (bool const& referenceTaxonPr
 	bool const& verbose, int const& numProcs)
 {
 	double partialDecisiveness = 0.0; // keep track with running mean to avoid possible overflow
-	double numInternalEdges = data.size() - 3;
+	int numInternalEdges = data.size() - 3;
 	int numTaxa = data.size();
 	vector < vector <int> > partitionToQuery;
 	
@@ -550,7 +549,7 @@ double calculatePartialDecisivenessSinglePartition (bool const& referenceTaxonPr
 	// empty vectors for next tree
 			tree.clear();
 			sibNodes.clear();
-			currentDecisiveness = numEdgesSatisfied/numInternalEdges;
+			currentDecisiveness = numEdgesSatisfied / (double)numInternalEdges;
 			sum += currentDecisiveness;
 			//partialDecisiveness = ((((treeCount - 1)/treeCount) * partialDecisiveness) + (currentDecisiveness/treeCount));
 		}
@@ -641,35 +640,42 @@ bool testCompleteDecisivness (vector < vector <int> > const& data, bool const& r
 
 vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> > const& data,
 	vector < vector < vector <bool> > > & userTrees, vector < vector <int> > const& treeTaxonOrdering,
-	vector <string> const& taxonNames, vector <double> const& locusWeights, vector <double> const& taxonWeights)
+	vector <string> const& taxonNames, vector <double> const& locusWeights, vector <double> const& taxonWeights,
+	int const& numProcs)
 {
 	vector < vector <double> > result;
 	vector < vector <bool> > rawTree;
 	vector < vector <bool> > formattedTree;
 	vector < vector <int> > sibNodes;
 	vector <bool> currentClade;
-	vector <int> left;
-	vector <int> right;
-	vector <int> sib;
-	vector <int> upper;
 	double treeCount = 0;
 	int numTaxa = (int)userTrees[0][0].size();
 	int numTrees = (int)userTrees.size();
-	bool findAll = true;
+	
+	time_t start = time(NULL);
+	time_t stop = start;
+	double seconds = 0;
+	
+	
+	
+	
+	// *** FIX THIS ***
+	bool findAll = true; // *** this should be an option. might just want # genes that speak to each edge (not # quartets).
+	
+	
 	
 	printMatrixToFile (data, taxonNames, locusWeights, taxonWeights);
-	
-	double numInternalEdges = userTrees[0][0].size() - 3; // *should* be the same for all trees in a file...
+	int numInternalEdges = userTrees[0][0].size() - 3; // *should* be the same for all trees in a file...
 	
 	if (debuggering) {cout << "Here I am! numTrees = " << numTrees << ". numInternalEdges = " << numInternalEdges
 		<< ". numTaxa = " << numTaxa << "." << endl;}
 	
 	for (int j = 0; j < numTrees; j++) {
 		treeCount++;
-		vector <double> decisivenessCurrentTree;
 		vector <int> taxonOrdering;
-		vector <int> numSatisfied;
-		vector <int> numPossible;
+		vector <double> decisivenessCurrentTree (numInternalEdges, 0.0);
+		vector <int> numSatisfied (numInternalEdges, 0);
+		vector <int> numPossible (numInternalEdges, 0);
 		
 /* ** Need to map taxon ordering to alignment via treeTaxonOrdering ***
 options:
@@ -685,6 +691,7 @@ options:
 			cout << endl << "Translation:" << endl;
 			printVectorAsList(taxonOrdering);
 		}
+		
 		for (int k = 0; k < (int)rawTree.size(); k++) {
 			vector <bool> clade (numTaxa, false);
 			for (int l = 0; l < numTaxa; l++) {
@@ -696,45 +703,68 @@ options:
 			clade.clear();
 		}
 		
-//			cout << "Formatted tree:" << endl;
-//			printTree(formattedTree);
+//		cout << "Formatted tree:" << endl;
+//		printTree(formattedTree);
 		
+		
+		
+		// *** YIKES! This takes a long time (64 of a total 74 second analysis). ***
 		sibNodes = getSibNodes(formattedTree); // get sibling node relationships; expected downstream
 		
+		stop = time(NULL);
+		seconds = difftime(stop, start);
+		cout << endl << "getSibNodes took " << seconds << " seconds." << endl;
+		start = stop;
+		
 		if (debuggering) {cout << endl << "Edges:" << endl;}
-		for (int i = 0; i < numInternalEdges; ++i) { // this is the important bit; *** NEED TO INCORPORATE TAXON CODING ***
-			currentClade = formattedTree[numTaxa + i];
-			double currentDecisiveness = 0.0;
-			int numEdgesSatisfied = 0;
+		
+		
+		
+	// multi-thread this shit!!!
+		#pragma omp parallel num_threads(numProcs)
+		{
+			vector <int> left;
+			vector <int> right;
+			vector <int> sib;
+			vector <int> upper;
+			#pragma omp for
+			for (int i = 0; i < numInternalEdges; ++i) { // this is the important bit; *** NEED TO INCORPORATE TAXON CODING ***
+				currentClade = formattedTree[numTaxa + i];
+				double currentDecisiveness = 0.0;
+				int numEdgesSatisfied = 0;
 			
-			getEdges(i, formattedTree, sibNodes, 0, left, right, sib, upper);
-			int numPossibleQuartets = (int)left.size() * (int)right.size() * (int)sib.size() * (int)upper.size();
+				getEdges(i, formattedTree, sibNodes, 0, left, right, sib, upper);
+				int numPossibleQuartets = (int)left.size() * (int)right.size() * (int)sib.size() * (int)upper.size();
 			
-// *** Scan taxon-gene matrix here ***
-			 numEdgesSatisfied = searchEdgePartitions(data, left, right, sib, upper, findAll, 0);
+	// *** Scan taxon-gene matrix here ***
+				numEdgesSatisfied = searchEdgePartitions(data, left, right, sib, upper, findAll, 0);
 			 
-			if (debuggering) {
-				cout << "Considering " << numPossibleQuartets << " ways to satisfy current node " << i + numTaxa << ":" << endl;
-				printClade(currentClade);
-				cout << endl;
-				cout << numEdgesSatisfied << " instances satisfied of a possible " << numPossibleQuartets
-			 	<< " for node " << i + numTaxa << " (= " << ((double)numEdgesSatisfied/(double)numPossibleQuartets)*100 << "%)." << endl;
+				if (debuggering) {
+					cout << "Considering " << numPossibleQuartets << " ways to satisfy current node " << i + numTaxa << ":" << endl;
+					printClade(currentClade);
+					cout << endl;
+					cout << numEdgesSatisfied << " instances satisfied of a possible " << numPossibleQuartets
+					<< " for node " << i + numTaxa << " (= " << ((double)numEdgesSatisfied/(double)numPossibleQuartets)*100 << "%)." << endl;
+				}
+				currentDecisiveness = (double)numEdgesSatisfied / (double)numPossibleQuartets;
+				decisivenessCurrentTree[i] = currentDecisiveness;
+				numSatisfied[i] = numEdgesSatisfied;
+				numPossible[i] = numPossibleQuartets;
+			 
+	// empty vectors for next edge
+				left.clear();
+				right.clear();
+				sib.clear();
+				upper.clear();
 			}
-			currentDecisiveness = (double)numEdgesSatisfied / (double)numPossibleQuartets;
-			decisivenessCurrentTree.push_back(currentDecisiveness);
-			numSatisfied.push_back(numEdgesSatisfied);
-			numPossible.push_back(numPossibleQuartets);
-			 
-// empty vectors for next edge
-			left.clear();
-			right.clear();
-			sib.clear();
-			upper.clear();
 		}
 		
-		printBipartitionTable(formattedTree, decisivenessCurrentTree, numSatisfied,
-			numPossible, numTaxa, numTrees, j);
+		printBipartitionTable(formattedTree, decisivenessCurrentTree, numSatisfied, numPossible, numTaxa, numTrees, j);
 		result.push_back(decisivenessCurrentTree);
+		
+		time_t stop = time(NULL);
+		double seconds = difftime(stop, start);
+		cout << endl << "Analyzing user-tree took " << seconds << " seconds." << endl;
 		
 		if (numTrees > 1) {
 			cout << "Average decisiveness for tree " << j + 1 << " is: " << sum(decisivenessCurrentTree)/(double)decisivenessCurrentTree.size() << endl;

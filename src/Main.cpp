@@ -329,7 +329,7 @@ int main(int argc, char *argv[]) {
 					thinning, treeTaxonOrdering);
 			}
 			userTreeDecisiveness = determineDecisivenessUserTree (revisedData, userTrees,
-				treeTaxonOrdering, revisedTaxonNames, revisedLocusWeights, revisedTaxonWeights);
+				treeTaxonOrdering, revisedTaxonNames, revisedLocusWeights, revisedTaxonWeights, numProcs);
 			
 			writeAnnotatedTrees(rawTrees, translationTable, userTreeDecisiveness, revisedTaxonNames);
 		} else if (quit) {

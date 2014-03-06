@@ -29,7 +29,8 @@ bool testCompleteDecisivness (vector < vector <int> > const& data, bool const& r
 	vector < vector <int> > & tripletLocations, vector < vector <int> > & missingTriplets);
 vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> > const& data,
 	vector < vector < vector <bool> > > & userTrees, vector < vector <int> > const& treeTaxonOrdering,
-	vector <string> const& taxonNames, vector <double> const& locusWeights, vector <double> const& taxonWeights);
+	vector <string> const& taxonNames, vector <double> const& locusWeights, vector <double> const& taxonWeights,
+	int const& numProcs);
 void printBipartitionTable (vector < vector <bool> > const& tree, vector <double> const& decisiveness,
 	vector <int> const& numSatisfied, vector <int> const& numPossible, int const& numTaxa,
 	int const& numTrees, int const& treeNumber);

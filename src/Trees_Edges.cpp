@@ -268,6 +268,8 @@ void splitEdge (vector <int> & sib, vector <int> & upper, vector < vector <int> 
 	upper = gatherTips(upper, tree[sibNodes[sibID][1]]);
 }
 
+
+// currently a huge bottleneck
 vector < vector <int> > getSibNodes (vector < vector <bool> > & tree)
 {
 	vector < vector <int> > sibNodes;
