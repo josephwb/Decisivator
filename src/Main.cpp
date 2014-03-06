@@ -32,41 +32,41 @@
    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-   Any feedback is very welcome, yo.
-   email: josephwb@uidaho.edu
+   Any feedback is very welcome.
+   email: josephwb@umich.edu
 */
 
 
 /*
 
-A program to analyze a matrix of taxon-gene cells for the purpose of determining idealized phylogenetic
+A program to analyze a matrix of taxon-locus cells for the purpose of determining idealized phylogenetic
 'decisiveness' sensu Michael Sanderson and Mike Steel.
 
-Presence of a gene is denoted by '1', absence by '0'. User may pass in a 0-1 matrix or (more likely)
+Presence of a locus is denoted by '1', absence by '0'. User may pass in a 0-1 matrix or (more likely)
 a Nexus file containing CHARSET declarations (in the latter case, the 0-1 matrix is determined
 automatically). 
 
 Searches for all taxon triplets (necessary) and quartets (sufficient) conditions (or, if a reference
-taxon exists, that is, one sequenced for all genes, all quads that contain that reference taxon), i.e. 
+taxon exists, that is, one sequenced for all loci, all quads that contain that reference taxon), i.e. 
 determines decisiveness of matrix as a whole for ALL possible trees.
 
-At the moment, deals only with a single matrix. User interacts, adding taxon-genes, merging taxa 
-(forming chimeric sequences) and/or deleting taxa and genes that may be causing problems (although
-deleting genes will never help, except to form reference taxa). In this way, one may (eventually,
+At the moment, deals only with a single matrix. User interacts, adding taxon-loci, merging taxa 
+(forming chimeric sequences) and/or deleting taxa and loci that may be causing problems (although
+deleting loci will never help, except to form reference taxa). In this way, one may (eventually,
 and pretty inefficiently) attain a matrix that is phylogenetically decisive.
 
 To determine partial decisiveness (branch-wise), the following will occur:
 
 1. get a topology (edgelengths not required) - DONE
 2. traverse tree, edge by edge - DONE
-3. determine if two taxa on EACH side of the edge are sequenced for a particular gene
+3. determine if two taxa on EACH side of the edge are sequenced for a particular locus
    
 'Partial decisivess' is of interest for both the focal tree and 'all' trees. For the latter, it is not
 possible to analyze every possible configuration. As an approximation, simulate multiple random trees
 of the same taxon size. An important consideration may be to constrain parts of the generated trees
 to display non-controversial edges.
 
-Ultimate goal: how to add taxon-genes to the matrix to most optimally (i.e. most frugally or with fixed
+Ultimate goal: how to add taxon-loci to the matrix to most optimally (i.e. most frugally or with fixed
 effort) improve phylogenetic decisiveness.
 
 The code below will, after final structure decisions (i.e. 'structurally decisive'! Ha!), be
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
 		nexusFileName = matrixFileName;
 	}
 
-// *** If reference taxon IS present, put at bottom of taxon-gene matrix (as outgroup taxon is always last in tree)
+// *** If reference taxon IS present, put at bottom of taxon-locus matrix (as outgroup taxon is always last in tree)
 //     Will allow faster satisfaction (but not rejection) of internal edges.
 	referenceTaxonPresent = searchForReferenceTaxon(data, referenceTaxa, taxonNames);
 	
@@ -250,7 +250,7 @@ int main(int argc, char *argv[]) {
 			reweightTaxa, partialTreewise, partialBranchwise, summarize, testCompleteDeciveness,
 			writeCurrentMatrix, testUserTree, partialIndividualPartition, printRefTaxa, useGA);
 		
-		if (revert) {	// User wants to start over manipulating original taxon-gene matrix
+		if (revert) {	// User wants to start over manipulating original taxon-locus matrix
 			revisedLocusNames = locusNames;
 			revisedTaxonNames = taxonNames;
 			revisedData = data;
