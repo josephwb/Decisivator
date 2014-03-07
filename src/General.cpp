@@ -79,8 +79,11 @@ bool checkValidOutputFile (string & outputFileName) {
 			fileNameAcceptable = true;
 		} else {
 			testIn.close();
-			cout << endl << "File '" << outputFileName << "' exists!  Change name (0) or overwrite (1)? ";
-			cin >> keepFileName;
+			
+			cout << endl << "File '" << outputFileName << "' exists!  ";
+			
+			keepFileName = checkValidBoolInput("Change name (0) or overwrite (1)? ");
+			
 			if (!keepFileName) {
 				cout << "Enter new output file name: ";
 				cin >> outputFileName;
