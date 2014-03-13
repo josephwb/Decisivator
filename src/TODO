@@ -55,7 +55,10 @@ Fix:
 1. tree-wise and branch-wise partial decisiveness is currently the same thing.
 2. where possible, initialize vectors instead of using push. should enable better multithreading indexing
 3. getSibNodes is a huge bottleneck.
+4. only seems to accept Nexus user trees. add newick.
+
 
 Enhancements
 1. recode all with 1) bit strings and 2) set operations. this is a complete re-write.
 2. use autoconf and configure
+3. add option that only variable data are considered (involves creating internal matrix representation).

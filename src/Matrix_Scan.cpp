@@ -670,6 +670,12 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
 	if (debuggering) {cout << "Here I am! numTrees = " << numTrees << ". numInternalEdges = " << numInternalEdges
 		<< ". numTaxa = " << numTaxa << "." << endl;}
 	
+	if (numTrees > 1) {
+		cout << endl << "Conducting analysis on " << numTrees << " provided user-trees." << endl;
+	} else {
+		cout << endl << "Conducting analysis on 1 provided user-tree." << endl;
+	}
+	
 	for (int j = 0; j < numTrees; j++) {
 		treeCount++;
 		vector <int> taxonOrdering;
@@ -708,13 +714,13 @@ options:
 		
 		
 		
-		// *** YIKES! This takes a long time (64 of a total 74 second analysis). ***
-		sibNodes = getSibNodes(formattedTree); // get sibling node relationships; expected downstream
+	// *** YIKES! This takes a long time (64 of a total 74 second analysis). ***
+		sibNodes = getSibNodes(formattedTree, numProcs); // get sibling node relationships; expected downstream
 		
-		stop = time(NULL);
-		seconds = difftime(stop, start);
-		cout << endl << "getSibNodes took " << seconds << " seconds." << endl;
-		start = stop;
+//		stop = time(NULL);
+//		seconds = difftime(stop, start);
+//		cout << endl << "getSibNodes took " << seconds << " seconds." << endl;
+//		start = stop;
 		
 		if (debuggering) {cout << endl << "Edges:" << endl;}
 		
@@ -762,10 +768,6 @@ options:
 		printBipartitionTable(formattedTree, decisivenessCurrentTree, numSatisfied, numPossible, numTaxa, numTrees, j);
 		result.push_back(decisivenessCurrentTree);
 		
-		time_t stop = time(NULL);
-		double seconds = difftime(stop, start);
-		cout << endl << "Analyzing user-tree took " << seconds << " seconds." << endl;
-		
 		if (numTrees > 1) {
 			cout << "Average decisiveness for tree " << j + 1 << " is: " << sum(decisivenessCurrentTree)/(double)decisivenessCurrentTree.size() << endl;
 		} else {
@@ -780,12 +782,25 @@ options:
 		numPossible.clear();
 	//	partialDecisiveness = ((((treeCount - 1)/treeCount) * partialDecisiveness) + (currentDecisiveness/treeCount));
 	}
-	cout << "Done." << endl << endl;
 	
+	stop = time(NULL);
+	seconds = difftime(stop, start);
+	
+	if (numTrees > 1) {
+		cout << endl << "Completed analysis of provided trees in " << seconds << " seconds. " << endl;
+	} else {
+		cout << endl << "Completed analysis of provided tree in " << seconds << " seconds. " << endl;
+	}
+	cout << "Bipartition decisiveness scores have been printed to file 'Decisivator.log'." << endl << endl;
 	return(result);
 }
 
+
+
+
 // PAUP-style
+// Hmm. Probably don't want this to print to screen (except maybe when debugging).
+// Should tailor the name of the file.
 void printBipartitionTable (vector < vector <bool> > const& tree, vector <double> const& decisiveness,
 	vector <int> const& numSatisfied, vector <int> const& numPossible, int const& numTaxa,
 	int const& numTrees, int const& treeNumber)
@@ -794,10 +809,10 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
 	log.open("Decisivator.log",ios::app);
 	
 	if (numTrees > 1) {
-		cout << endl << "Bipartition Decisiveness Scores for tree #" << treeNumber + 1 << ":" << endl << endl;
+		if (debuggering) {cout << endl << "Bipartition Decisiveness Scores for tree #" << treeNumber + 1 << ":" << endl << endl;}
 		log << endl << "Bipartition Decisiveness Scores for tree #" << treeNumber + 1 << ":" << endl << endl;
 	} else {
-		cout << endl << endl << "Bipartition Decisiveness Scores:" << endl << endl;
+		if (debuggering) {cout << endl << endl << "Bipartition Decisiveness Scores:" << endl << endl;}
 		log << endl << endl << "Bipartition Decisiveness Scores:" << endl << endl;
 	}
 	
@@ -808,15 +823,15 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
 		divisor = 1000;
 		for (int i = 1; i <= numTaxa; i++) {
 			if (i % divisor == 0) {
-				cout << counter;
+				if (debuggering) {cout << counter;}
 				log << counter;
 				counter ++;
 			} else {
-				cout << " ";
+				if (debuggering) {cout << " ";}
 				log << " ";
 			}
 		}
-		cout << endl;
+		if (debuggering) {cout << endl;}
 		log << endl;
 	}
 	if (numTaxa > 99) {
@@ -824,15 +839,15 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
 		divisor = 100;
 		for (int i = 1; i <= numTaxa; i++) {
 			if (i % divisor == 0) {
-				cout << counter;
+				if (debuggering) {cout << counter;}
 				log << counter;
 				counter ++;
 			} else {
-				cout << " ";
+				if (debuggering) {cout << " ";}
 				log << " ";
 			}
 		}
-		cout << endl;
+		if (debuggering) {cout << endl;}
 		log << endl;
 	}
 	if (numTaxa > 9) {
@@ -840,37 +855,37 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
 		divisor = 10;
 		for (int i = 1; i <= numTaxa; i++) {
 			if (i % divisor == 0) {
-				cout << counter;
+				if (debuggering) {cout << counter;}
 				log << counter;
 				counter ++;
 			} else {
-				cout << " ";
+				if (debuggering) {cout << " ";}
 				log << " ";
 			}
 		}
-		cout << endl;
+		if (debuggering) {cout << endl;}
 		log << endl;
 	}
 	counter = 1;
 	for (int i = 1; i <= numTaxa; i++) {
 		if (counter == 10) {
 			counter = 0;
-			cout << counter;
+			if (debuggering) {cout << counter;}
 			counter ++;
 		} else {
-			cout << counter;
+			if (debuggering) {cout << counter;}
 			log << counter;
 			counter ++;
 		}
 	}
-	cout << "	Freq.	Poss.	 %" << endl;
+	if (debuggering) {cout << "	Freq.	Poss.	 %" << endl;}
 	log << "	Freq.	Poss.	 %" << endl;
 	
 	for (int i = 1; i <= numTaxa; i++) {
-		cout << "-";
+		if (debuggering) {cout << "-";}
 		log << "-";
 	}
-	cout << "---------------------------" << endl;
+	if (debuggering) {cout << "---------------------------" << endl;}
 	log << "---------------------------" << endl;
 	
 // Last 'node' defines entire tree, penultimate node defines root (all other nodes already taken care of)
@@ -879,18 +894,18 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
 		vector <bool> currentClade = tree[i];
 		for (int j = 0; j < numTaxa; j++) {
 			if (currentClade[j]) {
-				cout << "*";
+				if (debuggering) {cout << "*";}
 				log << "*";
 			} else {
-				cout << ".";
+				if (debuggering) {cout << ".";}
 				log << ".";
 			}
 		}
-		cout << "	" << numSatisfied[counter] << "	" << numPossible[counter] << "	" << decisiveness[counter]*100 << endl;
+		if (debuggering) {cout << "	" << numSatisfied[counter] << "	" << numPossible[counter] << "	" << decisiveness[counter]*100 << endl;}
 		log << "	" << numSatisfied[counter] << "	" << numPossible[counter] << "	" << decisiveness[counter]*100 << endl;
 		counter++;
 	}
-	cout << endl;
+	if (debuggering) {cout << endl;}
 	log << endl;
 }
 

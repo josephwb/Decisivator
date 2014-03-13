@@ -2,6 +2,8 @@
 #include <vector>
 #include <cstdlib>
 #include <algorithm>
+#include <set>
+#include <numeric>
 
 using namespace std;
 
@@ -190,6 +192,9 @@ vector <int> getRemainingTaxa (vector <int> & includedTips, int const& numTaxa)
 	return(remainingTaxa);
 }
 
+
+
+
 void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < vector <int> > & sibNodes,
 	bool const& revisedReferenceTaxonPresent, vector <int> & left, vector <int> & right, vector <int> & sib,
 	vector <int> & upper)
@@ -269,47 +274,92 @@ void splitEdge (vector <int> & sib, vector <int> & upper, vector < vector <int> 
 }
 
 
-// currently a huge bottleneck
-vector < vector <int> > getSibNodes (vector < vector <bool> > & tree)
+
+
+
+// currently a HUGE bottleneck. FIXED!!! Went from 60+ seconds to 0 seconds for Angiosperm tree
+// need to use some clever set algorithm to speed things up
+// or store a real tree and traverse it
+/* Currently: tree is stored in sorted fashion, from smaller (tips) to larger clades. e.g.:
+Clades:
+0	0 0 0 0 0 0 0 0 0 1 
+1	0 0 0 0 0 0 0 0 1 0 
+2	0 0 0 0 0 0 0 1 0 0 
+3	0 0 0 0 0 0 1 0 0 0 
+4	0 0 0 0 0 1 0 0 0 0 
+5	0 0 0 0 1 0 0 0 0 0 
+6	0 0 0 1 0 0 0 0 0 0 
+7	0 0 1 0 0 0 0 0 0 0 
+8	0 1 0 0 0 0 0 0 0 0 
+9	1 0 0 0 0 0 0 0 0 0 
+10	0 0 0 0 0 0 0 0 1 1 
+11	0 0 0 0 0 1 1 0 0 0 
+12	0 0 0 0 1 1 1 0 0 0 
+13	0 0 0 1 1 1 1 0 0 0 
+14	0 0 0 1 1 1 1 1 0 0 
+15	0 0 0 1 1 1 1 1 1 1 
+16	0 1 1 0 0 0 0 0 0 0 
+17	0 1 1 1 1 1 1 1 1 1 
+18	1 1 1 1 1 1 1 1 1 1
+So, guaranteed to find descendant clades above clade of interest.
+*/
+vector < vector <int> > getSibNodes (vector < vector <bool> > & tree, int const& numProcs)
 {
 	vector < vector <int> > sibNodes;
 	int numTaxa = (int)tree[0].size();
-	vector <int> alive;       // index for available lineages
+	vector <int> alive (numTaxa, 0);		// index for available lineages
 	vector <int> temp;
 	
+	vector <int> cladeSizes ((int)tree.size(), 0);	// used for avoiding certain comparisons
+	for (int i = 0; i < (int)tree.size(); i++) {
+		cladeSizes[i] = std::accumulate(tree[i].begin(),tree[i].end(),0);
+	}
+	
 	for (int i = 0; i < numTaxa; i++) {
-		alive.push_back(i);
+		alive[i] = i;
 	}
 	
 	if (debuggering) {cout << "Tree before sib search:" << endl; printTree(tree);}
 	
-// loop over nodes
+//	cout << "Tree before sib search:" << endl; printTree(tree);
+//	cout << "Worst case scenario: make " << (((int)tree.size() - numTaxa) * (int)alive.size() * (int)alive.size() * numTaxa) << " comparisons here." << endl;
+	
+// loop over nodes. this is fucking ugly. find a good algorithm to perform this.
 	for (int i = numTaxa; i < (int)tree.size(); i++) {
 		vector <bool> testClade;
-		if (debuggering) {cout << "Looking for descendant of node: " << i << endl;}
+//		if (debuggering) {cout << "Looking for descendant of node: " << i << endl;}
+		
+		int currentCladeSize = cladeSizes[i];
+	//	cout << "Dealing with clade #" << i << endl;
 		
 		for (int j = 0; j < (int)alive.size(); j++) {
-			for (int k = 0; k < (int)alive.size(); k++) {
-				for (int l = 0; l < numTaxa; l++) {
-					testClade.push_back(tree[alive[j]][l] + tree[alive[k]][l]);
-				}
-				if (testClade == tree[i]) {
-					if (debuggering) {cout << "Holy shit. It worked?!? Descendant nodes are: "
-						<< alive[j] << " & " << alive[k] << "." << endl;}
-					temp.push_back(alive[j]);
-					temp.push_back(alive[k]);
-					sibNodes.push_back(temp);
+			// check that clade j is 1) smaller than the current clade and 2) can possibly be a descendant of the current clade
+			if ((cladeSizes[alive[j]] < currentCladeSize) && (tree[alive[j]] <= tree[i])) {
+	//			cout << "We've got a contender here." << endl;
+				for (int k = 0; k < (int)alive.size(); k++) {
+				// check that 1) clade j + k == current clade size and 2) clade k can possibly be a descendant of the current clade
+					if ((cladeSizes[alive[j]] + cladeSizes[alive[k]] == currentCladeSize) && (tree[alive[k]] <= tree[i])) {
+						testClade.reserve(tree[i].size());
+						std::transform(tree[alive[j]].begin(), tree[alive[j]].end(), tree[alive[k]].begin(), std::back_inserter(testClade), plus<bool>());
+						if (testClade == tree[i]) {
+							if (debuggering) {cout << "Holy shit. It worked?!? Descendant nodes are: "
+								<< alive[j] << " & " << alive[k] << "." << endl;}
+							temp.push_back(alive[j]);
+							temp.push_back(alive[k]);
+							sibNodes.push_back(temp);
 					
-					alive.erase(alive.begin()+k);
-					alive.erase(alive.begin()+j);
-					if (i != ((int)tree.size() - 1)) {
-						alive.push_back(i);
-						if (debuggering) {cout << "Adding node " << i << " to alive set." << endl;}
+							alive.erase(alive.begin()+k);
+							alive.erase(alive.begin()+j);
+							if (i != ((int)tree.size() - 1)) {
+								alive.push_back(i);
+								if (debuggering) {cout << "Adding node " << i << " to alive set." << endl;}
+							}
+							j = k = (int)alive.size(); // exit
+							temp.clear();
+						}
+						testClade.clear();
 					}
-					j = k = (int)alive.size(); // exit
-					temp.clear();
 				}
-				testClade.clear();
 			}
 		}
 		
@@ -319,8 +369,7 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree)
 			temp.push_back(alive[1]);
 			
 			if (debuggering) {
-				cout << "alive of of size: " << alive.size() << endl;
-				cout << "alive of of size: " << alive.size() << endl;
+				cout << "alive is of size: " << alive.size() << endl;
 				printVectorAsList(alive);
 				cout << "Adding the unrooted node:" << endl;
 				printVectorAsList(temp);

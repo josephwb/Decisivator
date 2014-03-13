@@ -16,6 +16,6 @@ vector <int> gatherTips (vector <int> & includedTips, vector <bool> const& clade
 vector <int> getRemainingTaxa (vector <int> & includedTips, int const& numTaxa);
 void splitEdge (vector <int> & sib, vector <int> & upper, vector < vector <int> > const& sibNodes,
 	int const& sibID, vector < vector <bool> > const& tree);
-vector < vector <int> > getSibNodes (vector < vector <bool> > & tree);
+vector < vector <int> > getSibNodes (vector < vector <bool> > & tree, int const& numProcs);
 
 #endif /* _TREES_AND_EDGES_H_ */

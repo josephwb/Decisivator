@@ -430,7 +430,11 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 	vector <double> currentDecisiveness;
 	string tree;
 	
-	cout << "Preparing to print out " << numTrees << " trees." << endl;
+	if (numTrees > 1) {
+		cout << "Preparing to print out " << numTrees << " trees." << endl;
+	} else {
+		cout << "Preparing to print out 1 tree." << endl;
+	}
 	bool complete = false;
 	
 	annotated_trees << "#NEXUS" << endl << endl;
@@ -485,7 +489,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 		tree = rawTrees[i];
 		reverse(currentDecisiveness.begin(), currentDecisiveness.end()); // this was flipped during searching. ugh. li.
 		
-		printVectorAsList(currentDecisiveness); // huh. this far works
+		if (debuggering) {printVectorAsList(currentDecisiveness);} // huh. this far works
 		
 		if (debuggering) {cout << endl << tree << endl << endl;}
 		
