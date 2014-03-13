@@ -2,7 +2,7 @@
 *.slo
 *.lo
 *.o
-Decisivator
+Decisivator*
 *.log
 
 # Compiled Dynamic libraries
