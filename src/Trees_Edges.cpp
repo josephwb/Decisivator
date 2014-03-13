@@ -278,7 +278,8 @@ void splitEdge (vector <int> & sib, vector <int> & upper, vector < vector <int> 
 
 
 // currently a HUGE bottleneck. FIXED!!! Went from 60+ seconds to 0 seconds for Angiosperm tree
-// need to use some clever set algorithm to speed things up
+// need to use some clever set algorithm to speed things up.
+// still want to use multithreading somehow... depends on whether the ordering of sibNodes is important (it probably is).
 // or store a real tree and traverse it
 /* Currently: tree is stored in sorted fashion, from smaller (tips) to larger clades. e.g.:
 Clades:
@@ -334,16 +335,16 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree, int const&
 		
 		for (int j = 0; j < (int)alive.size(); j++) {
 			// check that clade j is 1) smaller than the current clade and 2) can possibly be a descendant of the current clade
+			// checks like: tree[alive[j]] <= tree[i] are element-wise set operations, bailing on the first false
 			if ((cladeSizes[alive[j]] < currentCladeSize) && (tree[alive[j]] <= tree[i])) {
 	//			cout << "We've got a contender here." << endl;
 				for (int k = 0; k < (int)alive.size(); k++) {
 				// check that 1) clade j + k == current clade size and 2) clade k can possibly be a descendant of the current clade
 					if ((cladeSizes[alive[j]] + cladeSizes[alive[k]] == currentCladeSize) && (tree[alive[k]] <= tree[i])) {
 						testClade.reserve(tree[i].size());
-						std::transform(tree[alive[j]].begin(), tree[alive[j]].end(), tree[alive[k]].begin(), std::back_inserter(testClade), plus<bool>());
+						transform(tree[alive[j]].begin(), tree[alive[j]].end(), tree[alive[k]].begin(), back_inserter(testClade), plus<bool>());
 						if (testClade == tree[i]) {
-							if (debuggering) {cout << "Holy shit. It worked?!? Descendant nodes are: "
-								<< alive[j] << " & " << alive[k] << "." << endl;}
+							if (debuggering) {cout << "Holy shit. It worked?!? Descendant nodes are: " << alive[j] << " & " << alive[k] << "." << endl;}
 							temp.push_back(alive[j]);
 							temp.push_back(alive[k]);
 							sibNodes.push_back(temp);

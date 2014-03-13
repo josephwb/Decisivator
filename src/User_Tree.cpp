@@ -430,11 +430,11 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 	vector <double> currentDecisiveness;
 	string tree;
 	
-	if (numTrees > 1) {
-		cout << "Preparing to print out " << numTrees << " trees." << endl;
-	} else {
-		cout << "Preparing to print out 1 tree." << endl;
-	}
+//	if (numTrees > 1) {
+//		cout << "Preparing to print out " << numTrees << " trees." << endl;
+//	} else {
+//		cout << "Preparing to print out 1 tree." << endl;
+//	}
 	bool complete = false;
 	
 	annotated_trees << "#NEXUS" << endl << endl;
@@ -442,7 +442,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 	
 // *** check for presence of a translation table ***
 	if (translationTable.size() != 0) {
-		cout << endl << "We've got a translation table to print out here." << endl;
+	//	cout << endl << "We've got a translation table to print out here." << endl;
 /*
    translate
        1 Allosaurus_fragilis,
@@ -626,4 +626,5 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 		currentDecisiveness.clear();
 	}
 	annotated_trees << "End;";
+	cout << "Annotated tree written out to 'Decisivator.trees'." << endl;
 }

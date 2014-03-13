@@ -3,6 +3,7 @@
 *.lo
 *.o
 Decisivator
+*.log
 
 # Compiled Dynamic libraries
 *.so

@@ -791,7 +791,7 @@ options:
 	} else {
 		cout << endl << "Completed analysis of provided tree in " << seconds << " seconds. " << endl;
 	}
-	cout << "Bipartition decisiveness scores have been printed to file 'Decisivator.log'." << endl << endl;
+	cout << "Bipartition decisiveness scores have been printed to file 'Decisivator.log'." << endl;
 	return(result);
 }
 
