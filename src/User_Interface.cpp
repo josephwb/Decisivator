@@ -12,7 +12,7 @@ using namespace std;
 #include "Parse_Nexus.h"
 #include "Matrix_Scan.h"
 
-extern bool debuggering; // print out extra junk to screen
+extern bool debugging; // print out extra junk to screen
 extern double version;
 extern string month;
 extern int year;
@@ -233,7 +233,7 @@ void processCommandLineArguments(int argc, char *argv[], string & matrixFileName
 				numProcs = convertStringtoInt(argv[i]);
 				continue;
 			} else if (temp == "-debug") {
-				debuggering = true;
+				debugging = true;
 				cout << endl << "Printing additional information to screen for debugging purposes." << endl << endl;
 				continue;
 			} else {
@@ -322,7 +322,7 @@ void printSummaryInformation (vector <string> const& locusNames, vector <string>
 	} else {
 		cout << endl << "No reference taxa found (i.e. have data for all partitions)." << endl;
 	}
-	if (debuggering) {
+	if (debugging) {
 		cout << "A total of " << locusNames.size() << " partitions read:" << endl << endl;
 		printVectorAsList(locusNames);
 		cout << endl << "A total of " << taxonNames.size() << " taxa read:" << endl << endl;

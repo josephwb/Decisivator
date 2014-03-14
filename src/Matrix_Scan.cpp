@@ -19,7 +19,7 @@ using namespace std;
 #include "Trees_Edges.h"
 #include "User_Interface.h"
 
-extern bool debuggering;
+extern bool debugging;
 
 void checkForMissingTaxa (vector < vector <int> > const& data, vector <string> const& taxonNames)
 {
@@ -61,11 +61,11 @@ bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & ref
 	for (int i = 0; i < numTaxa; i++) {
 		if (data[i] == completeTaxon) {
 			if (!referencePresent) {
-				if (debuggering) {cout << endl << "Reference taxon (i.e. sequenced for all genes)." << endl;}
+				if (debugging) {cout << endl << "Reference taxon (i.e. sequenced for all genes)." << endl;}
 			}
 			referencePresent = true;
 			referenceTaxa.push_back(i);
-			if (debuggering) {cout << " " << numReference + 1 << ". " << taxonNames[i] << "." << endl;}
+			if (debugging) {cout << " " << numReference + 1 << ". " << taxonNames[i] << "." << endl;}
 			cout << " " << numReference + 1 << ". " << taxonNames[i] << "." << endl;
 			numReference++;
 		}
@@ -78,10 +78,10 @@ bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & ref
 		{
 			int ref = referenceTaxa[0];
 			
-			if (debuggering) {cout << "Moving reference taxon '" << taxonNames[ref] << "' to bottom of matrix. Don't be alarmed!" << endl;}
+			if (debugging) {cout << "Moving reference taxon '" << taxonNames[ref] << "' to bottom of matrix. Don't be alarmed!" << endl;}
 			
 // need to fix reference taxon indexing; moving taxon i to end changes index for all taxa i+1 -> N
-			if (debuggering) {cout << "Raw:" << endl;
+			if (debugging) {cout << "Raw:" << endl;
 			printVectorAsList(referenceTaxa);}
 			
 			referenceTaxa.push_back(numTaxa);
@@ -91,7 +91,7 @@ bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & ref
 				referenceTaxa[i] = referenceTaxa[i] - 1;
 			}
 			
-			if (debuggering) {cout << "Fixed:" << endl;
+			if (debugging) {cout << "Fixed:" << endl;
 			printVectorAsList(referenceTaxa);}
 			
 			data.push_back(data[ref]);
@@ -265,7 +265,7 @@ void searchForQuartetsWithReference (vector < vector <int> > const& data, vector
 	vector <int> reference;
 	reference.push_back(referenceTaxa[0]);
 	
-	if (debuggering) {
+	if (debugging) {
 		cout << "numTaxaToConsider = " << numTaxaToConsider << ":" << endl;
 		for (int i = 0; i < numTaxaToConsider; i++) {
 			cout << "  " << i + 1 << ". " << taxonNames[availableTaxa[i]] << endl;
@@ -427,13 +427,13 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
 			double currentDecisiveness = 0.0;
 			double numEdgesSatisfied = 0.0;
 			tree = fastBinaryTree(numTaxa, sibNodes, referenceTaxonPresent);
-			if (debuggering) {printTree(tree);}
+			if (debugging) {printTree(tree);}
 			
 // For debugging:
 //		printTree(tree);
 //		sort(tree.begin()+numTaxa,tree.end());
 					
-			if (debuggering) {cout << endl << "Edges:" << endl;}
+			if (debugging) {cout << endl << "Edges:" << endl;}
 			
 			for (int i = 0; i < numInternalEdges; ++i) { // Walk through all internal edges
 				getEdges(i, tree, sibNodes, referenceTaxonPresent, left, right, sib, upper);
@@ -529,9 +529,9 @@ double calculatePartialDecisivenessSinglePartition (bool const& referenceTaxonPr
 			double currentDecisiveness = 0.0;
 			double numEdgesSatisfied = 0;
 			tree = fastBinaryTree(numTaxa, sibNodes, referenceTaxonPresent);
-			if (debuggering) {printTree(tree);}
+			if (debugging) {printTree(tree);}
 			
-			if (debuggering) {cout << endl << "Edges:" << endl;}
+			if (debugging) {cout << endl << "Edges:" << endl;}
 			for (int i = 0; i < numInternalEdges; ++i) { // Walk through all internal edges
 				getEdges(i, tree, sibNodes, referenceTaxonPresent, left, right, sib, upper);
 				
@@ -595,7 +595,7 @@ int searchEdgePartitions (vector < vector <int> > const& data, vector <int> cons
 						if (data[left[i]][m] == 1 && data[right[j]][m] == 1 && data[sib[k]][m] == 1 && data[upper[l]][m] == 1) {
 							if (!findAll) {
 								numSatisfied++;
-								if (debuggering) {cout << "Quartet (" << left[i] << "," << right[j] << "," << sib[k] << "," << upper[l] << ") found at locus " << m << "!" << endl;}
+								if (debugging) {cout << "Quartet (" << left[i] << "," << right[j] << "," << sib[k] << "," << upper[l] << ") found at locus " << m << "!" << endl;}
 								return(numSatisfied); // exit: one is all that is needed
 							} else {
 								numSatisfied++;
@@ -667,7 +667,7 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
 	printMatrixToFile (data, taxonNames, locusWeights, taxonWeights);
 	int numInternalEdges = userTrees[0][0].size() - 3; // *should* be the same for all trees in a file...
 	
-	if (debuggering) {cout << "Here I am! numTrees = " << numTrees << ". numInternalEdges = " << numInternalEdges
+	if (debugging) {cout << "Here I am! numTrees = " << numTrees << ". numInternalEdges = " << numInternalEdges
 		<< ". numTaxa = " << numTaxa << "." << endl;}
 	
 	if (numTrees > 1) {
@@ -690,7 +690,7 @@ options:
 */
 		rawTree = userTrees[j];
 		taxonOrdering = treeTaxonOrdering[j];
-		if (debuggering) {
+		if (debugging) {
 //			cout << "Raw tree:" << endl;
 //			printTree(rawTree);
 			
@@ -722,7 +722,7 @@ options:
 //		cout << endl << "getSibNodes took " << seconds << " seconds." << endl;
 //		start = stop;
 		
-		if (debuggering) {cout << endl << "Edges:" << endl;}
+		if (debugging) {cout << endl << "Edges:" << endl;}
 		
 		
 		
@@ -745,7 +745,7 @@ options:
 	// *** Scan taxon-gene matrix here ***
 				numEdgesSatisfied = searchEdgePartitions(data, left, right, sib, upper, findAll, 0);
 			 
-				if (debuggering) {
+				if (debugging) {
 					cout << "Considering " << numPossibleQuartets << " ways to satisfy current node " << i + numTaxa << ":" << endl;
 					printClade(currentClade);
 					cout << endl;
@@ -809,10 +809,10 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
 	log.open("Decisivator.log",ios::app);
 	
 	if (numTrees > 1) {
-		if (debuggering) {cout << endl << "Bipartition Decisiveness Scores for tree #" << treeNumber + 1 << ":" << endl << endl;}
+		if (debugging) {cout << endl << "Bipartition Decisiveness Scores for tree #" << treeNumber + 1 << ":" << endl << endl;}
 		log << endl << "Bipartition Decisiveness Scores for tree #" << treeNumber + 1 << ":" << endl << endl;
 	} else {
-		if (debuggering) {cout << endl << endl << "Bipartition Decisiveness Scores:" << endl << endl;}
+		if (debugging) {cout << endl << endl << "Bipartition Decisiveness Scores:" << endl << endl;}
 		log << endl << endl << "Bipartition Decisiveness Scores:" << endl << endl;
 	}
 	
@@ -823,15 +823,15 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
 		divisor = 1000;
 		for (int i = 1; i <= numTaxa; i++) {
 			if (i % divisor == 0) {
-				if (debuggering) {cout << counter;}
+				if (debugging) {cout << counter;}
 				log << counter;
 				counter ++;
 			} else {
-				if (debuggering) {cout << " ";}
+				if (debugging) {cout << " ";}
 				log << " ";
 			}
 		}
-		if (debuggering) {cout << endl;}
+		if (debugging) {cout << endl;}
 		log << endl;
 	}
 	if (numTaxa > 99) {
@@ -839,15 +839,15 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
 		divisor = 100;
 		for (int i = 1; i <= numTaxa; i++) {
 			if (i % divisor == 0) {
-				if (debuggering) {cout << counter;}
+				if (debugging) {cout << counter;}
 				log << counter;
 				counter ++;
 			} else {
-				if (debuggering) {cout << " ";}
+				if (debugging) {cout << " ";}
 				log << " ";
 			}
 		}
-		if (debuggering) {cout << endl;}
+		if (debugging) {cout << endl;}
 		log << endl;
 	}
 	if (numTaxa > 9) {
@@ -855,37 +855,37 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
 		divisor = 10;
 		for (int i = 1; i <= numTaxa; i++) {
 			if (i % divisor == 0) {
-				if (debuggering) {cout << counter;}
+				if (debugging) {cout << counter;}
 				log << counter;
 				counter ++;
 			} else {
-				if (debuggering) {cout << " ";}
+				if (debugging) {cout << " ";}
 				log << " ";
 			}
 		}
-		if (debuggering) {cout << endl;}
+		if (debugging) {cout << endl;}
 		log << endl;
 	}
 	counter = 1;
 	for (int i = 1; i <= numTaxa; i++) {
 		if (counter == 10) {
 			counter = 0;
-			if (debuggering) {cout << counter;}
+			if (debugging) {cout << counter;}
 			counter ++;
 		} else {
-			if (debuggering) {cout << counter;}
+			if (debugging) {cout << counter;}
 			log << counter;
 			counter ++;
 		}
 	}
-	if (debuggering) {cout << "	Freq.	Poss.	 %" << endl;}
+	if (debugging) {cout << "	Freq.	Poss.	 %" << endl;}
 	log << "	Freq.	Poss.	 %" << endl;
 	
 	for (int i = 1; i <= numTaxa; i++) {
-		if (debuggering) {cout << "-";}
+		if (debugging) {cout << "-";}
 		log << "-";
 	}
-	if (debuggering) {cout << "---------------------------" << endl;}
+	if (debugging) {cout << "---------------------------" << endl;}
 	log << "---------------------------" << endl;
 	
 // Last 'node' defines entire tree, penultimate node defines root (all other nodes already taken care of)
@@ -894,18 +894,18 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
 		vector <bool> currentClade = tree[i];
 		for (int j = 0; j < numTaxa; j++) {
 			if (currentClade[j]) {
-				if (debuggering) {cout << "*";}
+				if (debugging) {cout << "*";}
 				log << "*";
 			} else {
-				if (debuggering) {cout << ".";}
+				if (debugging) {cout << ".";}
 				log << ".";
 			}
 		}
-		if (debuggering) {cout << "	" << numSatisfied[counter] << "	" << numPossible[counter] << "	" << decisiveness[counter]*100 << endl;}
+		if (debugging) {cout << "	" << numSatisfied[counter] << "	" << numPossible[counter] << "	" << decisiveness[counter]*100 << endl;}
 		log << "	" << numSatisfied[counter] << "	" << numPossible[counter] << "	" << decisiveness[counter]*100 << endl;
 		counter++;
 	}
-	if (debuggering) {cout << endl;}
+	if (debugging) {cout << endl;}
 	log << endl;
 }
 
@@ -951,7 +951,7 @@ void searchForQuartetsWithReferenceBIG (vector < vector <int> > const& data, vec
 		}
 	}
 	
-	if (debuggering) {
+	if (debugging) {
 		cout << "numTaxaToConsider = " << numTaxaToConsider << ":" << endl;
 		for (int i = 0; i < numTaxaToConsider; i++) {
 			cout << "  " << i + 1 << ". " << taxonNames[availableTaxa[i]] << endl;

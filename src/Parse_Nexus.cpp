@@ -12,7 +12,7 @@ using namespace std;
 #include "Parse_Data.h"
 #include "User_Interface.h"
 
-extern bool debuggering;
+extern bool debugging;
 
 /*
   NOTE: deals only with the vanilla-iest of Nexus file formats at the moment.
@@ -64,7 +64,7 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 // 	- no spaces allowed next to equal sign (for now)
 	
 	while (getline(inputUserFile,line) && !done) {
-		if (debuggering) {cout << "Current line: " << line << endl;}
+		if (debugging) {cout << "Current line: " << line << endl;}
 		int stringPosition = 0;
 		commentLine = checkCommentLine(line);
 		whiteSpaceOnly = checkWhiteSpaceOnly(line);
@@ -73,10 +73,10 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 		} else {
 			if (checkStringValue(line, "matrix", stringPosition)) { // Done - won't find the information further down; really only used for 'interleave'
 				done = true;
-				if (debuggering) {cout << "Encountered 'matrix'" << endl;}
+				if (debugging) {cout << "Encountered 'matrix'" << endl;}
 				continue;
 			} else if (checkStringValue(line, "dimensions", stringPosition)) {
-				if (debuggering) {cout << "Encountered 'dimensions'" << endl;}
+				if (debugging) {cout << "Encountered 'dimensions'" << endl;}
 				stringPosition = 0;
 				while (!numTaxaEncountered || !numCharEncountered) {
 					stringPosition++;
@@ -114,7 +114,7 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 								numTaxa = convertStringtoInt(tempString);
 							}
 						}
-						if (debuggering) {cout << "NTax = " << numTaxa << endl;}
+						if (debugging) {cout << "NTax = " << numTaxa << endl;}
 						numTaxaEncountered = true;
 					}
 					if (checkStringValue(tempString, "nchar", 0)) {
@@ -141,7 +141,7 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 								numChar = convertStringtoInt(tempString);
 							}
 						}
-						if (debuggering) {cout << "NChar = " << numTaxa << endl;}
+						if (debugging) {cout << "NChar = " << numTaxa << endl;}
 						numCharEncountered = true;
 					}
 				}
@@ -228,7 +228,7 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 								dataType = tempString;
 							}
 						}
-						if (debuggering) {cout << "Datatype = " << dataType << endl;}
+						if (debugging) {cout << "Datatype = " << dataType << endl;}
 						cout << "Datatype = " << dataType << endl;
 						dataTypeEncountered = true;
 					}
@@ -237,7 +237,7 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 		}
 	}
 	inputUserFile.close();
-	if (debuggering) {cout << endl;}
+	if (debugging) {cout << endl;}
 }
 
 vector <string> collectCharsets (string charsetFileName, vector <string> inputCharsets,
@@ -276,7 +276,7 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 		string tempString;
 		
 		if (checkStringValue(*lineIter, "charset", stringPosition)) {
-			if (debuggering) cout << "CHARSET line: " << *lineIter << endl;
+			if (debugging) cout << "CHARSET line: " << *lineIter << endl;
 			
 			charsetsEncountered = true;
 			bool equalSignEncountered = false;
@@ -299,7 +299,7 @@ vector <string> collectCharsets (string charsetFileName, vector <string> inputCh
 				bool separatorEncountered = false;
 				tempString = removeStringSuffix(*lineIter, '\\', separatorEncountered);
 				if (separatorEncountered) {
-					if (debuggering) {cout << "Interval CHARSET encountered: '" << *lineIter << "." << endl;}
+					if (debugging) {cout << "Interval CHARSET encountered: '" << *lineIter << "." << endl;}
 					//cout << "Interval CHARSET encountered: '" << *lineIter << "." << endl;
 					extractIntervalRange(charsetDeclaration, start, stop, interval);
 					tempIntVector.push_back(1);		// Code for interval range
@@ -562,7 +562,7 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 				continue;
 			} else {
 // First string is taxon name, second is sequence
-				if (debuggering) {cout << "Reading in taxon '" << extractStringElement(line, 0) << "'..." << endl;}
+				if (debugging) {cout << "Reading in taxon '" << extractStringElement(line, 0) << "'..." << endl;}
 				tempStringVector.push_back(extractStringElement(line, 0));
 				tempStringVector.push_back(extractStringElement(line, 1));
 				taxonNames.push_back(extractStringElement(line, 0));
@@ -584,7 +584,7 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 		}
 		if (numCharRead == numChar) {
 			allCharacterRead = true;
-			if (debuggering) {cout << "numCharRead (" << numCharRead << ") == numChar (" << numChar << ") declared in Nexus file. Woo-hoo!" << endl;}
+			if (debugging) {cout << "numCharRead (" << numCharRead << ") == numChar (" << numChar << ") declared in Nexus file. Woo-hoo!" << endl;}
 		}
 	}
 	else if (interleavedData) {
@@ -621,7 +621,7 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 					string taxonSequence = (extractStringElement(line, 1));
 					
 					if (firstPass) {
-						if (debuggering) {cout << "Reading in (interleaved) taxon '" << extractStringElement(line, 0) << "'..." << endl;}
+						if (debugging) {cout << "Reading in (interleaved) taxon '" << extractStringElement(line, 0) << "'..." << endl;}
 						taxonNames.push_back(taxonName);
 						tempStringVector.push_back(taxonName);		// Taxon name
 						tempStringVector.push_back(taxonSequence);	// sequence
@@ -644,7 +644,7 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
 			firstPass = false;
 			if (numCharRead == numChar) {
 				allCharacterRead = true;
-				if (debuggering) {cout << "numCharRead (" << numCharRead << ") == numChar (" << numChar << ") declared in Nexus file. Woo-hoo!" << endl;}
+				if (debugging) {cout << "numCharRead (" << numCharRead << ") == numChar (" << numChar << ") declared in Nexus file. Woo-hoo!" << endl;}
 			}
 // *** Need to print out some error here if not all characters are read ***
 // At the moment just segfaults
@@ -678,7 +678,7 @@ void constructMatrix (vector < vector <string> > const& taxaAlignment, vector < 
 			}
 			if (!sequencePresent) {
 				temp.push_back(0);
-				if (debuggering) {cout << "No sequence for taxon " << taxaAlignment[i][0] << " for locus " << locusNames[j] << "." << endl;}
+				if (debugging) {cout << "No sequence for taxon " << taxaAlignment[i][0] << " for locus " << locusNames[j] << "." << endl;}
 				numMissing++;
 			}
 		}
@@ -695,7 +695,7 @@ bool validCharacterEncountered (char const& character) {
 	if (character != '?' && character != '-' && character != 'N') {
 		match = true;
 	} else {
-		if(debuggering) {cout << "Character '" << character << "' is invalid." << endl;}
+		if(debugging) {cout << "Character '" << character << "' is invalid." << endl;}
 	}
 	return match;
 }

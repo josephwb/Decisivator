@@ -11,7 +11,7 @@ using namespace std;
 #include "General.h"
 #include "Matrix_Scan.h"
 
-extern bool debuggering;
+extern bool debugging;
 
 void addTaxonGeneToMatrix (vector < vector <int> > & data, vector <string> const& taxonNames,
 	vector <string> & locusNames, vector <double> & locusWeights, vector <double> & taxonWeights)
@@ -780,7 +780,7 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 		
 		thresholdCount = (int)thresholdValue * numTaxa;
 		
-		if (debuggering) {cout << "thresholdCount calculated to be: " << thresholdCount << endl;}
+		if (debugging) {cout << "thresholdCount calculated to be: " << thresholdCount << endl;}
 	}
 	
 // Count
@@ -800,7 +800,7 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 		
 		sum = accumulate(temp.begin(), temp.end(), 0);
 		
-		if (debuggering) {cout << "Overlap count for taxon '" << taxonNames[taxonIter] << "' is: " << sum << endl;}
+		if (debugging) {cout << "Overlap count for taxon '" << taxonNames[taxonIter] << "' is: " << sum << endl;}
 		
 		counts.push_back(sum);
 		if (sum < minCount) {
@@ -808,7 +808,7 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 		}
 	}
 	
-	if (debuggering) {cout << "minCount = " << minCount << endl;}
+	if (debugging) {cout << "minCount = " << minCount << endl;}
 	
 	minOverlap = double(minCount) / double(numTaxa);
 	
@@ -816,10 +816,10 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 		if (!invokeThreshold) { // just take the lowest motherfuckers
 			cout << endl << "Minimum taxon overlap is: " << minOverlap << endl;
 			for (int taxonIter = numTaxa-1; taxonIter >= 0; taxonIter--) {
-				if (debuggering) {cout << "taxon '" << taxonNames[taxonIter] << "' has count: " << counts[taxonIter] << endl;}
+				if (debugging) {cout << "taxon '" << taxonNames[taxonIter] << "' has count: " << counts[taxonIter] << endl;}
 				if (counts[taxonIter] == minCount) {
 					excludedTaxa.push_back(taxonNames[taxonIter]);
-					if (debuggering) {cout << "DELETE! taxonIter = " << taxonIter << "; taxon = " << taxonNames[taxonIter] << endl;}
+					if (debugging) {cout << "DELETE! taxonIter = " << taxonIter << "; taxon = " << taxonNames[taxonIter] << endl;}
 					data.erase(data.begin()+taxonIter);
 					taxonNames.erase(taxonNames.begin()+taxonIter);
 					taxonWeights.erase(taxonWeights.begin()+taxonIter);
@@ -830,10 +830,10 @@ void excludeTaxaMinimalOverlap (vector < vector <int> > & data, vector <string> 
 		} else {
 			cout << endl << "Threshold taxon overlap is: " << thresholdValue << endl;
 			for (int taxonIter = numTaxa-1; taxonIter >= 0; taxonIter--) {
-				if (debuggering) {cout << "taxon '" << taxonNames[taxonIter] << "' has count: " << counts[taxonIter] << endl;}
+				if (debugging) {cout << "taxon '" << taxonNames[taxonIter] << "' has count: " << counts[taxonIter] << endl;}
 				if (counts[taxonIter] <= thresholdCount) {
 					excludedTaxa.push_back(taxonNames[taxonIter]);
-					if (debuggering) {cout << "DELETE! taxonIter = " << taxonIter << "; taxon = " << taxonNames[taxonIter] << endl;}
+					if (debugging) {cout << "DELETE! taxonIter = " << taxonIter << "; taxon = " << taxonNames[taxonIter] << endl;}
 					data.erase(data.begin()+taxonIter);
 					taxonNames.erase(taxonNames.begin()+taxonIter);
 					taxonWeights.erase(taxonWeights.begin()+taxonIter);

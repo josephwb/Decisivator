@@ -1,7 +1,7 @@
 #ifndef _MATRIX_SCAN_H_
 #define _MATRIX_SCAN_H_
 
-//extern bool debuggering;
+//extern bool debugging;
 
 void checkForMissingTaxa (vector < vector <int> > const& data, vector <string> const& taxonNames);
 bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & referenceTaxa,

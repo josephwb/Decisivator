@@ -10,7 +10,7 @@ using namespace std;
 #include "Trees_Edges.h"
 #include "General.h"
 
-extern bool debuggering; // print out extra junk to screen
+extern bool debugging; // print out extra junk to screen
 
 // Adapted from LJH R code
 vector < vector <bool> > fastBinaryTree (int const& numTaxa, vector < vector <int> > & sibNodes,
@@ -37,24 +37,24 @@ vector < vector <bool> > fastBinaryTree (int const& numTaxa, vector < vector <in
 		alive.push_back(i);
 	}
 	
-	if (debuggering) {cout << endl;}
+	if (debugging) {cout << endl;}
 	for (int i = simTaxa; i < (2 * simTaxa - 1); i++) { // there will be T-2 internal nodes (unrooted tree)
 		vector <bool> newClade;
-		if (debuggering) {cout << "Sampled lineages (node " << i << "):";}
+		if (debugging) {cout << "Sampled lineages (node " << i << "):";}
 		for (int j = 0; j < 2; j++) { // select two available lineages to coalesce
 			randomNum = rand() % (int)alive.size();
 			
-			if (debuggering) {cout << "randomNum = " << randomNum << endl;}
+			if (debugging) {cout << "randomNum = " << randomNum << endl;}
 			
 			toCoalesce.push_back(alive[randomNum]);
 			
 			dec.push_back(alive[randomNum]);
 			anc.push_back(i);
 			
-			if (debuggering) {cout << " " << alive[randomNum];}
+			if (debugging) {cout << " " << alive[randomNum];}
 			alive.erase(alive.begin()+randomNum);
 		}
-		if (debuggering) {cout << endl;}
+		if (debugging) {cout << endl;}
 		sibNodes.push_back(toCoalesce);
 		for (int k = 0; k < simTaxa; k++) { // coalesce
 			newClade.push_back(tree[toCoalesce[0]][k] + tree[toCoalesce[1]][k]); // just add the boolean values from clades toCoalesce[0] and toCoalesce[1]
@@ -72,7 +72,7 @@ vector < vector <bool> > fastBinaryTree (int const& numTaxa, vector < vector <in
 		tree.push_back(root);
 	}
 	
-	if (debuggering) {
+	if (debugging) {
 		printTree(tree);
 		
 		cout << "Sibnodes:" << endl;
@@ -82,7 +82,7 @@ vector < vector <bool> > fastBinaryTree (int const& numTaxa, vector < vector <in
 		cout << endl;
 	}
 	
-	if (debuggering) {
+	if (debugging) {
 		cout << "anc	dec" << endl;
 		for (int i = 0; i < (int)anc.size(); i++) {
 			cout << anc[i] << "	" << dec[i] << endl;
@@ -211,7 +211,7 @@ void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < v
 	
 	int node = edge + simTaxa; // first N nodes are 'singletons'. Gah! who wrote this shit?!? Oh, yeah...
 	int sibID = 0;
-	if (debuggering) {cout << endl << "Internal node #" << node << endl;}
+	if (debugging) {cout << endl << "Internal node #" << node << endl;}
 	
 // Right and left children:
 	includedTips = gatherTips(includedTips, tree[sibNodes[edge][0]]);
@@ -236,7 +236,7 @@ void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < v
 	
 	upper = getRemainingTaxa(includedTips, numTaxa);
 	
-	if (debuggering) {
+	if (debugging) {
 		if (upper.empty()) {
 			cout << "*** UPPER IS EMPTY!!! ***" << endl;
 			cout << "Left:";  printClade(left);
@@ -255,7 +255,7 @@ void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < v
 // reverse the 'upper' vector, as reference taxon (if present) will be the last taxon
 	reverse(upper.begin(), upper.end());
 	
-	if (debuggering) {
+	if (debugging) {
 		cout << "Left:";  printClade(left);
 		cout << "Right:"; printClade(right);
 		cout << "Sib:";   printClade(sib);
@@ -320,7 +320,7 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree, int const&
 		alive[i] = i;
 	}
 	
-	if (debuggering) {cout << "Tree before sib search:" << endl; printTree(tree);}
+	if (debugging) {cout << "Tree before sib search:" << endl; printTree(tree);}
 	
 //	cout << "Tree before sib search:" << endl; printTree(tree);
 //	cout << "Worst case scenario: make " << (((int)tree.size() - numTaxa) * (int)alive.size() * (int)alive.size() * numTaxa) << " comparisons here." << endl;
@@ -328,7 +328,7 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree, int const&
 // loop over nodes. this is fucking ugly. find a good algorithm to perform this.
 	for (int i = numTaxa; i < (int)tree.size(); i++) {
 		vector <bool> testClade;
-//		if (debuggering) {cout << "Looking for descendant of node: " << i << endl;}
+//		if (debugging) {cout << "Looking for descendant of node: " << i << endl;}
 		
 		int currentCladeSize = cladeSizes[i];
 	//	cout << "Dealing with clade #" << i << endl;
@@ -344,7 +344,7 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree, int const&
 						testClade.reserve(tree[i].size());
 						transform(tree[alive[j]].begin(), tree[alive[j]].end(), tree[alive[k]].begin(), back_inserter(testClade), plus<bool>());
 						if (testClade == tree[i]) {
-							if (debuggering) {cout << "Holy shit. It worked?!? Descendant nodes are: " << alive[j] << " & " << alive[k] << "." << endl;}
+							if (debugging) {cout << "Holy shit. It worked?!? Descendant nodes are: " << alive[j] << " & " << alive[k] << "." << endl;}
 							temp.push_back(alive[j]);
 							temp.push_back(alive[k]);
 							sibNodes.push_back(temp);
@@ -353,7 +353,7 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree, int const&
 							alive.erase(alive.begin()+j);
 							if (i != ((int)tree.size() - 1)) {
 								alive.push_back(i);
-								if (debuggering) {cout << "Adding node " << i << " to alive set." << endl;}
+								if (debugging) {cout << "Adding node " << i << " to alive set." << endl;}
 							}
 							j = k = (int)alive.size(); // exit
 							temp.clear();
@@ -369,7 +369,7 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree, int const&
 			temp.push_back(alive[0]); // take first two; 3rd in the last clade identified
 			temp.push_back(alive[1]);
 			
-			if (debuggering) {
+			if (debugging) {
 				cout << "alive is of size: " << alive.size() << endl;
 				printVectorAsList(alive);
 				cout << "Adding the unrooted node:" << endl;
@@ -387,15 +387,15 @@ vector < vector <int> > getSibNodes (vector < vector <bool> > & tree, int const&
 			temp.push_back(numNodes-1);
 			temp.push_back(numNodes);
 			sibNodes.push_back(temp);
-			if (debuggering) {cout << "Added sibNodes " << alive[0] << " & " << alive[1]
+			if (debugging) {cout << "Added sibNodes " << alive[0] << " & " << alive[1]
 				<< " and " << numNodes << " & " << numNodes-1 << "." << endl;}
 			
-			if (debuggering) {printTree(tree);}
+			if (debugging) {printTree(tree);}
 			i = (int)tree.size();
 		}
 	}
 	
-	if (debuggering) {cout << "Got all sibNodes!" << endl; printTree(tree);}
+	if (debugging) {cout << "Got all sibNodes!" << endl; printTree(tree);}
 	
 	return (sibNodes);
 }

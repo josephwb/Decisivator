@@ -109,7 +109,7 @@ double version = 0.58;
 string month = "March";
 int year = 2014;
 
-bool debuggering = false; // should extra comments be printed to stdout?
+bool debugging = false; // should extra comments be printed to stdout?
 
 int main(int argc, char *argv[]) {
     srand ((unsigned int)time(NULL) );     // initialize random seed
@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
 		getUserTrees (treeFileName, rawTrees, userTrees, taxonNames, translationTable, burnin,
 			thinning, treeTaxonOrdering);
 		numUserTrees = (int)userTrees.size();
-		if (debuggering) {
+		if (debugging) {
 			cout << "userTrees has size " << numUserTrees << "; treeTaxonOrdering has size "
 				<< treeTaxonOrdering.size() << endl;
 			cout << "Collected user trees:" << endl;

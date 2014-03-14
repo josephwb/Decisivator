@@ -11,7 +11,7 @@ using namespace std;
 #include "Parse_Nexus.h"
 #include "Trees_Edges.h"
 
-extern bool debuggering; // print out extra junk to screen
+extern bool debugging; // print out extra junk to screen
 
 // *** Need to determine if translation table exists (it probably does). DONE. ***
 // *** Log with vector <int> (mapping names to translation table). DONE. ***
@@ -56,7 +56,7 @@ void getUserTrees (string const& treeFileName, vector <string> & rawTrees,
 	} else {
 		cout << "Translation table found." << endl;
 		cout << "Successfully read in coding for " << translationTable.size() << " taxa." << endl << endl;
-		if (debuggering) {printVectorAsList(translationTable);}
+		if (debugging) {printVectorAsList(translationTable);}
 	}
 	
 //	'tree MUSCLE50genePart = (((((((Rhynochetos:29.585829,Eurypyga:29.585829):39.775412,Phaethon:69.361241):2.341594,((Syrrhaptes:67.522426,(Podiceps:43.000'
@@ -91,14 +91,14 @@ void getUserTrees (string const& treeFileName, vector <string> & rawTrees,
 						weAreCool = true;
 					}
 				}
-				if (debuggering) {cout << "Tree '" << name << "' = "<< treeDeclaration << endl << endl;}
+				if (debugging) {cout << "Tree '" << name << "' = "<< treeDeclaration << endl << endl;}
 				
 				treeNames.push_back(name);
 				tempTree = parseTree(treeDeclaration, taxonNames, translationTable, treeTaxonOrdering);
 				userTrees.push_back(tempTree);
 				
 				
-				if (debuggering) {
+				if (debugging) {
 					cout << "Tree '" << name << "' = "<< treeDeclaration << endl;
 					printTree(tempTree);
 				}
@@ -156,11 +156,11 @@ vector < vector <bool> > parseTree (string & tree, vector <string> const& taxonN
 			vector <int> dummy;
 			activeTaxa.push_back(dummy); // yeah, i know, ugly...
 			activeNode.push_back(true);
-			if (debuggering) {cout << "Opening node #" << currentNode << endl;}
+			if (debugging) {cout << "Opening node #" << currentNode << endl;}
 			continue;
 		} else if (currentChar == ')') { // close node
 			activeNode[currentNode] = false;
-			if (debuggering) {cout << "Closing node #" << currentNode << endl;}
+			if (debugging) {cout << "Closing node #" << currentNode << endl;}
 			for (int iterActive = 0; iterActive < (int)activeNode.size(); iterActive++) { // find largest open node
 				if (activeNode[iterActive]) {
 					currentNode = iterActive;
@@ -205,7 +205,7 @@ vector < vector <bool> > parseTree (string & tree, vector <string> const& taxonN
 		} else if (currentChar == ',') {
 			continue;
 		} else if (currentChar == ';') {
-			if (debuggering) {cout << "End of tree description." << endl;}
+			if (debugging) {cout << "End of tree description." << endl;}
 		} else if (currentChar != ',') { // tip name; could be an integer if a translation table is being used.
 			complete = false;
 			countTaxa++;
@@ -296,9 +296,9 @@ vector < vector <bool> > parseTree (string & tree, vector <string> const& taxonN
 	reverse(formattedTree.begin(), formattedTree.end());
 
 // test!
-	if (debuggering) {printTree(formattedTree);}
+	if (debugging) {printTree(formattedTree);}
 	
-	if (debuggering) {
+	if (debugging) {
 		cout << "Encountered " << numNodes << " nodes." << endl;
 		cout << "Encountered " << countTaxa + 1 << " taxa." << endl;
 	}
@@ -314,7 +314,7 @@ vector < vector <bool> > parseTree (string & tree, vector <string> const& taxonN
 //	printTree(formattedTree);
 	
 	
-	if (debuggering) {cout << endl;}
+	if (debugging) {cout << endl;}
 	
 	return formattedTree;
 }
@@ -368,14 +368,14 @@ vector <int> collectTaxonCoding (vector <string> & rawInput, vector <string> con
 					tipName = removeStringSuffix(extractStringElement(*lineIter, 1), ',', commaEncountered);
 				}
 				storeNames.push_back(tipName);
-				if (debuggering) {cout << "Stored index #" << index << " and name '" << tipName << "'."<< endl;}
+				if (debugging) {cout << "Stored index #" << index << " and name '" << tipName << "'."<< endl;}
 // Check against taxonNames list
 				bool match = false;
 				for (int taxaIter = 0; taxaIter < numTaxa; taxaIter++) {
 					if (tipName == taxonNames[taxaIter]) {
 						taxonCoding[index] = taxaIter;
 						match = true;
-						if (debuggering) {cout << "Matched tip '" << tipName << "' at index #" << index << " to taxon '"
+						if (debugging) {cout << "Matched tip '" << tipName << "' at index #" << index << " to taxon '"
 							<< taxonNames[taxaIter] << "' which is in " << taxaIter << " place in the alignment." << endl;}
 					}
 				}
@@ -383,12 +383,12 @@ vector <int> collectTaxonCoding (vector <string> & rawInput, vector <string> con
 					cout << "ERROR: Tree taxon '" << tipName << "' not found in input matrix. Exiting." << endl << endl;
 					exit(1);
 				}
-				if (debuggering) {cout << "Encountered tree taxon '" << tipName << "' with index = " << index << endl;}
+				if (debugging) {cout << "Encountered tree taxon '" << tipName << "' with index = " << index << endl;}
 			}
 		}
 	}
 	
-	if (debuggering) { // print out mapping of translation table to alignment
+	if (debugging) { // print out mapping of translation table to alignment
 		if (taxonCoding.size() != 0) {
 			for (int taxonIter = 0; taxonIter < numTaxa; taxonIter++) {
 				if (numTaxa >= 99) {
@@ -489,9 +489,9 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 		tree = rawTrees[i];
 		reverse(currentDecisiveness.begin(), currentDecisiveness.end()); // this was flipped during searching. ugh. li.
 		
-		if (debuggering) {printVectorAsList(currentDecisiveness);} // huh. this far works
+		if (debugging) {printVectorAsList(currentDecisiveness);} // huh. this far works
 		
-		if (debuggering) {cout << endl << tree << endl << endl;}
+		if (debugging) {cout << endl << tree << endl << endl;}
 		
 		bool start = false;
 		int position = 0;
@@ -603,7 +603,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 				annotated_trees << currentChar;
 				continue;
 			} else if (currentChar == ';') {
-				if (debuggering) {cout << "End of tree description." << endl;}
+				if (debugging) {cout << "End of tree description." << endl;}
 				annotated_trees << currentChar << endl;
 			} else { // tip name; could be an integer if a translation table is being used.
 				complete = false;

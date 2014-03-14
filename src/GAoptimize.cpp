@@ -16,7 +16,7 @@
 #include "Matrix_Scan.h"
 #include "General.h"
 
-extern bool debuggering;
+extern bool debugging;
 
 vector < vector <int> > GAHandler (int const& numAddGA, vector < vector <int> > const& data,
 	double & GADecisiveness, bool const& referenceTaxonPresent, int const& numProcs)
@@ -359,7 +359,7 @@ void mutate (vector < vector <int> > & data, vector < vector <int> > const& lega
 			return;
 		} else {
 			radd = rand() % count0;
-			if (debuggering) {cout << "Randomly adding taxon-gene to cell " << radd << "." << endl;}
+			if (debugging) {cout << "Randomly adding taxon-gene to cell " << radd << "." << endl;}
 		}
 	}
 // select random currently present gene to remove
@@ -370,7 +370,7 @@ void mutate (vector < vector <int> > & data, vector < vector <int> > const& lega
 			return;
 		} else {
 			rremove = rand() % count1;
-			if (debuggering) {cout << "Randomly removing taxon-gene from cell " << rremove << "." << endl;}
+			if (debugging) {cout << "Randomly removing taxon-gene from cell " << rremove << "." << endl;}
 		}
 	}
 		

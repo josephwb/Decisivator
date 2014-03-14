@@ -9,7 +9,7 @@ using namespace std;
 
 #include "General.h"
 
-extern bool debuggering;
+extern bool debugging;
 
 // Perform case-insenstive char match test
 bool checkCharValue (char const& charInput, char const& charToMatch) {
