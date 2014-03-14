@@ -1,8 +1,12 @@
 /*  
    Decisivator
-   Copyright (c) 2011, PuRGe C/O JWB
+   Copyright (c) 2014, PuRGe C/O JWB
+   PuRGe is from:
    Department of Biological Sciences
    University of Idaho, Moscow, Idaho, USA
+   JWB is currently at:
+   Department of Ecology & Evolutionary Biology
+   University of Michigan, Ann Arbor, Michigan, USA
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
@@ -101,11 +105,11 @@ using namespace std;
 
 
 // version information
-double version = 0.57;
-string month = "July";
-int year = 2012;
+double version = 0.58;
+string month = "March";
+int year = 2014;
 
-bool debuggering = false;
+bool debuggering = false; // should extra comments be printed to stdout?
 
 int main(int argc, char *argv[]) {
     srand ((unsigned int)time(NULL) );     // initialize random seed

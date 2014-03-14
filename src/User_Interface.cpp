@@ -24,8 +24,8 @@ void printProgramInfo() {
 	"                A PuRGe Product"                  << endl <<
 	"              University of Idaho"                << endl <<
 	"       Department of Biological Sciences"         << endl <<
-	"        Complaints: josephwb@uidaho.edu"          << endl <<
-	"                 " << month <<", " << year <<        endl << 
+	"        Complaints: josephwb@umich.edu"           << endl <<
+	"                  " << month <<", " << year <<       endl << 
 	"************************************************" << endl << endl;
 }
 
