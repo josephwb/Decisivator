@@ -1,5 +1,5 @@
-Program description: Calculates phylogenetic 'decisiveness' sensu Sanderson, Steel, and McMahon.
----------------
+###Program description: Calculates phylogenetic 'decisiveness' sensu Sanderson, Steel, and McMahon.
+
 To compile, type the following in a unix prompt:
 
 	make
