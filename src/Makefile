@@ -4,6 +4,11 @@ DEBUG = -g
 CFLAGS = -Wall -c -m64 -O3 -funroll-loops $(DEBUG)
 LFLAGS = -Wall -m64 $(DEBUG)
 
+#CC ?= g++
+#ifneq ($(CC), g++)
+#	CC=$CC
+#endif
+
 mt ?= T
 ifeq ($(mt), T)
 	CFLAGS+=-fopenmp

@@ -62,3 +62,4 @@ Enhancements
 1. recode all with 1) bit strings and 2) set operations. this is a complete re-write.
 2. use autoconf and configure
 3. add option that only variable data are considered (involves creating internal matrix representation).
+4. add constraint tree option. considering all possible trees is silly. when simulating 'random' trees, make sure they are compatible with the constraint tree. should give much more informative results.
