@@ -38,8 +38,7 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
 	bool validChoice = false;
 	char userChoice;
 	
-	while (!validChoice)
-	{
+	while (!validChoice) {
 		cout << endl
 		<< "Programs options:" << endl
 		<< " [A]dd virtual taxon-character(s) to matrix manually" << endl
@@ -62,46 +61,32 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
 		cin >> userChoice;
 		cin.ignore(200, '\n');
 		
-		if (checkCharValue(userChoice,'a'))
-		{
+		if (checkCharValue(userChoice,'a')) {
 			addGenes = true;
 			validChoice = true;
 			continue;
-		}
-		else if (checkCharValue(userChoice,'m'))
-		{
+		} else if (checkCharValue(userChoice,'m')) {
 			merge = true;
 			validChoice = true;
 			continue;
-		}
-		else if (checkCharValue(userChoice,'e'))
-		{
+		} else if (checkCharValue(userChoice,'e')) {
 			exclude = true;
 			validChoice = true;
 			continue;
-		}
-		else if (checkCharValue(userChoice,'d'))
-		{
+		} else if (checkCharValue(userChoice,'d')) {
 			deleteGenes = true;
 			validChoice = true;
 			continue;
-		}
-		else if (checkCharValue(userChoice,'r'))
-		{
+		} else if (checkCharValue(userChoice,'r')) {
 			revert = true;
 			validChoice = true;
 			continue;
-		}
-		else if (checkCharValue(userChoice,'p'))
-		{
+		} else if (checkCharValue(userChoice,'p')) {
 			print = true;
 			validChoice = true;
 			continue;
-		}
-		else if (checkCharValue(userChoice,'c'))
-		{
-			while (!validChoice)
-			{
+		} else if (checkCharValue(userChoice,'c')) {
+			while (!validChoice) {
 				cout << endl
 				<< "Calculate partial decisiveness:" << endl
 				<< " [T]ree-wise" << endl
@@ -114,68 +99,46 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
 				{
 					partialTreewise = true;
 					validChoice = true;
-				}
-				else if (checkCharValue(userChoice,'b'))
-				{
+				} else if (checkCharValue(userChoice,'b')) {
 					partialBranchwise = true;
 					validChoice = true;
-				}
-				else if (checkCharValue(userChoice,'i'))
-				{
+				} else if (checkCharValue(userChoice,'i')) {
 					partialIndividualPartition = true;
 					validChoice = true;
-				}
-				else
-				{
+				} else {
 					cout << endl << "Invalid input option (" << userChoice << "). Try again." << endl << endl;
 				}
 			}
 			continue;
-		}
-		else if (checkCharValue(userChoice,'s'))
-		{
+		} else if (checkCharValue(userChoice,'s')) {
 			summarize = true;
 			validChoice = true;
 			continue;
-		}
-		else if (checkCharValue(userChoice,'t'))
-		{
+		} else if (checkCharValue(userChoice,'t')) {
 			testCompleteDeciveness = true;
 			validChoice = true;
 			continue;
-		}
-		else if (checkCharValue(userChoice,'l'))
-		{
+		} else if (checkCharValue(userChoice,'l')) {
 			printRefTaxa = true;
 			validChoice = true;
 			continue;
-		}
-		else if (checkCharValue(userChoice,'w'))
-		{
+		} else if (checkCharValue(userChoice,'w')) {
 			writeCurrentMatrix = true;
 			validChoice = true;
 			continue;
-		}
-		else if (checkCharValue(userChoice,'i'))
-		{
+		} else if (checkCharValue(userChoice,'i')) {
 			testUserTree = true;
 			validChoice = true;
 			continue;
-		}
-		else if (checkCharValue(userChoice,'q'))
-		{
+		} else if (checkCharValue(userChoice,'q')) {
 			quit = true;
 			validChoice = true;
 			continue;
-		}
-		else if (checkCharValue(userChoice,'o'))
-		{
+		} else if (checkCharValue(userChoice,'o')) {
 			useGA = true;
 			validChoice = true;
 			continue;
-		}
-		else
-		{
+		} else {
 			cout << "Invalid input option (" << userChoice << "). Try again." << endl << endl;
 		}
 	}
@@ -305,9 +268,9 @@ void printSummaryInformation (vector <string> const& locusNames, vector <string>
 	<< "*******************************" << endl;
 	
 	if (numProcs == 1) {
-		cout << endl << "1 processor available for analyisis." << endl;
+		cout << endl << "1 processor available for analysis." << endl;
 	} else {
-		cout << endl << numProcs << " processors available for analyisis." << endl;
+		cout << endl << numProcs << " processors available for analysis." << endl;
 	}
 	
 	cout << "Input file: '" << nexusFileName << "'." << endl;

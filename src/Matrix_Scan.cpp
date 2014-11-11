@@ -680,6 +680,9 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
 		treeCount++;
 		vector <int> taxonOrdering;
 		vector <double> decisivenessCurrentTree (numInternalEdges, 0.0);
+		
+		
+	// *** These two should be > int for large trees! ***
 		vector <int> numSatisfied (numInternalEdges, 0);
 		vector <int> numPossible (numInternalEdges, 0);
 		
