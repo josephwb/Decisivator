@@ -626,5 +626,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
 		currentDecisiveness.clear();
 	}
 	annotated_trees << "End;";
+	annotated_trees.close();
+	
 	cout << "Annotated tree written out to 'Decisivator.trees'." << endl;
 }
