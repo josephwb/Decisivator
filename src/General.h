@@ -28,11 +28,11 @@ void printVectorAsList (vector <string> const& vectorToPrint);
 void printVectorAsList (vector <int> const& vectorToPrint); // overloading for debugging
 void printVectorAsList (vector <double> const& vectorToPrint); // overloading for debugging
 void printVectorAsList (vector <double> const& vectorOneToPrint,
-	vector <double> const& vectorTwoToPrint, string const& columnOneName,
-	string const& columnTwoName, string const& columnThreeName); // overloading for debugging
+    vector <double> const& vectorTwoToPrint, string const& columnOneName,
+    string const& columnTwoName, string const& columnThreeName); // overloading for debugging
 void printVectorAsList (vector <string> const& vectorOneToPrint, vector <int> const& vectorTwoToPrint,
-	vector <double> const& vectorThreeToPrint, string const& columnOneName, string const& columnTwoName,
-	string const& columnThreeName, string const& columnFourName);
+    vector <double> const& vectorThreeToPrint, string const& columnOneName, string const& columnTwoName,
+    string const& columnThreeName, string const& columnFourName);
 vector <string> collectData (string const& fileName);
 void printProgress (string const& elementType, unsigned long const& current, unsigned long const& upper);
 bool caseInsensitiveStringCompare (string const& str1, string const& str2);
