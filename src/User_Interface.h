@@ -21,12 +21,12 @@ void processCommandLineArguments(int argc, char *argv[], string & matrixFileName
     string & treeFileName, int & burnin, int & thinning, int & numProcs);
 void writeMatrix (vector <string> const& taxonNames, int const& numChar, 
     vector < vector <string> > const& taxaAlignment, vector < vector <int> > const& includedLocusRanges,
-    vector <string> const& locusNames);
+    vector <string> const& locusNames, string const& dataType);
 void printMatrixToFile (vector < vector <int> > const& data, vector <string> const& taxonNames, 
     vector <double> const& locusWeights, vector <double> const& taxonWeights);
 void writeNexus (int const& numTaxa, int const& numChar, vector <string> const& taxonNames,
     string & fileName, vector < vector <string> > const& taxaAlignment, vector < vector <int> > const& includedLocusRanges,
-    vector <string> const& locusNames);
+    vector <string> const& locusNames, string const& dataType);
 void writePhylip (int const& numTaxa, int const& numChar, vector <string> const& taxonNames,
     string & fileName, vector < vector <string> > const& taxaAlignment);
 int selectPartition (vector < vector <int> > const& data, vector <string> const& locusNames);

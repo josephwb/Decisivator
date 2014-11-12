@@ -586,8 +586,7 @@ vector < vector <string> > collectTaxaAlignment (string fileName, int const& num
             allCharacterRead = true;
             if (debugging) {cout << "numCharRead (" << numCharRead << ") == numChar (" << numChar << ") declared in Nexus file. Woo-hoo!" << endl;}
         }
-    }
-    else if (interleavedData) {
+    } else if (interleavedData) {
 // Ignore lines until 'matrix' is encountered
         cout << endl << endl << "READING IN INTERLEAVED DATA..." << endl;
         while (!matrixEncountered) {
@@ -692,7 +691,7 @@ void constructMatrix (vector < vector <string> > const& taxaAlignment, vector < 
 // Made more general; can now handle any kind of data
 bool validCharacterEncountered (char const& character) {
     bool match = false;
-    if (character != '?' && character != '-' && character != 'N') {
+    if (character != '?' && character != '-' && character != 'N' && character != 'X') {
         match = true;
     } else {
         if(debugging) {cout << "Character '" << character << "' is invalid." << endl;}

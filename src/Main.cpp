@@ -324,7 +324,7 @@ int main(int argc, char *argv[]) {
         } else if (printRefTaxa) {
             printReferenceTaxa (revisedReferenceTaxa, revisedTaxonNames);
         } else if (writeCurrentMatrix) { // output matrix in nexus or phylip format
-            writeMatrix (revisedTaxonNames, numChar, taxaAlignment, includedLocusRanges, revisedLocusNames);
+            writeMatrix (revisedTaxonNames, numChar, taxaAlignment, includedLocusRanges, revisedLocusNames, dataType);
         } else if (testUserTree) { // determine decisiveness on passed-in user tree
 // if doesn't yet exist, get filename from user
             if (treeFileName.size() == 0) {
