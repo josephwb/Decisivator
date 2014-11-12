@@ -46,6 +46,7 @@ void checkForMissingTaxa (vector < vector <int> > const& data, vector <string> c
     }
 }
 
+
 bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & referenceTaxa,
     vector <string> & taxonNames)
 {
@@ -106,6 +107,7 @@ bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & ref
     return referencePresent;
 }
 
+
 // We DO want locations for triplets when we are looping over missing quartets
 void searchForAllTriplets (vector < vector <int> > const& data, vector < vector <int> > & triplets,
     vector < vector <int> > & tripletLocations, vector < vector <int> > & missingTriplets)
@@ -163,6 +165,7 @@ void searchForAllTriplets (vector < vector <int> > const& data, vector < vector 
         cout << " Woo-hoo! All possible taxon triplets observed. Matrix is (probably) decisive for all possible trees!" << endl;
     }
 }
+
 
 // May not be so useful; if not all triplets are present, neither will all quaduplets
 // Therefore, only call if all triplets ARE present (a necessary but not sufficient condition)
@@ -326,6 +329,7 @@ void searchForQuartetsWithReference (vector < vector <int> > const& data, vector
     }
 }
 
+
 // Summarize which taxa are missing from triplets/quartets
 void whichTaxaProblematic (vector < vector <int> > const& missingGroups, vector <string> const& taxonNames,
     string const& grouping, vector <int> const& referenceTaxa)
@@ -363,6 +367,7 @@ void whichTaxaProblematic (vector < vector <int> > const& missingGroups, vector 
     }
 }
 
+
 // No need to parallelize here
 void getCoverage (vector < vector <int> > const& data, double & taxonCoverage)
 {
@@ -381,6 +386,7 @@ void getCoverage (vector < vector <int> > const& data, double & taxonCoverage)
     }
     taxonCoverage = float(taxonGeneCount)/(float(numTaxa) * float(numLoci));
 }
+
 
 // Eventually pass in more stuff e.g. keep track of missing clades, etc.
 // multithreading implemented via openmp
@@ -572,6 +578,7 @@ double calculatePartialDecisivenessSinglePartition (bool const& referenceTaxonPr
     return(partialDecisiveness);
 }
 
+
 // findAll below switches between boolean and count
 int searchEdgePartitions (vector < vector <int> > const& data, vector <int> const& left,
     vector <int> const& right, vector <int> const& sib, vector <int> const& upper, bool const& findAll,
@@ -610,6 +617,7 @@ int searchEdgePartitions (vector < vector <int> > const& data, vector <int> cons
     return(numSatisfied); // hmm. returning int here, but treated as boolean elsewhere
 }
 
+
 bool testCompleteDecisivness (vector < vector <int> > const& data, bool const& referenceTaxonPresent,
     vector <int> const& referenceTaxa, vector <string> const& taxonNames, vector < vector <int> > & missingQuartets,
     vector < vector <int> > & triplets, vector < vector <int> > & tripletLocations, vector < vector <int> > & missingTriplets)
@@ -637,6 +645,7 @@ bool testCompleteDecisivness (vector < vector <int> > const& data, bool const& r
     
     return (matrixDecisive);
 }
+
 
 vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> > const& data,
     vector < vector < vector <bool> > > & userTrees, vector < vector <int> > const& treeTaxonOrdering,
