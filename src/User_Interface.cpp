@@ -570,16 +570,16 @@ void writeNexus (int const& numTaxa, int const& numChar, vector <string> const& 
                     }
                 }
                 outFile << "   " << taxaAlignment[j][1] << endl;
-                 match = true;
+                match = true;
              }
             j++;
         }
     }
     outFile << ";" << endl
-    << "End;" << endl;
+    << "End;" << endl << endl;
     
 // write CHARSET information
-    outFile << endl << "BEGIN ASSUMPTIONS;" << endl << endl;
+    outFile << "BEGIN ASSUMPTIONS;" << endl << endl;
     for (int partIter = 0; partIter < numLoci; partIter++) {
         if (includedLocusRanges[partIter][0] == 0) { // simple range e.g. '1-566'
             outFile << "CHARSET " << locusNames[partIter] << " = " << includedLocusRanges[partIter][1]
