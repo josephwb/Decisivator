@@ -32,7 +32,7 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
     vector <string> const& taxonNames, vector <double> const& locusWeights, vector <double> const& taxonWeights,
     int const& numProcs);
 void printBipartitionTable (vector < vector <bool> > const& tree, vector <double> const& decisiveness,
-    vector <int> const& numSatisfied, vector <int> const& numPossible, int const& numTaxa,
+    vector <unsigned long int> const& numSatisfied, vector <unsigned long int> const& numPossible, int const& numTaxa,
     int const& numTrees, int const& treeNumber);
 double calculatePartialDecisivenessSinglePartition (bool const& referenceTaxonPresent, int & numTrees,
     vector < vector <int> > const& data, bool const& findAll, int const& partitionID,

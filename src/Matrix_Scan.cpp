@@ -692,8 +692,8 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
         
         
     // *** These two should be > int for large trees! ***
-        vector <int> numSatisfied (numInternalEdges, 0);
-        vector <int> numPossible (numInternalEdges, 0);
+        vector <unsigned long int> numSatisfied (numInternalEdges, 0);
+        vector <unsigned long int> numPossible (numInternalEdges, 0);
         
 /* ** Need to map taxon ordering to alignment via treeTaxonOrdering ***
 options:
@@ -749,10 +749,10 @@ options:
             for (int i = 0; i < numInternalEdges; ++i) { // this is the important bit; *** NEED TO INCORPORATE TAXON CODING ***
                 currentClade = formattedTree[numTaxa + i];
                 double currentDecisiveness = 0.0;
-                int numEdgesSatisfied = 0;
+                unsigned long int numEdgesSatisfied = 0;
             
                 getEdges(i, formattedTree, sibNodes, 0, left, right, sib, upper);
-                int numPossibleQuartets = (int)left.size() * (int)right.size() * (int)sib.size() * (int)upper.size();
+                unsigned long int numPossibleQuartets = (int)left.size() * (int)right.size() * (int)sib.size() * (int)upper.size();
             
     // *** Scan taxon-gene matrix here ***
                 numEdgesSatisfied = searchEdgePartitions(data, left, right, sib, upper, findAll, 0);
@@ -814,7 +814,7 @@ options:
 // Hmm. Probably don't want this to print to screen (except maybe when debugging).
 // Should tailor the name of the file.
 void printBipartitionTable (vector < vector <bool> > const& tree, vector <double> const& decisiveness,
-    vector <int> const& numSatisfied, vector <int> const& numPossible, int const& numTaxa,
+    vector <unsigned long int> const& numSatisfied, vector <unsigned long int> const& numPossible, int const& numTaxa,
     int const& numTrees, int const& treeNumber)
 {
     ofstream log;
@@ -828,6 +828,9 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
         log << endl << endl << "Bipartition Decisiveness Scores:" << endl << endl;
     }
     
+
+    // TODO: there is at least 1 one-off error here; just involves index labelling at top of table
+
     int counter = 0;
     int divisor = 0;
     if (numTaxa > 999) {
@@ -836,6 +839,9 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
         for (int i = 1; i <= numTaxa; i++) {
             if (i % divisor == 0) {
                 if (debugging) {cout << counter;}
+                if (counter == divisor) {
+                    counter = 0;
+                }
                 log << counter;
                 counter ++;
             } else {
@@ -851,7 +857,9 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
         divisor = 100;
         for (int i = 1; i <= numTaxa; i++) {
             if (i % divisor == 0) {
-                if (debugging) {cout << counter;}
+            	if (counter == divisor) {
+            	    counter = 0;
+            	}
                 log << counter;
                 counter ++;
             } else {
@@ -868,6 +876,9 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
         for (int i = 1; i <= numTaxa; i++) {
             if (i % divisor == 0) {
                 if (debugging) {cout << counter;}
+                if (counter == divisor) {
+                	counter = 0;
+                }
                 log << counter;
                 counter ++;
             } else {
@@ -882,6 +893,7 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
     for (int i = 1; i <= numTaxa; i++) {
         if (counter == 10) {
             counter = 0;
+            log << counter;
             if (debugging) {cout << counter;}
             counter ++;
         } else {
