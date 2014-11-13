@@ -669,8 +669,9 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
     
     
     // *** FIX THIS ***
-    bool findAll = true; // *** this should be an option. might just want # genes that speak to each edge (not # quartets).
-    
+    //bool findAll = true; // *** this should be an option. might just want # genes that speak to each edge (not # quartets).
+    bool findAll = true;
+    bool debugging = true;
     
     
     printMatrixToFile (data, taxonNames, locusWeights, taxonWeights);
@@ -931,6 +932,7 @@ void printBipartitionTable (vector < vector <bool> > const& tree, vector <double
     }
     if (debugging) {cout << endl;}
     log << endl;
+    log.close();
 }
 
 

@@ -240,6 +240,7 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
     if (debugging) {cout << endl;}
 }
 
+
 vector <string> collectCharsets (string charsetFileName, vector <string> inputCharsets,
     vector < vector <int> > & includedLocusRanges, int const& numChar) {
     ifstream declaredCharsets;
@@ -453,7 +454,11 @@ void printCollectedCharsets (vector <string> const& collectedCharsets, vector < 
         }
         counter++;
     }
-    cout << "Total number of partitions is: " << sum << endl << endl;
+    if (collectedCharsets.size() == 1) {
+    	cout << "Summary: 1 partition totalling " << sum << " characters." << endl << endl;
+    } else {
+    	cout << "Summary: " << collectedCharsets.size() << " partitions totalling " << sum << " characters." << endl << endl;
+    }
 }
 
 bool checkCommentLine (string stringToParse) {

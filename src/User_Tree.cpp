@@ -428,7 +428,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
     checkValidOutputFile (outTrees);
     
     annotated_trees.open(outTrees.c_str());
-    
+
     int numTrees = (int)rawTrees.size();
     vector <double> currentDecisiveness;
     string tree;
@@ -520,8 +520,8 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
                 annotated_trees << currentChar;
                 iterator++;
                 
-                currentChar = tree[iterator]; // end of tree; GET OUTTA THERE!!!
-                if (currentChar == ';') {
+                currentChar = tree[iterator];
+                if (currentChar == ';') { // end of tree; GET OUTTA THERE!!!
                     annotated_trees << currentChar << endl;
                     continue;
                 } else if (currentChar == ',' || currentChar == ')') { // no edgelengths present; simply a topology
@@ -553,6 +553,9 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
                                 }
                             }
                             continue;
+                        } else if (currentChar == ';') { // end of tree; GET OUTTA THERE!!!
+                        	annotated_trees << currentChar << endl;
+                        	break;
                         } else {
                             annotated_trees << currentChar;
                         }
@@ -626,10 +629,10 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
                 }
             }
         }
-        tree.clear();
-        currentDecisiveness.clear();
+        //tree.clear();
+        //currentDecisiveness.clear();
     }
-    annotated_trees << "End;";
+    annotated_trees << "End;" << endl;
     annotated_trees.close();
     
     cout << "Annotated tree written out to 'Decisivator.trees'." << endl;
