@@ -669,9 +669,9 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
     
     
     // *** FIX THIS ***
-    //bool findAll = true; // *** this should be an option. might just want # genes that speak to each edge (not # quartets).
-    bool findAll = true;
-    bool debugging = true;
+    bool findAll = true; // *** this should be an option. might just want # genes that speak to each edge (not # quartets).
+    //bool findAll = false;
+    //bool debugging = true;
     
     
     printMatrixToFile (data, taxonNames, locusWeights, taxonWeights);
@@ -751,9 +751,12 @@ options:
                 currentClade = formattedTree[numTaxa + i];
                 double currentDecisiveness = 0.0;
                 unsigned long int numEdgesSatisfied = 0;
-            
+                unsigned long int numPossibleQuartets = 1;
+
                 getEdges(i, formattedTree, sibNodes, 0, left, right, sib, upper);
-                unsigned long int numPossibleQuartets = (int)left.size() * (int)right.size() * (int)sib.size() * (int)upper.size();
+                if (findAll) {
+                    numPossibleQuartets = (int)left.size() * (int)right.size() * (int)sib.size() * (int)upper.size();
+                }
             
     // *** Scan taxon-gene matrix here ***
                 numEdgesSatisfied = searchEdgePartitions(data, left, right, sib, upper, findAll, 0);
