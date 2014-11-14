@@ -11,6 +11,7 @@ using namespace std;
 
 extern bool debugging;
 
+
 // Perform case-insenstive char match test
 bool checkCharValue (char const& charInput, char const& charToMatch) {
     if (toupper(charInput) == toupper(charToMatch)) {
@@ -19,6 +20,7 @@ bool checkCharValue (char const& charInput, char const& charToMatch) {
         return false;
     }
 }
+
 
 string getFileName () {
     string fileName;
@@ -43,6 +45,7 @@ string getFileName () {
     return fileName;
 }
 
+
 bool checkValidFile (string fileName) {
     ifstream inFile;
     bool validFile = true;
@@ -64,6 +67,7 @@ bool checkValidFile (string fileName) {
     }
     return(validFile);
 }
+
 
 bool checkValidOutputFile (string & outputFileName) {
     bool testOutBool = true;
@@ -114,6 +118,7 @@ bool checkValidOutputFile (string & outputFileName) {
     return testOutBool;
 }
 
+
 int checkValidIntInput (string queryString) {
     int userInput = 0;
     bool validInput = false;
@@ -134,6 +139,7 @@ int checkValidIntInput (string queryString) {
     }
     return userInput;
 }
+
 
 bool checkValidBoolInput (string queryString) {
     int userInput = 0;
@@ -161,6 +167,7 @@ bool checkValidBoolInput (string queryString) {
     return userInput;
 }
 
+
 bool checkStringValue (string stringToParse, string stringToMatch, int stringPosition) {
 // Performs case-insenstive string match test
     string testString = extractStringElement(stringToParse, stringPosition);
@@ -181,6 +188,7 @@ bool checkStringValue (string stringToParse, string stringToMatch, int stringPos
     return true;
 }
 
+
 unsigned long choose (int const& n, int const& r) {
     unsigned long result = 0;
     if (r == 0) {return (1);}
@@ -194,10 +202,12 @@ unsigned long choose (int const& n, int const& r) {
     return (result);
 }
 
+
 unsigned long factorial (int const& num) {
     if (num <= 1) return (1);
     return factorial(num - 1) * num; // recursive call
 }
+
 
 // Given some existing string, extract (copy) the ith element and store as new string
 string extractStringElement (string & stringToParse, int const& position) {
@@ -207,6 +217,7 @@ string extractStringElement (string & stringToParse, int const& position) {
     return returnString;
 }
 
+
 int convertStringtoInt (string stringToConvert) {
     int tempInt = 0;
     istringstream tempStream(stringToConvert);
@@ -214,6 +225,7 @@ int convertStringtoInt (string stringToConvert) {
     
     return tempInt;
 }
+
 
 string convertIntToString (int & intToConvert) {
     string tempString;
@@ -224,6 +236,7 @@ string convertIntToString (int & intToConvert) {
     return tempString;
 }
 
+
 double convertStringtoDouble (string stringToConvert) {
     double tempDouble = 0;
     istringstream tempStream(stringToConvert);
@@ -231,6 +244,21 @@ double convertStringtoDouble (string stringToConvert) {
     
     return tempDouble;
 }
+
+
+// make sure 0.0 and 1.0 values are output with decimals
+string outputDoublePrecision (double & val) {
+    string tempString;
+    stringstream tempStream;
+    tempStream << val;
+    tempString = tempStream.str();
+    if (tempString.size() == 1) {
+        tempString += ".0";
+    }
+
+    return tempString;
+}
+
 
 // Store elements of a string in a vector
 vector <string> storeStringVector (string & stringToParse) {
@@ -244,6 +272,7 @@ vector <string> storeStringVector (string & stringToParse) {
     
     return tempVector;
 }
+
 
 // Print purdy lists, aligning element names
 void printVectorAsList (vector <string> const& vectorToPrint) {
@@ -284,6 +313,7 @@ void printVectorAsList (vector <string> const& vectorToPrint) {
         cout << tempName << endl;
     }
 }
+
 
 void printVectorAsList (vector <string> const& vectorOneToPrint, vector <int> const& vectorTwoToPrint,
     vector <double> const& vectorThreeToPrint, string const& columnOneName, string const& columnTwoName,
@@ -340,6 +370,7 @@ void printVectorAsList (vector <string> const& vectorOneToPrint, vector <int> co
     }
 }
 
+
 void printVectorAsList (vector <int> const& vectorToPrint) { // overloading for debugging
     int numElements = (int)vectorToPrint.size();
     for (int i = 0; i < numElements; i++) {
@@ -361,6 +392,7 @@ void printVectorAsList (vector <int> const& vectorToPrint) { // overloading for 
     cout << endl;
 }
 
+
 void printVectorAsList (vector <double> const& vectorToPrint) { // overloading for debugging
     int numElements = (int)vectorToPrint.size();
     for (int i = 0; i < numElements; i++) {
@@ -381,6 +413,7 @@ void printVectorAsList (vector <double> const& vectorToPrint) { // overloading f
     }
     cout << endl;
 }
+
 
 void printVectorAsList (vector <double> const& vectorOneToPrint,
     vector <double> const& vectorTwoToPrint, string const& columnOneName,
@@ -417,6 +450,7 @@ void printVectorAsList (vector <double> const& vectorOneToPrint,
     }
 }
 
+
 vector <string> collectData (string const& fileName) {
     vector <string> inputData;
     ifstream inFile;
@@ -437,9 +471,11 @@ vector <string> collectData (string const& fileName) {
     return inputData;
 }
 
+
 void printProgress (string const& elementType, unsigned long const& current, unsigned long const& upper) {
     cout << "  " << elementType << ": " << current << " of " << upper << "\r" << flush;
 }
+
 
 bool caseInsensitiveStringCompare (string const& str1, string const& str2) {
     bool match = true;
@@ -456,6 +492,7 @@ bool caseInsensitiveStringCompare (string const& str1, string const& str2) {
     return match;
 }
 
+
 bool checkWhiteSpaceOnly (string stringToParse) {
     bool whiteSpaceOnly = true;
     vector<string> tempVector;
@@ -469,8 +506,9 @@ bool checkWhiteSpaceOnly (string stringToParse) {
     return whiteSpaceOnly;
 }
 
+
 double sum (vector <double> const& x) {
-    double total = 0.0;  // the sum is accumulated here
+    double total = 0.0;  // the sum is accumulated here *** <- this is available natively ***
     for (int i = 0; i < (int)x.size(); i++) {
         total = total + x[i];  
     }

@@ -525,7 +525,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
                     annotated_trees << currentChar << endl;
                     continue;
                 } else if (currentChar == ',' || currentChar == ')') { // no edgelengths present; simply a topology
-                    annotated_trees << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
+                    annotated_trees << "[&decisiveness=" << outputDoublePrecision(currentDecisiveness[annotationCount]) << "]";
                     annotationCount++;
                     iterator--;
                 } else if (currentChar == ':') { // edge length; need to look for '[' following
@@ -535,7 +535,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
                         iterator++;
                         currentChar = tree[iterator];
                         if (currentChar == ',' || currentChar == ')') {
-                            annotated_trees << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
+                            annotated_trees << "[&decisiveness=" << outputDoublePrecision(currentDecisiveness[annotationCount]) << "]";
                             annotationCount++;
                             iterator--;
                             complete = true;
@@ -547,7 +547,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
                                 currentChar = tree[iterator];
                                 if (currentChar == ']') {
                                     complete = true;
-                                    annotated_trees << ",decisiveness=" << currentDecisiveness[annotationCount] << "]";
+                                    annotated_trees << ",decisiveness=" << outputDoublePrecision(currentDecisiveness[annotationCount]) << "]";
                                 } else {
                                     annotated_trees << currentChar;
                                 }
@@ -568,14 +568,14 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
                         currentChar = tree[iterator];
                         if (currentChar == ']') {
                             complete = true;
-                            annotated_trees << ",decisiveness=" << currentDecisiveness[annotationCount] << "]";
+                            annotated_trees << ",decisiveness=" << outputDoublePrecision(currentDecisiveness[annotationCount]) << "]";
                         } else {
                             annotated_trees << currentChar;
                         }
                     }
                     continue;
                 } else { // no edgelengths present; simply a topology
-                    annotated_trees << "[&decisiveness=" << currentDecisiveness[annotationCount] << "]";
+                    annotated_trees << "[&decisiveness=" << outputDoublePrecision(currentDecisiveness[annotationCount]) << "]";
                     annotationCount++;
                 }
             } else if (currentChar == '[') { // annotation
@@ -586,7 +586,7 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
                     currentChar = tree[iterator];
                     if (currentChar == ']') {
                         complete = true;
-                        annotated_trees << ",&decisiveness=" << currentDecisiveness[annotationCount] << "]";
+                        annotated_trees << ",&decisiveness=" << outputDoublePrecision(currentDecisiveness[annotationCount]) << "]";
                     } else {
                         annotated_trees << currentChar;
                     }
@@ -629,8 +629,8 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
                 }
             }
         }
-        //tree.clear();
-        //currentDecisiveness.clear();
+        tree.clear();
+        currentDecisiveness.clear();
     }
     annotated_trees << "End;" << endl;
     annotated_trees.close();

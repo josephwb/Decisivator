@@ -23,6 +23,7 @@ string extractStringElement (string & stringToParse, int const& position);
 int convertStringtoInt (string stringToConvert);
 string convertIntToString (int & intToConvert);
 double convertStringtoDouble (string stringToConvert);
+string outputDoublePrecision (double & val);
 vector <string> storeStringVector (string & stringToParse);
 void printVectorAsList (vector <string> const& vectorToPrint);
 void printVectorAsList (vector <int> const& vectorToPrint); // overloading for debugging
