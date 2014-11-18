@@ -667,18 +667,14 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
     
     
     
-    
     // *** FIX THIS ***
     bool findAll = true; // *** this should be an option. might just want # genes that speak to each edge (not # quartets).
     //bool findAll = false;
-    //bool debugging = true;
+    bool debugging = false;
     
     
     printMatrixToFile (data, taxonNames, locusWeights, taxonWeights);
-    int numInternalEdges = userTrees[0][0].size() - 3; // *should* be the same for all trees in a file...
     
-    if (debugging) {cout << "Here I am! numTrees = " << numTrees << ". numInternalEdges = " << numInternalEdges
-        << ". numTaxa = " << numTaxa << "." << endl;}
     
     if (numTrees > 1) {
         cout << endl << "Conducting analysis on " << numTrees << " provided user-trees." << endl;
@@ -689,6 +685,23 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
     for (int j = 0; j < numTrees; j++) {
         treeCount++;
         vector <int> taxonOrdering;
+
+        int numTaxa = (int)userTrees[j][0].size();
+        int treeSize = userTrees[j].size();
+
+        if (debugging) {cout << "numTaxa = " << numTaxa << " and tree size = " << treeSize << " for tree #" << j << endl;}
+        if (debugging) {cout << "numInternalEdges should be: " << treeSize - numTaxa - 1 << endl;}
+
+        int numInternalEdges = treeSize - numTaxa - 1;
+
+        vector <bool> temp = userTrees[j][treeSize - 2];
+
+        // check if rooted tree with lone root lineage
+        if (std::accumulate(temp.begin(), temp.end(), 0) == (numTaxa - 1)) {
+            numInternalEdges = numInternalEdges - 1;
+            cout << "Root has a single tip lineage; drop this from internal edge list." << endl;
+        }
+
         vector <double> decisivenessCurrentTree (numInternalEdges, 0.0);
         
         
@@ -696,16 +709,22 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
         vector <unsigned long int> numSatisfied (numInternalEdges, 0);
         vector <unsigned long int> numPossible (numInternalEdges, 0);
         
+
+
+
+
 /* ** Need to map taxon ordering to alignment via treeTaxonOrdering ***
 options:
-1. rearrange tree to reflect that ordering (easy but ugly)
-2. map (pretty but harder); this will be fixed when put into OO format
+1. rearrange tree to reflect that ordering (easy but ugly) <- BUT need to be able to convert back!
+2. map (pretty, but harder); this will be fixed when put into OO format
 */
+
+
         rawTree = userTrees[j];
         taxonOrdering = treeTaxonOrdering[j];
         if (debugging) {
-//            cout << "Raw tree:" << endl;
-//            printTree(rawTree);
+            cout << "Raw tree:" << endl;
+            printTree(rawTree);
             
             cout << endl << "Translation:" << endl;
             printVectorAsList(taxonOrdering);
@@ -722,11 +741,16 @@ options:
             clade.clear();
         }
         
-//        cout << "Formatted tree:" << endl;
-//        printTree(formattedTree);
+        if (debugging) {cout << "Formatted tree:" << endl;}
+        if (debugging) {printTree(formattedTree);}
         
         
         
+
+
+
+
+
     // *** YIKES! This takes a long time (64 of a total 74 second analysis). ***
         sibNodes = getSibNodes(formattedTree, numProcs); // get sibling node relationships; expected downstream
         
@@ -1031,6 +1055,7 @@ void searchForQuartetsWithReferenceBIG (vector < vector <int> > const& data, vec
         cout << " Woo-hoo! All possible taxon quartets observed. Matrix IS decisive for all possible trees!" << endl;
     }
 }
+
 
 void whichTaxaProblematicBIG (vector <int> const& missingQuartetsByTaxa, vector <string> const& taxonNames,
     string const& grouping, vector <int> const& referenceTaxa)

@@ -115,6 +115,7 @@ vector < vector <int> > convertTreeToApeFormat (vector < vector <bool> > const& 
     return treeEdges;
 }
 
+
 /*
   1. identify internal edge (total of numTaxa - 3) - DONE
   2. left descendants - DONE
@@ -135,6 +136,7 @@ vector < vector <int> > convertTreeToApeFormat (vector < vector <bool> > const& 
   
 */
 
+
 void printClade (vector <int> const& clade)
 {
     for (int i = 0; i < int(clade.size()); i++) {
@@ -143,6 +145,7 @@ void printClade (vector <int> const& clade)
     cout << ";" << endl;
 }
 
+
 void printClade (vector <bool> const& clade) // overloaded for debugging
 {
     for (int i = 0; i < int(clade.size()); i++) {
@@ -150,12 +153,18 @@ void printClade (vector <bool> const& clade) // overloaded for debugging
     }
 }
 
+
 // Just for debugging
 void printTree (vector < vector <bool> > const& tree)
 {
     cout << endl << "Clades:" << endl;
     for (int i = 0; i < int(tree.size()); ++i) {
         cout << i << "    ";
+        if (int(tree.size()) > 10) {
+            if (i < 10) {
+                cout << " ";
+            }
+        }
         for (int j = 0; j < int(tree[1].size()); j++) {
             cout << tree[i][j] << " ";
         }
@@ -163,6 +172,7 @@ void printTree (vector < vector <bool> > const& tree)
     }
     cout << endl;
 }
+
 
 vector <int> gatherTips (vector <int> & includedTips, vector <bool> const& clade)
 {
@@ -173,6 +183,7 @@ vector <int> gatherTips (vector <int> & includedTips, vector <bool> const& clade
     }
     return(includedTips);
 }
+
 
 vector <int> getRemainingTaxa (vector <int> & includedTips, int const& numTaxa)
 {
@@ -191,8 +202,6 @@ vector <int> getRemainingTaxa (vector <int> & includedTips, int const& numTaxa)
     }
     return(remainingTaxa);
 }
-
-
 
 
 void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < vector <int> > & sibNodes,
@@ -262,6 +271,7 @@ void getEdges (int const& edge, vector < vector <bool> > const& tree, vector < v
         cout << "Upper:"; printClade(upper);
     }
 }
+
 
 // Unrooted tree; split sib edge
 void splitEdge (vector <int> & sib, vector <int> & upper, vector < vector <int> > const& sibNodes,
