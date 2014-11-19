@@ -1,5 +1,13 @@
-#### Decisivator: calculate phylogenetic 'decisiveness' sensu Sanderson, Steel, and McMahon.
+#### Decisivator
 
+##### Overview
+Calculate phylogenetic 'decisiveness' sensu Sanderson, Steel, and McMahon. Calculations can 
+involve matrix occupency alone (for so-called 'complete decisivess'). The combinatorics 
+involved can be prohibitive with large taxon-gene matrices. As an alternative, decisiveness 
+can be approximated through the analysis of many random tree topologies. Additionally, the 
+decisiveness of a user tree (or distribution of trees) can be quantified.
+
+##### Compilation
 To compile, type the following in a unix prompt:
 
 	make
@@ -9,6 +17,8 @@ If (for some reason) you wish to turn off multithreading, recompile as:
 
 	make clean
 	make mt=F
+
+##### Usage
 
 To run, type:
 
