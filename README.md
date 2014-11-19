@@ -26,7 +26,8 @@ where:
 	  '1' indicates cell has been sequenced, while '0' indicates it has not.
 	  First row should give locus names. First column should give taxon names.
 
-	'tree_file' contains user tree(s) in Nexus format to evaluate decisiveness upon.
+	'tree_file' contains user tree(s) in Nexus format to evaluate decisiveness upon. Tree(s)
+	  must be fully bifurcating.
 
 	'burnin' is the number of trees to ignore. Only makes sense with a distribution of trees.
 
