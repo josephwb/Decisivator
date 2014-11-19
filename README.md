@@ -1,4 +1,4 @@
-###Program description: Calculates phylogenetic 'decisiveness' sensu Sanderson, Steel, and McMahon.
+#### Decisivator: calculate phylogenetic 'decisiveness' sensu Sanderson, Steel, and McMahon.
 
 To compile, type the following in a unix prompt:
 
