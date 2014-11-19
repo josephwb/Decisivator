@@ -7,6 +7,10 @@ involved can be prohibitive with large taxon-gene matrices. As an alternative, d
 can be approximated through the analysis of many random tree topologies. Additionally, the 
 decisiveness of a user tree (or distribution of trees) can be quantified.
 
+##### Small favour
+Despite being open source software, I'd appreciate having first crack at publishing the 
+analytical aspects of the software. 
+
 ##### Compilation
 To compile, type the following in a unix prompt:
 
