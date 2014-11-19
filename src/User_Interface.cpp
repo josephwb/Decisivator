@@ -29,6 +29,7 @@ void printProgramInfo() {
     "************************************************" << endl << endl;
 }
 
+
 void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & deleteGenes, bool & revert,
     bool & quit, bool & print, bool & reweightLoci, bool & reweightTaxa, bool & partialTreewise,
     bool & partialBranchwise, bool & summarize, bool & testCompleteDeciveness,
@@ -144,6 +145,7 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
     }
 }
 
+
 // use getopt here instead
 void processCommandLineArguments(int argc, char *argv[], string & matrixFileName,
     string & nexusFileName, string & locusWeightFileName, string & taxonWeightFileName,
@@ -211,6 +213,7 @@ void processCommandLineArguments(int argc, char *argv[], string & matrixFileName
     }
 }
 
+
 void printHelp ()
 {
     cout << endl
@@ -222,8 +225,8 @@ void printHelp ()
     << endl
     << "Usage:" << endl
     << endl
-    << "./Decisivator [-d data_file] [-m taxon-gene_matrix] [-t tree_file] [-b burnin] [-n thinning]" << endl
-    << "   [-w taxon_weights] [-l locus_weights] [-np num_proc]" << endl
+    << "./Decisivator [-d data_file] [-m taxon-gene_matrix] [-t tree_file] [-b burnin]" << endl
+    << "   [-n thinning] [-w taxon_weights] [-l locus_weights] [-np num_proc]" << endl
     << endl
     << "where:" << endl
     << endl
@@ -232,29 +235,31 @@ void printHelp ()
     << "    - e.g. contiguous (X-Y) or interval (e.g. codon: X-Y\\3) data are fine." << endl
     << "    - CHARSET referencing is NOT allowed at present (but will be!)" << endl
     << endl
-    << "'taxon-gene_matrix' is a table listing taxa (rows) and genes (columns). This is a legacy format." << endl
+    << "'taxon-gene_matrix' is a (legacy format) table listing taxa (rows) and genes (columns)." << endl
     << "  '1' indicates a cell (taxon-partition) has data, while '0' indicates it does not." << endl
     << "  First row should give locus names. First column should give taxon names." << endl
     << endl
-    << "'tree_file' contains user tree(s) in Nexus format to evaluate decisiveness upon. Tree(s) must be" << endl
-    << "fully bifurcating." << endl
+    << "'tree_file' contains user tree(s) in Nexus format to evaluate decisiveness upon. Tree(s)" << endl
+    << "  must be fully bifurcating." << endl
     << endl
     << "'burnin' is the number of trees to ignore. Only makes sense with a distribution of trees." << endl
     << endl
-    << "'thinning' is the interval between sampling trees (i.e. where every nth tree sample will be retained)." << endl
-    << "  Only makes sense with a distribution of trees." << endl
+    << "'thinning' is the interval between sampling trees (i.e. where every nth tree sample will" << endl
+    << "  be retained). Only makes sense with a distribution of trees." << endl
     << endl
-    << "'taxon_weights' is a two-column (taxon, weight; with headers) file listing weights for taxa" << endl
-    << "  based on some arbitrary accessibility criterion." << endl
+    << "'taxon_weights' is a two-column (taxon, weight; with headers) file listing weights for" << endl
+    << "  taxa based on some arbitrary accessibility criterion." << endl
     << endl
-    << "'locus_weights' is the analogous two-column (locus, weight; with headers) file for locus weights." << endl
+    << "'locus_weights' is a two-column (locus, weight; with headers) file for locus weights." << endl
     << endl
     << "'num_proc' is the number of processors to use (default is all available). Only with OPENMP version." << endl
     << endl
-    << "NOTE: The taxon and locus weight files need not be complete. All weights are 1.0 by default." << endl
-    << "  Enter only weights which should be changed from the default. Or do this shit within the program itself." << endl
+    << "NOTE: The taxon and locus weight files need not be complete. All weights are 1.0 by" << endl
+    << "  default. Enter only weights which should be changed from the default. Or do this shit" << endl
+    << "  within the program itself." << endl
     << endl;
 }
+
 
 void printSummaryInformation (vector <string> const& locusNames, vector <string> const& taxonNames,
     vector < vector <int> > const& data, double const& taxonCoverage, vector <int> const& referenceTaxa,
@@ -326,6 +331,7 @@ void printSummaryInformation (vector <string> const& locusNames, vector <string>
     }
     checkForMissingTaxa (data, taxonNames);
 }
+
 
 void printReferenceTaxa (vector <int> const& referenceTaxa, vector <string> const& taxonNames)
 {
@@ -595,6 +601,7 @@ void writeNexus (int const& numTaxa, int const& numChar, vector <string> const& 
     outFile.close();
 }
 
+
 void writePhylip (int const& numTaxa, int const& numChar, vector <string> const& taxonNames,
     string & fileName, vector < vector <string> > const& taxaAlignment)
 {
@@ -636,6 +643,7 @@ void writePhylip (int const& numTaxa, int const& numChar, vector <string> const&
     outFile.close();
     cout  << endl << "File '" << fileName << "' successfully created." << endl;
 }
+
 
 int selectPartition (vector < vector <int> > const& data, vector <string> const& locusNames)
 {
