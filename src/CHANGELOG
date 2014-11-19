@@ -1,3 +1,5 @@
+2014-11-19
+  * Fixed bug to mapping decisiveness upon user tree(s)
 2012-10-31
   * changed code to allow user to specify number of processors in open version (default = all)
 2012-07-08
