@@ -650,7 +650,7 @@ bool testCompleteDecisivness (vector < vector <int> > const& data, bool const& r
 vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> > const& data,
     vector < vector < vector <bool> > > & userTrees, vector < vector <int> > const& treeTaxonOrdering,
     vector <string> const& taxonNames, vector <double> const& locusWeights, vector <double> const& taxonWeights,
-    int const& numProcs)
+    bool & findAll, int const& numProcs)
 {
     vector < vector <double> > result;
     vector < vector <bool> > rawTree;
@@ -668,7 +668,7 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
     
     
     // *** FIX THIS ***
-    bool findAll = true; // *** this should be an option. might just want # genes that speak to each edge (not # quartets).
+    //findAll = true; // *** this should be an option. might just want # genes that speak to each edge (not # quartets).
     //bool findAll = false;
     bool debugging = false;
     

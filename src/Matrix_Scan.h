@@ -30,7 +30,7 @@ bool testCompleteDecisivness (vector < vector <int> > const& data, bool const& r
 vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> > const& data,
     vector < vector < vector <bool> > > & userTrees, vector < vector <int> > const& treeTaxonOrdering,
     vector <string> const& taxonNames, vector <double> const& locusWeights, vector <double> const& taxonWeights,
-    int const& numProcs);
+    bool & findAll, int const& numProcs);
 void printBipartitionTable (vector < vector <bool> > const& tree, vector <double> const& decisiveness,
     vector <unsigned long int> const& numSatisfied, vector <unsigned long int> const& numPossible, int const& numTaxa,
     int const& numTrees, int const& treeNumber);

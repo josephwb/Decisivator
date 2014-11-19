@@ -332,8 +332,9 @@ int main(int argc, char *argv[]) {
                 getUserTrees (treeFileName, rawTrees, userTrees, taxonNames, translationTable, burnin,
                     thinning, treeTaxonOrdering);
             }
+            findAll = checkValidBoolInput("Search for minimal (0) or exhaustive (1) coverage? ");
             userTreeDecisiveness = determineDecisivenessUserTree (revisedData, userTrees,
-                treeTaxonOrdering, revisedTaxonNames, revisedLocusWeights, revisedTaxonWeights, numProcs);
+                treeTaxonOrdering, revisedTaxonNames, revisedLocusWeights, revisedTaxonWeights, findAll, numProcs);
             
             writeAnnotatedTrees(rawTrees, translationTable, userTreeDecisiveness, revisedTaxonNames);
         } else if (quit) {
