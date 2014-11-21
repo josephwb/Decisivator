@@ -8,7 +8,7 @@ can be approximated through the analysis of many random tree topologies. Additio
 decisiveness of a user tree (or distribution of trees) can be quantified.
 
 ##### Small favour
-Despite being open source software, I'd appreciate having first crack at publishing the 
+Despite being open source, I'd appreciate having first crack at publishing the 
 analytical aspects of the software. 
 
 ##### Compilation
