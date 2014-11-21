@@ -32,34 +32,37 @@
 10. make formatting less Draconian (low priority until informed otherwise)
    1. CHARSETs - allow referential CHARSETS, multiple ranges, etc.
    2. allow more flexibility in attributes definitions - DONE!
-11. switch to APE tree-formatting - STARTED
+11. switch to APE tree-formatting - Hmm, maybe not...
 12. print out locus-specific coverage - DONE!
 13. print out taxon-specific coverage - DONE!
 14. give better options for deleting partitions - DONE!
 15. implement genetic algorithm (via Daniel) - DONE!
    1. add N genes - DONE!
    2. add until decisive
-   3. delete taxa until decisive
+   3. delete taxa until decisive <- important for a publication
    4. print out augmented matrix to file - DONE!
    5. need to tweak GA parameters: population size, tournament size, mutation
    6. have irregular hill-climbing steps (code there, just not used/optimized)
 16. allow input of phylip-formatted data (and separate partition file) e.g. ala RAxML
 17. allow user to specify that all characters are independent (e.g. morphological) instead of providing a huge number of CHARSET declarations
 18. check whether partitions contain constant data
-19. use getopt for parsing commandline arguments
+19. use getopt for parsing commandline arguments <- not urgent.
 20. more efficient handling of CHARSETs ala pxboot
 21. user-tree analysis: currently checks all relevant gene-quartets. add option to count number of genes which speak to an edge (not # quartets). considerably less computation.
+22. Make scriptable (i.e. use config file, exit on completition).
+23. Better output file names.
 
 
 Fix:
-1. tree-wise and branch-wise partial decisiveness is currently the same thing.
-2. where possible, initialize vectors instead of using push. should enable better multithreading indexing
+1. tree-wise and branch-wise partial decisiveness is currently the same thing. <- I think this is fixed.
+2. where possible, initialize vectors instead of using push. should enable better multithreading indexing. <- I think this is fixed.
 3. getSibNodes is a huge bottleneck.
-4. only seems to accept Nexus user trees. add newick.
+4. only seems to accept Nexus user trees. add newick. <- should be easy.
 
 
 Enhancements
 1. recode all with 1) bit strings and 2) set operations. this is a complete re-write.
 2. use autoconf and configure
-3. add option that only variable data are considered (involves creating internal matrix representation).
-4. add constraint tree option. considering all possible trees is silly. when simulating 'random' trees, make sure they are compatible with the constraint tree. should give much more informative results.
+3. add option that only variable data are considered (involves creating internal matrix representation). <- probably important.
+4. add constraint tree option. considering all possible trees is silly. when simulating 'random' trees, make sure they are compatible with the constraint tree. should give much more informative results. <- definitely important, but difficult given current tree generation (random).
+
