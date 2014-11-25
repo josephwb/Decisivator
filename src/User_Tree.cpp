@@ -428,7 +428,7 @@ vector <int> collectTaxonCoding (vector <string> & rawInput, vector <string> con
 }
 
 
-void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & translationTable,
+void writeAnnotatedTrees (string const& treeFileName, vector <string> const& rawTrees, vector <int> & translationTable,
     vector < vector <double> > userTreeDecisiveness, vector <string> const& taxonNames)
 {
 // may or may not have a root-type declaration and/or probability:
@@ -438,9 +438,8 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
     
     ofstream annotated_trees;
     
-    string outTrees = "Decisivator.trees";
-    checkValidOutputFile (outTrees);
-    
+    string outTrees = "Decisivator-" + removeStringSuffix(treeFileName, '.') + ".trees";
+    checkValidOutputFile(outTrees);
     annotated_trees.open(outTrees.c_str());
 
     int numTrees = (int)rawTrees.size();
@@ -685,5 +684,5 @@ void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & transl
     annotated_trees << "End;" << endl;
     annotated_trees.close();
     
-    cout << "Annotated tree written out to 'Decisivator.trees'." << endl;
+    cout << "Annotated tree written out to '" << outTrees << "'." << endl;
 }

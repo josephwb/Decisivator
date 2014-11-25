@@ -647,10 +647,10 @@ bool testCompleteDecisivness (vector < vector <int> > const& data, bool const& r
 }
 
 
-vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> > const& data,
-    vector < vector < vector <bool> > > & userTrees, vector < vector <int> > const& treeTaxonOrdering,
-    vector <string> const& taxonNames, vector <double> const& locusWeights, vector <double> const& taxonWeights,
-    bool & findAll, int const& numProcs)
+vector < vector <double> > determineDecisivenessUserTree (string const& matrixFileName,
+    vector < vector <int> > const& data, vector < vector < vector <bool> > > & userTrees,
+    vector < vector <int> > const& treeTaxonOrdering, vector <string> const& taxonNames,
+    vector <double> const& locusWeights, vector <double> const& taxonWeights, bool & findAll, int const& numProcs)
 {
     vector < vector <double> > result;
     vector < vector <bool> > rawTree;
@@ -665,7 +665,8 @@ vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> 
     time_t stop = start;
     double seconds = 0;
     
-    
+    string outLog = "Decisivator-" + removeStringSuffix(matrixFileName, '.') + ".log";
+    checkValidOutputFile(outLog);
     
     // *** FIX THIS ***
     //findAll = true; // *** this should be an option. might just want # genes that speak to each edge (not # quartets).
@@ -805,7 +806,7 @@ options:
             }
         }
         
-        printBipartitionTable(formattedTree, decisivenessCurrentTree, numSatisfied, numPossible, numTaxa, numTrees, j);
+        printBipartitionTable(outLog, formattedTree, decisivenessCurrentTree, numSatisfied, numPossible, numTaxa, numTrees, j);
         result.push_back(decisivenessCurrentTree);
         
         if (numTrees > 1) {
@@ -831,7 +832,7 @@ options:
     } else {
         cout << endl << "Completed analysis of provided tree in " << seconds << " seconds. " << endl;
     }
-    cout << "Bipartition decisiveness scores have been printed to file 'Decisivator.log'." << endl;
+    cout << "Bipartition decisiveness scores have been printed to file '" << outLog << "'." << endl;
     return(result);
 }
 
@@ -841,11 +842,14 @@ options:
 // PAUP-style
 // Hmm. Probably don't want this to print to screen (except maybe when debugging).
 // Should tailor the name of the file.
-void printBipartitionTable (vector < vector <bool> > const& tree, vector <double> const& decisiveness,
-    vector <unsigned long int> const& numSatisfied, vector <unsigned long int> const& numPossible, int const& numTaxa,
-    int const& numTrees, int const& treeNumber)
+void printBipartitionTable (string const& logFileName, vector < vector <bool> > const& tree,
+    vector <double> const& decisiveness, vector <unsigned long int> const& numSatisfied,
+    vector <unsigned long int> const& numPossible, int const& numTaxa, int const& numTrees, int const& treeNumber)
 {
     ofstream log;
+
+    log.open(logFileName.c_str());
+
     log.open("Decisivator.log",ios::app);
     
     if (numTrees > 1) {

@@ -8,7 +8,7 @@ void getUserTrees (string const& treeFileName, vector <string> & rawTrees,
 vector < vector <bool> > parseTree (string & tree, vector <string> const& taxonNames,
     vector <int> & translationTable, vector < vector <int> > & treeTaxonOrdering);
 vector <int> collectTaxonCoding (vector <string> & rawInput, vector <string> const& taxonNames);
-void writeAnnotatedTrees (vector <string> const& rawTrees, vector <int> & translationTable,
+void writeAnnotatedTrees (string const& treeFileName, vector <string> const& rawTrees, vector <int> & translationTable,
     vector < vector <double> > userTreeDecisiveness, vector <string> const& taxonNames);
 
 #endif /* _USER_TREES_H_ */

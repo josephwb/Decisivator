@@ -162,11 +162,12 @@ int main(int argc, char *argv[]) {
     cout << numProcs << " processors available for analyisis." << endl << endl;
     
 // Read in data, store
-    if (!nexusFileName.empty()) {
+    if (!matrixFileName.empty()) {
+        parseInputMatrix(matrixFileName, locusNames, taxonNames, data);
+    } else if (!nexusFileName.empty()) {
         parseNexus(nexusFileName, data, taxonNames, locusNames, numChar, taxaAlignment,
             includedLocusRanges, dataType);
-    } else if (!matrixFileName.empty()) {
-        parseInputMatrix(matrixFileName, locusNames, taxonNames, data);
+        matrixFileName = nexusFileName;
     } else {
         cout << "Ergh. Something fucked up... Shit." << endl;
         exit(1);
@@ -328,15 +329,15 @@ int main(int argc, char *argv[]) {
         } else if (testUserTree) { // determine decisiveness on passed-in user tree
 // if doesn't yet exist, get filename from user
             if (treeFileName.size() == 0) {
-                treeFileName = getFileName ();
+                treeFileName = getFileName();
                 getUserTrees (treeFileName, rawTrees, userTrees, taxonNames, translationTable, burnin,
                     thinning, treeTaxonOrdering);
             }
             findAll = checkValidBoolInput("Search for minimal (0) or exhaustive (1) coverage? ");
-            userTreeDecisiveness = determineDecisivenessUserTree (revisedData, userTrees,
+            userTreeDecisiveness = determineDecisivenessUserTree (matrixFileName, revisedData, userTrees,
                 treeTaxonOrdering, revisedTaxonNames, revisedLocusWeights, revisedTaxonWeights, findAll, numProcs);
             
-            writeAnnotatedTrees(rawTrees, translationTable, userTreeDecisiveness, revisedTaxonNames);
+            writeAnnotatedTrees(treeFileName, rawTrees, translationTable, userTreeDecisiveness, revisedTaxonNames);
         } else if (quit) {
             doneEditing = true;
         }

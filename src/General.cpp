@@ -218,6 +218,33 @@ string extractStringElement (string & stringToParse, int const& position) {
 }
 
 
+// remove trailing filename extension
+string removeStringSuffix (string stringToParse, char suffixToRemove) {
+    string temp;
+    vector <char> tempVector;
+    int charCounter = 0;
+    int suffixStart = 0;
+    bool suffixEncountered = false;
+    for (string::iterator charIter = stringToParse.begin(); charIter < stringToParse.end(); charIter++) {
+        tempVector.push_back(*charIter);
+        if (*charIter == suffixToRemove) {
+            suffixStart = charCounter;
+            suffixEncountered = true;
+        }
+        charCounter++;
+    }
+    if (suffixEncountered) {
+        for (int charIter = 0; charIter < suffixStart; charIter++) {
+            temp += tempVector[charIter];
+        }
+    }
+    if (!suffixEncountered) {
+        temp = stringToParse;
+    }
+    return temp;
+}
+
+
 int convertStringtoInt (string stringToConvert) {
     int tempInt = 0;
     istringstream tempStream(stringToConvert);

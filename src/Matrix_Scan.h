@@ -27,13 +27,13 @@ bool testCompleteDecisivness (vector < vector <int> > const& data, bool const& r
     vector <int> const& referenceTaxa, vector <string> const& taxonNames,
     vector < vector <int> > & missingQuartets, vector < vector <int> > & triplets,
     vector < vector <int> > & tripletLocations, vector < vector <int> > & missingTriplets);
-vector < vector <double> > determineDecisivenessUserTree (vector < vector <int> > const& data,
-    vector < vector < vector <bool> > > & userTrees, vector < vector <int> > const& treeTaxonOrdering,
-    vector <string> const& taxonNames, vector <double> const& locusWeights, vector <double> const& taxonWeights,
-    bool & findAll, int const& numProcs);
-void printBipartitionTable (vector < vector <bool> > const& tree, vector <double> const& decisiveness,
-    vector <unsigned long int> const& numSatisfied, vector <unsigned long int> const& numPossible, int const& numTaxa,
-    int const& numTrees, int const& treeNumber);
+vector < vector <double> > determineDecisivenessUserTree (string const& matrixFileName,
+    vector < vector <int> > const& data, vector < vector < vector <bool> > > & userTrees,
+    vector < vector <int> > const& treeTaxonOrdering, vector <string> const& taxonNames,
+    vector <double> const& locusWeights, vector <double> const& taxonWeights, bool & findAll, int const& numProcs);
+void printBipartitionTable (string const& logFileName, vector < vector <bool> > const& tree,
+    vector <double> const& decisiveness, vector <unsigned long int> const& numSatisfied,
+    vector <unsigned long int> const& numPossible, int const& numTaxa, int const& numTrees, int const& treeNumber);
 double calculatePartialDecisivenessSinglePartition (bool const& referenceTaxonPresent, int & numTrees,
     vector < vector <int> > const& data, bool const& findAll, int const& partitionID,
     bool const& verbose, int const& numProcs);
