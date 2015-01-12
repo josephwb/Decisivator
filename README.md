@@ -2,7 +2,7 @@
 
 ##### Overview
 Calculate phylogenetic 'decisiveness' sensu Sanderson, Steel, and McMahon. Calculations can 
-involve matrix occupency alone (for so-called 'complete decisivess'). The combinatorics 
+involve matrix occupency alone (for so-called 'complete decisiveness'). The combinatorics 
 involved can be prohibitive with large taxon-gene matrices. As an alternative, decisiveness 
 can be approximated through the analysis of many random tree topologies. Additionally, the 
 decisiveness of a user tree (or distribution of trees) can be quantified.
