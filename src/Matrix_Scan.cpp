@@ -21,8 +21,7 @@ using namespace std;
 
 extern bool debugging;
 
-void checkForMissingTaxa (vector < vector <int> > const& data, vector <string> const& taxonNames)
-{
+void checkForMissingTaxa (vector < vector <int> > const& data, vector <string> const& taxonNames) {
     vector <string> missingData;
     for (int i = 0; i < (int)data.size(); i++) { // numTaxa
         bool match = false;
@@ -47,9 +46,7 @@ void checkForMissingTaxa (vector < vector <int> > const& data, vector <string> c
 }
 
 
-bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & referenceTaxa,
-    vector <string> & taxonNames)
-{
+bool searchForReferenceTaxon (vector < vector <int> > & data, vector <int> & referenceTaxa, vector <string> & taxonNames) {
     bool referencePresent = false;
     referenceTaxa.clear();
     int numTaxa = (int)data.size();
@@ -169,8 +166,7 @@ void searchForAllTriplets (vector < vector <int> > const& data, vector < vector 
 
 // May not be so useful; if not all triplets are present, neither will all quaduplets
 // Therefore, only call if all triplets ARE present (a necessary but not sufficient condition)
-void searchForAllQuartets (vector < vector <int> > const& data, vector < vector <int> > & missingQuartets)
-{
+void searchForAllQuartets (vector < vector <int> > const& data, vector < vector <int> > & missingQuartets) {
 // Clear vector, as dimensions may have changed
     missingQuartets.clear();
     
@@ -332,8 +328,7 @@ void searchForQuartetsWithReference (vector < vector <int> > const& data, vector
 
 // Summarize which taxa are missing from triplets/quartets
 void whichTaxaProblematic (vector < vector <int> > const& missingGroups, vector <string> const& taxonNames,
-    string const& grouping, vector <int> const& referenceTaxa)
-{
+    string const& grouping, vector <int> const& referenceTaxa) {
     vector <int> missingTaxa;
     int numTaxa = (int)taxonNames.size();
     int numGroups = (int)missingGroups.size();
@@ -369,8 +364,7 @@ void whichTaxaProblematic (vector < vector <int> > const& missingGroups, vector 
 
 
 // No need to parallelize here
-void getCoverage (vector < vector <int> > const& data, double & taxonCoverage)
-{
+void getCoverage (vector < vector <int> > const& data, double & taxonCoverage) {
     int taxonGeneCount = 0;
     taxonCoverage = 0;
     taxonGeneCount = 0;
@@ -379,7 +373,7 @@ void getCoverage (vector < vector <int> > const& data, double & taxonCoverage)
     
     for (int i = 0; i < numTaxa; i++) {
         for (int j = 0; j < numLoci; j++) {
-            if(data[i][j] == 1) {
+            if (data[i][j] == 1) {
                 taxonGeneCount++;
             }
         }

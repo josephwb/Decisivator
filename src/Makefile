@@ -1,8 +1,10 @@
 OBJS = Main.o General.o Trees_Edges.o Manipulate_Matrix.o Matrix_Scan.o Parse_Data.o User_Interface.o Parse_Nexus.o User_Tree.o GAoptimize.o
-#CC = g++
-CC = icc
+## use g++ from homebrew, not clang (mac symlinks g++ to clang)
+CC = g++-5
+#CC = clang++
+#CC = icc
 #CC = icpc
-DEBUG = -g
+#DEBUG = -g
 CFLAGS = -Wall -c -m64 -O3 -funroll-loops $(DEBUG)
 LFLAGS = -Wall -m64 $(DEBUG)
 

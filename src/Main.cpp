@@ -169,7 +169,8 @@ int main(int argc, char *argv[]) {
             includedLocusRanges, dataType);
         matrixFileName = nexusFileName;
     } else {
-        cout << "Ergh. Something fucked up... Shit." << endl;
+        //cout << "Ergh. Something fucked up... Shit." << endl;
+        cout << "Whoops! Encountered an error. Not sure how we ever entered this bit of code, but exiting now." << endl;
         exit(1);
     }
     if (!matrixFileName.empty()) {
@@ -188,7 +189,8 @@ int main(int argc, char *argv[]) {
             cout << "userTrees has size " << numUserTrees << "; treeTaxonOrdering has size "
                 << treeTaxonOrdering.size() << endl;
             cout << "Collected user trees:" << endl;
-            printVectorAsList(rawTrees);}
+            printVectorAsList(rawTrees);
+        }
     }
     
 // Get weights (if present)
