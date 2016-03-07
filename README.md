@@ -50,8 +50,8 @@ where:
 	'locus_weights' is a two-column (locus, weight; with headers) file for locus weights.
 
 	NOTE: The taxon and locus weight files need not be complete. All weights are 1.0 by
-	  default. Enter only weights which should be changed from the default. Or do this shit
-	  within the program itself.
+	  default. Enter only weights which should be changed from the default. Or do this kind
+	  of stuff within the program itself.
 
 For help, type:
 
