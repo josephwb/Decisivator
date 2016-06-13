@@ -1,8 +1,8 @@
 OBJS = Main.o General.o Trees_Edges.o Manipulate_Matrix.o Matrix_Scan.o Parse_Data.o User_Interface.o Parse_Nexus.o User_Tree.o GAoptimize.o
 
-CC = g++
+#CC = g++
 ## on mac: use g++ from homebrew, not clang (mac symlinks g++ to clang)
-#CC = g++-5
+CC = /usr/local/bin/g++-5
 #CC = clang++
 #CC = icc
 #CC = icpc

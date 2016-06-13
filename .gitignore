@@ -4,6 +4,7 @@
 *.o
 Decisivator*
 *.log
+RandTree_V1.0/rt
 
 # Compiled Dynamic libraries
 *.so
@@ -19,6 +20,10 @@ Decisivator*
 .project
 .classpath
 .settings
+.metadata
+
+# netbeans
+nbproject
 
 # junk
 .DS_Store

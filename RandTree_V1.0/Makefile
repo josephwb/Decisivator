@@ -1,4 +1,4 @@
-CC	= gcc
+CC	= /usr/local/bin/gcc-5
 
 #############################################################################
 ## NODETYPE specifies what type of node to use in the trees, use flag to change it
@@ -10,7 +10,8 @@ CFLAGS = -g3 -pg
 # DEPEND  = makedepend
 
 # *** THE LINK FLAGS ***
-LINKFLAGS = -fast
+#LINKFLAGS = -fast
+
 LIBS = -lm
 
 SRCS    = ptr_tree.c stack.c randtree.c 
