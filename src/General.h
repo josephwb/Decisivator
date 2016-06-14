@@ -10,11 +10,14 @@
 
 bool checkWhiteSpaceOnly (string stringToParse);
 bool checkCharValue (char const& charInput, char const& charToMatch);
+vector <string> tokenize (string const& input);
 string getFileName();
 bool checkValidFile (string);
 bool checkValidOutputFile (string & outputFileName);
 int checkValidIntInput (string);
 bool checkValidBoolInput (string queryString);
+
+bool checkStringValue (string & inString, string const& stringToMatch);
 bool checkStringValue (string stringToParse, string stringToMatch, int stringPosition);
 unsigned long choose (int const& n, int const& r);
 unsigned long factorial (int const& num);

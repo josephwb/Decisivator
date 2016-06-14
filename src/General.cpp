@@ -4,6 +4,7 @@
 #include <vector>
 #include <math.h>
 #include <cstdlib>
+#include <algorithm> 
 
 using namespace std;
 
@@ -19,6 +20,18 @@ bool checkCharValue (char const& charInput, char const& charToMatch) {
     } else {
         return false;
     }
+}
+
+
+// split string by whitespace
+vector <string> tokenize (string const& input) {
+    vector <string> tokens;
+    string temp;
+    istringstream str(input);
+    while (str >> temp) {
+        tokens.push_back(temp);
+    }
+    return tokens;
 }
 
 
@@ -165,6 +178,17 @@ bool checkValidBoolInput (string queryString) {
         }
     }
     return userInput;
+}
+
+
+// stringToMatch should be all UPPERCASE
+bool checkStringValue (string & inString, string const& stringToMatch) {
+    bool match = false;
+    transform(inString.begin(), inString.end(), inString.begin(), ::toupper);
+    if (inString == stringToMatch) {
+        return true;
+    }
+    return match;
 }
 
 

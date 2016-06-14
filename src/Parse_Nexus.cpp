@@ -63,7 +63,7 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
 // some optional entries 'Format datatype=dna [gap=-] [missing=?] {[interleave=yes] or [interleave] [interleave=no]};'
 //     - no spaces allowed next to equal sign (for now)
     
-    while (getline(inputUserFile,line) && !done) {
+    while (getline(inputUserFile, line) && !done) {
         if (debugging) {cout << "Current line: " << line << endl;}
         int stringPosition = 0;
         commentLine = checkCommentLine(line);
@@ -71,16 +71,18 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
         if (line.empty() || commentLine || whiteSpaceOnly) {
             continue;
         } else {
-            if (checkStringValue(line, "matrix", stringPosition)) { // Done - won't find the information further down; really only used for 'interleave'
+            vector <string> tokens = tokenize(line);
+            cout << "line = " << line << "; tokens[0] = '" << tokens[0] << "'." << endl;
+            if (checkStringValue(tokens[0], "MATRIX")) { // Done - won't find the information further down; really only used for 'interleave'
                 done = true;
                 if (debugging) {cout << "Encountered 'matrix'" << endl;}
-                continue;
-            } else if (checkStringValue(line, "dimensions", stringPosition)) {
+                break;
+            } else if (checkStringValue(tokens[0], "DIMENSIONS")) {
                 if (debugging) {cout << "Encountered 'dimensions'" << endl;}
                 stringPosition = 0;
                 while (!numTaxaEncountered || !numCharEncountered) {
                     stringPosition++;
-                    string tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered); // check for end of line
+                    string tempString = removeStringSuffix(extractStringElement(line, stringPosition), ';', semicolonEncountered); // check for end of line
                     if (tempString == ";") {
                         if (!dataTypeEncountered) { // not specified; is this even allowed?
                             dataType = "standard";
