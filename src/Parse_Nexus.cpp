@@ -46,8 +46,6 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
     bool numTaxaEncountered = false;
     bool numCharEncountered = false;
     bool dataTypeEncountered = false;
-    bool equalSignEncountered = false;
-    bool semicolonEncountered = false;
     bool done = false; // know to stop looking
     
     inputUserFile.open(fileName.c_str());
@@ -66,24 +64,28 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
     
     while (getline(inputUserFile, line) && !done) {
         if (debugging) {cout << "Current line: " << line << endl;}
-        int stringPosition = 0;
+        
         commentLine = checkCommentLine(line);
         whiteSpaceOnly = checkWhiteSpaceOnly(line);
         if (line.empty() || commentLine || whiteSpaceOnly) {
             continue;
         } else {
+            // get rid of junk that complicates parsing
+            std::replace(line.begin(), line.end(), '=', ' ');
+            std::size_t found = line.find(";");
+            if (found != std::string::npos) {
+                line.erase(found);
+            }
             vector <string> tokens = tokenize(line);
-            cout << "line = " << line << "; tokens[0] = '" << tokens[0] << "'." << endl;
+            
             if (checkStringValue(tokens[0], "MATRIX")) { // Done - won't find the information further down; really only used for 'interleave'
                 done = true;
                 if (debugging) {cout << "Encountered 'matrix'" << endl;}
                 break;
-            } else if (checkStringValue(tokens[0], "DIMENSIONS")) {
-                if (debugging) {cout << "Encountered 'dimensions'" << endl;}
-                std::replace(line.begin(), line.end(), '=', ' ');
-                line.erase(line.find(';'));
+            }
             
-                tokens = tokenize(line);
+            if (checkStringValue(tokens[0], "DIMENSIONS")) {
+                if (debugging) {cout << "Encountered 'dimensions'" << endl;}
                 for (unsigned int i = 1; i < tokens.size(); i++) {
                     if (checkStringValue(tokens[i], "NTAX")) {
                         i++;
@@ -97,99 +99,55 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
                         cout << "I... don't know what is going on here..." << endl;
                     }
                 }
-                
                 if (!numTaxaEncountered || !numCharEncountered) {
                     cout << "Error parsing 'dimensions'. Exiting." << endl;
                     exit(0);
                 }
                 
-            } else if (checkStringValue(line, "format", stringPosition)) { // check to see if interleaved, datatype
-                stringPosition = 0;
-                while (!semicolonEncountered || !dataTypeEncountered) {
-                    stringPosition++;
-                    string tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', semicolonEncountered); // check for end of line
-                    if (tempString == ";") {
-                        if (!dataTypeEncountered) { // not specified; is this even allowed?
-                            dataType = "standard";
-                            cout << "No datatype specified. Treating as standard." << endl;
-                            dataTypeEncountered = true;
-                            continue;
-                        }
-                    }
-                    tempString = removeStringSuffix(extractStringElement(line,stringPosition), '=', equalSignEncountered); // where '=' is used i.e. 'interleave=yes;'
-                    if (checkStringValue(tempString, "interleave", 0)) { // format: interleave=yes or interleave= yes or interleave = yes or interleave
-                        if (equalSignEncountered) { // format: interleave=yes or interleave= yes
-                            tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
-                            if (!tempString.empty()) { // format: interleave=yes
-                                tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
-                                if (checkStringValue(tempString, "yes", 0)) {
-                                    interleavedData = true;
-                                    cout << "Data are in interleaved format." << endl;
-                                    continue;
-                                } else if (checkStringValue(tempString, "no", 0)) {
-                                    interleavedData = false;
-                                    cout << "Data are not in interleaved format." << endl;
-                                    continue;
-                                }
-                            } else { // format: interleave= yes
-                                stringPosition++;
-                                tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
-                                if (checkStringValue(tempString, "yes", 0)) {
-                                    interleavedData = true;
-                                    cout << "Data are in interleaved format." << endl;
-                                    continue;
-                                } else if (checkStringValue(tempString, "no", 0)) {
-                                    interleavedData = false;
-                                    cout << "Data are not in interleaved format." << endl;
-                                    continue;
-                                }
-                            }
-                        } else { // format: interleave = yes or interleave
-                            stringPosition++;
-                            tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
-                            if (checkStringValue(tempString, "yes", 0)) {
+            } else if (checkStringValue(tokens[0], "FORMAT")) {
+                if (debugging) {cout << "Encountered 'format'" << endl;}
+                for (unsigned int i = 1; i < tokens.size(); i++) {
+                    if (checkStringValue(tokens[i], "DATATYPE")) {
+                        i++;
+                        dataType = tokens[i];
+                        dataTypeEncountered = true;
+                        continue;
+                    } else if (checkStringValue(tokens[i], "MISSING")) {
+                        // not using this right now. skip to next
+                        i++;
+                        continue;
+                    } else if (checkStringValue(tokens[i], "INTERLEAVE")) {
+                        if (i == (tokens.size() - 1)) {
+                            interleavedData = true;
+                        } else {
+                            i++;
+                            if (checkStringValue(tokens[i], "YES")) {
                                 interleavedData = true;
-                                cout << "Data are in interleaved format." << endl;
                                 continue;
-                            } else if (checkStringValue(tempString, "no", 0)) {
+                            } else if (checkStringValue(tokens[i], "NO")) {
+                                // this is probably never used, but just in case...
                                 interleavedData = false;
-                                cout << "Data are not in interleaved format." << endl;
                                 continue;
                             } else {
-                                interleavedData = false;
-                                cout << "Data are not in interleaved format." << endl;
-                                stringPosition--;
+                                // interleave is not followed by yes/no and is not last
+                                i--;
+                                interleavedData = true;
                                 continue;
                             }
                         }
-                    } else if (checkStringValue(tempString, "datatype", 0)) {
-                        if (equalSignEncountered) { // format: datatype=dna or datatype= dna
-                            tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
-                            if (!tempString.empty()) { // format: datatype=8
-                                tempString = removeStringSuffix(tempString, ';', numTaxaEncountered); // possibly last
-                                dataType = tempString;
-                            } else { // format: datatype= dna
-                                stringPosition++;
-                                tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', numTaxaEncountered); // possibly last
-                                dataType = tempString;
-                            }
-                        } else { // format: datatype = dna or datatype =dna
-                            stringPosition++;
-                            tempString = extractStringElement(line,stringPosition);
-                            if (tempString == "=") { // format: datatype = dna
-                                stringPosition++;
-                                tempString = removeStringSuffix(extractStringElement(line,stringPosition), ';', numTaxaEncountered);
-                                dataType = tempString;
-                            } else { // format: datatype =dna
-                                tempString = removeStringPrefix(extractStringElement(line,stringPosition), '=');
-                                tempString = removeStringSuffix(tempString, ';', numTaxaEncountered);
-                                dataType = tempString;
-                            }
-                        }
-                        if (debugging) {cout << "Datatype = " << dataType << endl;}
-                        cout << "Datatype = " << dataType << endl;
-                        dataTypeEncountered = true;
+                    } else {
+                        cout << "I... don't know what is going on here..." << endl;
                     }
+                }
+                if (interleavedData) {
+                    cout << "Data are in interleaved format." << endl;
+                } else {
+                    cout << "Data are not in interleaved format." << endl;
+                }
+                if (!dataTypeEncountered) { // not specified; is this even allowed?
+                    dataType = "standard";
+                    cout << "No datatype specified. Treating as standard." << endl;
+                    dataTypeEncountered = true;
                 }
             }
         }
