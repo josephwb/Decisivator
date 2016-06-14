@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <cstdlib>
+#include <algorithm>
 
 using namespace std;
 
@@ -79,74 +80,29 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
                 break;
             } else if (checkStringValue(tokens[0], "DIMENSIONS")) {
                 if (debugging) {cout << "Encountered 'dimensions'" << endl;}
-                stringPosition = 0;
-                while (!numTaxaEncountered || !numCharEncountered) {
-                    stringPosition++;
-                    string tempString = removeStringSuffix(extractStringElement(line, stringPosition), ';', semicolonEncountered); // check for end of line
-                    if (tempString == ";") {
-                        if (!dataTypeEncountered) { // not specified; is this even allowed?
-                            dataType = "standard";
-                            cout << "No datatype specified. Treating as standard." << endl;
-                            dataTypeEncountered = true;
-                            continue;
-                        }
-                    }
-                    tempString = removeStringSuffix(extractStringElement(line, stringPosition), '=', equalSignEncountered);
-                    if (checkStringValue(tempString, "ntax", 0)) {
-                        if (equalSignEncountered) { // format: ntax=8 or ntax= 8
-                            tempString = removeStringPrefix(extractStringElement(line, stringPosition), '=');
-                            if (!tempString.empty()) { // format: ntax=8
-                                tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
-                                numTaxa = convertStringtoInt(tempString);
-                            } else { // format: ntax= 8
-                                stringPosition++;
-                                tempString = removeStringSuffix(extractStringElement(line, stringPosition), ';', semicolonEncountered); // possibly last
-                                numTaxa = convertStringtoInt(tempString);
-                            }
-                        } else { // format: ntax = 8 or ntax =8
-                            stringPosition++;
-                            tempString = extractStringElement(line,stringPosition);
-                            if (tempString == "=") { // format: ntax = 8
-                                stringPosition++;
-                                tempString = removeStringSuffix(extractStringElement(line, stringPosition), ';', semicolonEncountered);
-                                numTaxa = convertStringtoInt(tempString);
-                            } else { // format: ntax =8
-                                tempString = removeStringPrefix(extractStringElement(line, stringPosition), '=');
-                                tempString = removeStringSuffix(tempString, ';', semicolonEncountered);
-                                numTaxa = convertStringtoInt(tempString);
-                            }
-                        }
-                        if (debugging) {cout << "NTax = " << numTaxa << endl;}
+                std::replace(line.begin(), line.end(), '=', ' ');
+                line.erase(line.find(';'));
+            
+                tokens = tokenize(line);
+                for (unsigned int i = 1; i < tokens.size(); i++) {
+                    if (checkStringValue(tokens[i], "NTAX")) {
+                        i++;
+                        numTaxa = convertStringtoInt(tokens[i]);
                         numTaxaEncountered = true;
-                    }
-                    if (checkStringValue(tempString, "nchar", 0)) {
-                        if (equalSignEncountered) { // format: nchar=8 or nchar= 8
-                            tempString = removeStringPrefix(extractStringElement(line, stringPosition), '=');
-                            if (!tempString.empty()) { // format: nchar=8
-                                tempString = removeStringSuffix(tempString, ';', semicolonEncountered); // possibly last
-                                numChar = convertStringtoInt(tempString);
-                            } else { // format: nchar= 8
-                                stringPosition++;
-                                tempString = removeStringSuffix(extractStringElement(line, stringPosition), ';', semicolonEncountered); // possibly last
-                                numChar = convertStringtoInt(tempString);
-                            }
-                        } else { // format: nchar = 8 or nchar =8
-                            stringPosition++;
-                            tempString = extractStringElement(line, stringPosition);
-                            if (tempString == "=") { // format: nchar = 8
-                                stringPosition++;
-                                tempString = removeStringSuffix(extractStringElement(line, stringPosition), ';', semicolonEncountered);
-                                numChar = convertStringtoInt(tempString);
-                            } else { // format: nchar =8
-                                tempString = removeStringPrefix(extractStringElement(line, stringPosition), '=');
-                                tempString = removeStringSuffix(tempString, ';', semicolonEncountered);
-                                numChar = convertStringtoInt(tempString);
-                            }
-                        }
-                        if (debugging) {cout << "NChar = " << numTaxa << endl;}
+                    } else if (checkStringValue(tokens[i], "NCHAR")) {
+                        i++;
+                        numChar = convertStringtoInt(tokens[i]);
                         numCharEncountered = true;
+                    } else {
+                        cout << "I... don't know what is going on here..." << endl;
                     }
                 }
+                
+                if (!numTaxaEncountered || !numCharEncountered) {
+                    cout << "Error parsing 'dimensions'. Exiting." << endl;
+                    exit(0);
+                }
+                
             } else if (checkStringValue(line, "format", stringPosition)) { // check to see if interleaved, datatype
                 stringPosition = 0;
                 while (!semicolonEncountered || !dataTypeEncountered) {
