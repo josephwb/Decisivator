@@ -21,7 +21,8 @@ using namespace std;
 
 extern bool debugging;
 
-void checkForMissingTaxa (vector < vector <int> > const& data, vector <string> const& taxonNames) {
+void checkForMissingTaxa (vector < vector <int> > const& data, vector <string> const& taxonNames)
+{
     vector <string> missingData;
     for (int i = 0; i < (int)data.size(); i++) { // numTaxa
         bool match = false;
@@ -328,7 +329,8 @@ void searchForQuartetsWithReference (vector < vector <int> > const& data, vector
 
 // Summarize which taxa are missing from triplets/quartets
 void whichTaxaProblematic (vector < vector <int> > const& missingGroups, vector <string> const& taxonNames,
-    string const& grouping, vector <int> const& referenceTaxa) {
+    string const& grouping, vector <int> const& referenceTaxa)
+{
     vector <int> missingTaxa;
     int numTaxa = (int)taxonNames.size();
     int numGroups = (int)missingGroups.size();
@@ -372,13 +374,17 @@ void getCoverage (vector < vector <int> > const& data, double & taxonCoverage) {
     int numLoci = (int)data[1].size();
     
     for (int i = 0; i < numTaxa; i++) {
+        taxonGeneCount += accumulate(data[i].begin(), data[i].end(), 0);
+        /*
         for (int j = 0; j < numLoci; j++) {
             if (data[i][j] == 1) {
                 taxonGeneCount++;
             }
         }
+        */
     }
     taxonCoverage = float(taxonGeneCount)/(float(numTaxa) * float(numLoci));
+    
 }
 
 
@@ -417,7 +423,7 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
         
         int thread_id = omp_get_thread_num();
         
-//        double temp = 0.0;
+//      double temp = 0.0;
         double sum = 0.0;
         
         #pragma omp for
@@ -455,7 +461,6 @@ double calculatePartialDecisiveness (bool const& referenceTaxonPresent, int & nu
             currentDecisiveness = numEdgesSatisfied / (double)numInternalEdges;
 //            privateDecisiveness = ((((privateTreeCount - 1)/privateTreeCount) * privateDecisiveness)
 //                + (currentDecisiveness/privateTreeCount));
-            
 //            temp = privateDecisiveness;
             sum += currentDecisiveness;
         }
@@ -652,7 +657,7 @@ vector < vector <double> > determineDecisivenessUserTree (string const& matrixFi
     vector < vector <int> > sibNodes;
     vector <bool> currentClade;
     double treeCount = 0;
-    int numTaxa = (int)userTrees[0][0].size();
+    //int numTaxa = (int)userTrees[0][0].size();
     int numTrees = (int)userTrees.size();
     
     time_t start = time(NULL);
@@ -1078,4 +1083,18 @@ void whichTaxaProblematicBIG (vector <int> const& missingQuartetsByTaxa, vector 
             cout << " Taxon '" << taxonNames[missingTaxa[i]] << "' missing from (" << currentMax << ") taxon " << grouping << "." << endl;
         }
     }
+}
+
+
+// Check for variable data. Second step will be to check for parsimony-informative data
+// this take in the alignment rather than the presence/absence matrix
+
+void scrutinizeAlignment (vector < vector <string> > const& taxaAlignment) {
+    int numTaxa = (int)taxaAlignment.size();
+    int numChar = (int)taxaAlignment[0][1].size();
+    
+    cout << "Will analyze " << numChar << " chars for " << numTaxa << " taxa." << endl;
+    //cout << "First seq: " << endl;
+    //cout << taxaAlignment[0][0] << endl;
+    //cout << taxaAlignment[0][1] << endl;
 }

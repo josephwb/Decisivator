@@ -4,7 +4,8 @@
 #include <vector>
 #include <math.h>
 #include <cstdlib>
-#include <algorithm> 
+#include <algorithm>
+#include <numeric>
 
 using namespace std;
 
@@ -560,9 +561,13 @@ bool checkWhiteSpaceOnly (string stringToParse) {
 
 double sum (vector <double> const& x) {
     double total = 0.0;  // the sum is accumulated here *** <- this is available natively ***
+    
+    total += accumulate(x.begin(), x.end(), 0.0);
+    /*
     for (int i = 0; i < (int)x.size(); i++) {
         total = total + x[i];  
     }
+    */
     return total;
 }
 

@@ -37,5 +37,6 @@ void printBipartitionTable (string const& logFileName, vector < vector <bool> > 
 double calculatePartialDecisivenessSinglePartition (bool const& referenceTaxonPresent, int & numTrees,
     vector < vector <int> > const& data, bool const& findAll, int const& partitionID,
     bool const& verbose, int const& numProcs);
+void scrutinizeAlignment (vector < vector <string> > const& taxaAlignment);
 
 #endif /* _MATRIX_SCAN_H_ */
