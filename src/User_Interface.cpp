@@ -562,7 +562,7 @@ void writeNexus (int const& numTaxa, int const& numChar, vector <string> const& 
     << endl
     << "Begin data;" << endl
     << "    Dimensions ntax=" << numTaxa << " nchar=" << numChar << ";" << endl
-    << "    Format datatype=" << dataType << " missing=?;" << endl
+    << "    Format datatype=" << dataType << " missing=? gap=-;" << endl
     << "    Matrix" << endl << endl;
     
     for (int i = 0; i < numTaxa; i++) {
