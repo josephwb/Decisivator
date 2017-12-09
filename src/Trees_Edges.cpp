@@ -97,6 +97,7 @@ vector < vector <bool> > fastBinaryTree (int const& numTaxa, vector < vector <in
 
 
 // return two-column list of edges; should be more efficient
+// why was this ever planned?!?
 vector < vector <int> > convertTreeToApeFormat (vector < vector <bool> > const& tree)
 {
     vector < vector <int> > treeEdges;

@@ -29,12 +29,12 @@ void printProgramInfo() {
     "************************************************" << endl << endl;
 }
 
-
+// should probably use getopt here
 void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & deleteGenes, bool & revert,
     bool & quit, bool & print, bool & reweightLoci, bool & reweightTaxa, bool & partialTreewise,
     bool & partialBranchwise, bool & summarize, bool & testCompleteDeciveness,
     bool & writeCurrentMatrix, bool & testUserTree, bool & partialIndividualPartition,
-    bool & printRefTaxa, bool & useGA)
+    bool & printRefTaxa, bool & useGA, bool & checkVariable)
 {
     bool validChoice = false;
     char userChoice;
@@ -55,6 +55,7 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
         << " [L]ist current reference taxa (i.e. have data for all partitions)" << endl
         << " [W]rite current matrix" << endl
         << " [R]evert to original matrix" << endl
+        << " [Z] new variability check" << endl
         << " [Q]uit" << endl
         << endl
         << "Enter desired option: ";
@@ -137,6 +138,10 @@ void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & d
             continue;
         } else if (checkCharValue(userChoice,'o')) {
             useGA = true;
+            validChoice = true;
+            continue;
+        } else if (checkCharValue(userChoice,'z')) {
+            checkVariable = true;
             validChoice = true;
             continue;
         } else {
@@ -347,7 +352,7 @@ void printReferenceTaxa (vector <int> const& referenceTaxa, vector <string> cons
 }
 
 
-// print our proportion of data present
+// print out proportion of data present
 void printMatrix (vector < vector <int> > const& data, vector <string> const& taxonNames, 
     vector <double> const& locusWeights, vector <double> const& taxonWeights)
 {
@@ -557,7 +562,7 @@ void writeNexus (int const& numTaxa, int const& numChar, vector <string> const& 
     << endl
     << "Begin data;" << endl
     << "    Dimensions ntax=" << numTaxa << " nchar=" << numChar << ";" << endl
-    << "    Format datatype=" << dataType << " missing=?;" << endl
+    << "    Format datatype=" << dataType << " missing=? gap=-;" << endl
     << "    Matrix" << endl << endl;
     
     for (int i = 0; i < numTaxa; i++) {

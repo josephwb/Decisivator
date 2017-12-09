@@ -65,7 +65,7 @@ To determine partial decisiveness (branch-wise), the following will occur:
 2. traverse tree, edge by edge - DONE
 3. determine if two taxa on EACH side of the edge are sequenced for a particular locus
    
-'Partial decisivess' is of interest for both the focal tree and 'all' trees. For the latter, it is not
+'Partial decisiveness' is of interest for both the focal tree and 'all' trees. For the latter, it is not
 possible to analyze every possible configuration. As an approximation, simulate multiple random trees
 of the same taxon size. An important consideration may be to constrain parts of the generated trees
 to display non-controversial edges.
@@ -105,9 +105,9 @@ using namespace std;
 
 
 // version information
-double version = 0.58;
-string month = "March";
-int year = 2014;
+double version = 0.591;
+string month = "Smarch";
+int year = 2017;
 
 bool debugging = false; // should extra comments be printed to stdout?
 
@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
     processCommandLineArguments(argc, argv, matrixFileName, nexusFileName, locusWeightFileName,
         taxonWeightFileName, treeFileName, burnin, thinning, numProcs);
     
-    cout << numProcs << " processors available for analyisis." << endl << endl;
+    cout << numProcs << " processors available for analysis." << endl << endl;
     
 // Read in data, store
     if (!matrixFileName.empty()) {
@@ -251,11 +251,12 @@ int main(int argc, char *argv[]) {
         bool testUserTree = false;
         bool findAll = false;
         bool useGA = false;
+        bool checkVariable = false;
         int numAddGA = 0;
         
         printProgamOptions (addGenes, merge, exclude, deleteGenes, revert, quit, print, reweightLoci,
             reweightTaxa, partialTreewise, partialBranchwise, summarize, testCompleteDeciveness,
-            writeCurrentMatrix, testUserTree, partialIndividualPartition, printRefTaxa, useGA);
+            writeCurrentMatrix, testUserTree, partialIndividualPartition, printRefTaxa, useGA, checkVariable);
         
         if (revert) {    // User wants to start over manipulating original taxon-locus matrix
             revisedLocusNames = locusNames;
@@ -301,7 +302,7 @@ int main(int argc, char *argv[]) {
                     numRandomTrees, revisedData, findAll, numProcs, verbose);
             } else if (partialIndividualPartition) {
                 findAll = true;
-                int partitionID = selectPartition (revisedData, revisedLocusNames);
+                int partitionID = selectPartition(revisedData, revisedLocusNames);
                 partitionDecisiveness[partitionID] = calculatePartialDecisivenessSinglePartition(revisedReferenceTaxonPresent,
                     numRandomTrees, revisedData, findAll, partitionID, 0, numProcs); // set verbose to false
                 cout << "Partial decisiveness for partition '" << locusNames[partitionID]
@@ -315,7 +316,7 @@ int main(int argc, char *argv[]) {
                 // newMatrix = false;
                 completeDecisivenessDetermined = true;
             }
-        } else if (useGA) {
+        } else if (useGA) { // this wasn't really implemented well
             cout << endl;
             numAddGA = checkValidIntInput("Enter how many virtual taxon-character(s) to add to matrix: ");
             
@@ -325,14 +326,14 @@ int main(int argc, char *argv[]) {
         } else if (print) {
             printMatrix(revisedData, revisedTaxonNames, revisedLocusWeights, revisedTaxonWeights);
         } else if (printRefTaxa) {
-            printReferenceTaxa (revisedReferenceTaxa, revisedTaxonNames);
+            printReferenceTaxa(revisedReferenceTaxa, revisedTaxonNames);
         } else if (writeCurrentMatrix) { // output matrix in nexus or phylip format
-            writeMatrix (revisedTaxonNames, numChar, taxaAlignment, includedLocusRanges, revisedLocusNames, dataType);
+            writeMatrix(revisedTaxonNames, numChar, taxaAlignment, includedLocusRanges, revisedLocusNames, dataType);
         } else if (testUserTree) { // determine decisiveness on passed-in user tree
 // if doesn't yet exist, get filename from user
             if (treeFileName.size() == 0) {
                 treeFileName = getFileName();
-                getUserTrees (treeFileName, rawTrees, userTrees, taxonNames, translationTable, burnin,
+                getUserTrees(treeFileName, rawTrees, userTrees, taxonNames, translationTable, burnin,
                     thinning, treeTaxonOrdering);
             }
             findAll = checkValidBoolInput("Search for minimal (0) or exhaustive (1) coverage? ");
@@ -340,9 +341,12 @@ int main(int argc, char *argv[]) {
                 treeTaxonOrdering, revisedTaxonNames, revisedLocusWeights, revisedTaxonWeights, findAll, numProcs);
             
             writeAnnotatedTrees(treeFileName, rawTrees, translationTable, userTreeDecisiveness, revisedTaxonNames);
+        } else if (checkVariable) {
+            scrutinizeAlignment(taxaAlignment);
         } else if (quit) {
             doneEditing = true;
         }
+        
 // If matrix has changed in any way, reset
         if (merge || deleteGenes || exclude || addGenes) {
             treewiseDecisiveness = 0.0;

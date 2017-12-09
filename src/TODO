@@ -51,6 +51,7 @@
 21. user-tree analysis: currently checks all relevant gene-quartets. add option to count number of genes which speak to an edge (not # quartets). considerably less computation.
 22. Make scriptable (i.e. use config file, exit on completion).
 23. Better output file names.
+24. in addition to 18 above, check for parsimony-informative chars (i.e. for morphology)
 
 
 Fix:
