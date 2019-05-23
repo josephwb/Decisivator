@@ -638,6 +638,8 @@ bool testCompleteDecisivness (vector < vector <int> > const& data, bool const& r
             searchForAllQuartets(data, missingQuartets);
             if (missingQuartets.size() > 0) {
                 whichTaxaProblematic(missingQuartets, taxonNames, "quartets", referenceTaxa);
+            } else {
+                matrixDecisive = true;
             }
         }
     }
