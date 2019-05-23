@@ -116,6 +116,10 @@ void getAttributes (string fileName, int & numTaxa, int & numChar, bool & interl
                         // not using this right now. skip to next
                         i++;
                         continue;
+                    } else if (checkStringValue(tokens[i], "GAP")) {
+                        // not using this right now. skip to next
+                        i++;
+                        continue;
                     } else if (checkStringValue(tokens[i], "INTERLEAVE")) {
                         if (i == (tokens.size() - 1)) {
                             interleavedData = true;
