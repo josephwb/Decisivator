@@ -937,7 +937,7 @@ void mergeTaxa (vector < vector <int> > & data, vector <string> & taxonNames, ve
                 int numLoci = (int)tempIntVector[0].size();
                 vector <int> mergedData (numLoci, 0);
                 for (int i = 0; i < numLoci; i++) { // Merge data
-                    for (int j = 0; j < int(tempIntVector.size()); j++) {
+                    for (unsigned int j = 0; j < tempIntVector.size(); j++) {
                         if (tempIntVector[j][i] == 1) {
                             mergedData[i] = 1;
                             j = int(tempIntVector.size()); // Match found; exit

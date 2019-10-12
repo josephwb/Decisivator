@@ -27,6 +27,11 @@
    7. possessing data for only a specific gene - DONE!
 6. export nexus file for reduced matrix - DONE!
 7. print log so can be run in background - IMPLEMENTED FOR USER TREES, BUT NOTHING ELSE (YET)
+   - hrm. currently states:
+    Bipartition decisiveness scores have been printed to file 'Decisivator-Archaeopteryx_matrix.log'.
+    Annotated tree written out to 'Decisivator-Archaeopteryx.trees'.
+   - but log file is empty - FIXED
+   - maybe include average decisiveness in tree as annotation
 8. automatically report version/month/year - DONE!
 9. write rudimentary manual - STARTED
 10. make formatting less Draconian (low priority until informed otherwise)

@@ -24,7 +24,7 @@ void printProgramInfo() {
     "                A PuRGe Product"                  << endl <<
     "              University of Idaho"                << endl <<
     "       Department of Biological Sciences"         << endl <<
-    "        Complaints: josephwb@umich.edu"           << endl <<
+    "        Complaints: phylo.jwb@gmail.com"           << endl <<
     "                  " << month <<", " << year <<       endl << 
     "************************************************" << endl << endl;
 }
@@ -163,7 +163,7 @@ void processCommandLineArguments(int argc, char *argv[], string & matrixFileName
             string temp = argv[i];
             
             if (temp == "-h" || temp == "-help") {
-                printHelp();
+                printHelp(numProcs);
                 exit(0);  
             } else if (temp == "-m") {
                 i++;
@@ -210,7 +210,7 @@ void processCommandLineArguments(int argc, char *argv[], string & matrixFileName
                 cout
                 << "Unknown command-line argument '" << argv[i] << "' encountered." << endl
                 << endl;
-                printHelp();
+                printHelp(numProcs);
                 exit(0);
             }
             cout << endl;
@@ -219,14 +219,15 @@ void processCommandLineArguments(int argc, char *argv[], string & matrixFileName
 }
 
 
-void printHelp ()
+void printHelp (int numProcs)
 {
+    if (numProcs == 1) {
+        cout << "1 processor available for analysis." << endl;
+    } else {
+        cout << numProcs << " processors available for analysis." << endl;
+    }
     cout << endl
     << "Program description: Calculates phylogenetic 'decisiveness' sensu Sanderson and Steel." << endl
-    << endl
-    << "To compile, type the following in a unix prompt:" << endl
-    << endl
-    << "make" << endl
     << endl
     << "Usage:" << endl
     << endl

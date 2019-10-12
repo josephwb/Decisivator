@@ -2,7 +2,7 @@
 #define _USER_INTERFACE_H_
 
 void printProgramInfo();
-void printHelp ();
+void printHelp (int numProcs);
 void printMatrix (vector < vector <int> > const& data, vector <string> const& taxonNames, 
     vector <double> const& locusWeights, vector <double> const& taxonWeights);
 void printProgamOptions (bool & addGenes, bool & merge, bool & exclude, bool & deleteGenes, bool & revert,

@@ -792,7 +792,8 @@ options:
                     printClade(currentClade);
                     cout << endl;
                     cout << numEdgesSatisfied << " instances satisfied of a possible " << numPossibleQuartets
-                    << " for node " << i + numTaxa << " (= " << ((double)numEdgesSatisfied/(double)numPossibleQuartets)*100 << "%)." << endl;
+                        << " for node " << i + numTaxa << " (= "
+                        << ((double)numEdgesSatisfied/(double)numPossibleQuartets)*100 << "%)." << endl;
                 }
                 currentDecisiveness = (double)numEdgesSatisfied / (double)numPossibleQuartets;
                 decisivenessCurrentTree[i] = currentDecisiveness;
@@ -807,13 +808,16 @@ options:
             }
         }
         
-        printBipartitionTable(outLog, formattedTree, decisivenessCurrentTree, numSatisfied, numPossible, numTaxa, numTrees, j);
+        printBipartitionTable(outLog, formattedTree, decisivenessCurrentTree,
+            numSatisfied, numPossible, numTaxa, numTrees, j);
         result.push_back(decisivenessCurrentTree);
         
         if (numTrees > 1) {
-            cout << "Average decisiveness for tree " << j + 1 << " is: " << sum(decisivenessCurrentTree)/(double)decisivenessCurrentTree.size() << endl;
+            cout << "Average decisiveness for tree " << j + 1 << " is: "
+                << sum(decisivenessCurrentTree)/(double)decisivenessCurrentTree.size() << endl;
         } else {
-            cout << "Average decisiveness for this tree is: " << sum(decisivenessCurrentTree)/(double)decisivenessCurrentTree.size() << endl;
+            cout << "Average decisiveness for this tree is: "
+                << sum(decisivenessCurrentTree)/(double)decisivenessCurrentTree.size() << endl;
         }
 // empty vectors for next tree
         rawTree.clear();
@@ -848,10 +852,8 @@ void printBipartitionTable (string const& logFileName, vector < vector <bool> > 
     vector <unsigned long int> const& numPossible, int const& numTaxa, int const& numTrees, int const& treeNumber)
 {
     ofstream log;
-
-    log.open(logFileName.c_str());
-
-    log.open("Decisivator.log",ios::app);
+    
+    log.open(logFileName.c_str(),ios::app);
     
     if (numTrees > 1) {
         if (debugging) {cout << endl << "Bipartition Decisiveness Scores for tree #" << treeNumber + 1 << ":" << endl << endl;}

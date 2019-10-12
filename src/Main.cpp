@@ -105,9 +105,9 @@ using namespace std;
 
 
 // version information
-double version = 0.591;
+double version = 0.592;
 string month = "Smarch";
-int year = 2017;
+int year = 2019;
 
 bool debugging = false; // should extra comments be printed to stdout?
 
