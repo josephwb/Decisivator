@@ -1,0 +1,6 @@
+			Gene_1	Gene_2
+Taxon_A	1	0
+Taxon_B	1	1
+Taxon_C	1	1
+Taxon_D	1	0
+Taxon_E	0	1
