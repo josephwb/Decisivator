@@ -28,3 +28,7 @@ nbproject
 # junk
 .DS_Store
 *~
+
+# phyx
+phyx.logfile
+
