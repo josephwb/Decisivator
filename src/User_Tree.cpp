@@ -114,6 +114,11 @@ void getUserTrees (string const& treeFileName, vector <string> & rawTrees,
     }
     rawInput.clear();
     
+    if (treeCounter == 0) {
+        cout << "No trees read. Make sure trees are in Nexus format. Exiting." << endl << endl;
+        exit(0);
+    }
+    
     if (treeCounter != (int)userTrees.size()) {
         cout << "Read in " << treeCounter << " user trees; retained " << userTrees.size() << " of them (discarded first "
         << burnin << " trees, retained every " << thinning << " tree thereafter)." << endl << endl;
