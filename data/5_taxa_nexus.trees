@@ -1,0 +1,18 @@
+#NEXUS
+Begin trees;
+tree tree0 = [&U] (Taxon_B,Taxon_C,(Taxon_D,(Taxon_A,Taxon_E)));
+tree tree1 = [&U] (Taxon_C,(Taxon_A,Taxon_D),(Taxon_B,Taxon_E));
+tree tree2 = [&U] (Taxon_B,(Taxon_A,Taxon_D),(Taxon_C,Taxon_E));
+tree tree3 = [&U] (Taxon_B,Taxon_C,(Taxon_A,(Taxon_D,Taxon_E)));
+tree tree4 = [&U] (Taxon_B,Taxon_C,((Taxon_A,Taxon_D),Taxon_E));
+tree tree5 = [&U] (Taxon_C,(Taxon_B,Taxon_D),(Taxon_A,Taxon_E));
+tree tree6 = [&U] (Taxon_A,Taxon_C,(Taxon_D,(Taxon_B,Taxon_E)));
+tree tree7 = [&U] (Taxon_A,(Taxon_B,Taxon_D),(Taxon_C,Taxon_E));
+tree tree8 = [&U] (Taxon_A,Taxon_C,(Taxon_B,(Taxon_D,Taxon_E)));
+tree tree9 = [&U] (Taxon_A,Taxon_C,((Taxon_B,Taxon_D),Taxon_E));
+tree tree10 = [&U] (Taxon_B,(Taxon_C,Taxon_D),(Taxon_A,Taxon_E));
+tree tree11 = [&U] (Taxon_A,(Taxon_C,Taxon_D),(Taxon_B,Taxon_E));
+tree tree12 = [&U] (Taxon_A,Taxon_B,(Taxon_D,(Taxon_C,Taxon_E)));
+tree tree13 = [&U] (Taxon_A,Taxon_B,(Taxon_C,(Taxon_D,Taxon_E)));
+tree tree14 = [&U] (Taxon_A,Taxon_B,((Taxon_C,Taxon_D),Taxon_E));
+end;
